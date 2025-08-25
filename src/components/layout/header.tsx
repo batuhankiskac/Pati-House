@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { PawPrint } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 export default function Header() {
   const pathname = usePathname();
@@ -22,14 +23,17 @@ export default function Header() {
               Pati House
             </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
+          <nav className="hidden md:flex items-center gap-4 text-sm">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'transition-colors hover:text-accent font-medium',
-                  pathname === link.href ? 'text-accent' : 'text-foreground/80'
+                  buttonVariants({ variant: pathname === link.href ? 'default' : 'ghost', size: 'sm' }),
+                  'transition-all duration-300',
+                  pathname === link.href
+                    ? 'bg-accent text-accent-foreground shadow-md'
+                    : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
                 )}
               >
                 {link.label}
