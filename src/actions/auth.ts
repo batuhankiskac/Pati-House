@@ -3,19 +3,23 @@
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 
-export async function authenticate(prevState: string | undefined, formData: FormData) {
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData
+) {
   try {
     await signIn('credentials', formData);
   } catch (error) {
     if (error instanceof AuthError) {
-      // Sadece 'CredentialsSignin' hatasını yakala, diğer tüm hatalar (yönlendirme dahil) yeniden fırlatılsın.
-      if (error.type === 'CredentialsSignin') {
-        return 'CredentialsSignin';
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'CredentialsSignin';
+        default:
+          // Diğer tüm AuthError hatalarını yeniden fırlat (yönlendirme dahil)
+          throw error;
       }
-      // Diğer AuthError türlerini yeniden fırlat.
-      throw error;
     }
-    // AuthError olmayan diğer hataları yeniden fırlat.
+    // AuthError olmayan diğer tüm hataları yeniden fırlat
     throw error;
   }
 }
