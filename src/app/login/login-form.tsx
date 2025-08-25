@@ -4,12 +4,13 @@ import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {signIn} from '@/auth';
-import {useFormState, useFormStatus} from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
 import {AlertCircle} from 'lucide-react';
 
 export function LoginForm() {
-  const [state, formAction] = useFormState(authenticate, undefined);
+  const [state, formAction] = useActionState(authenticate, undefined);
 
   return (
     <form action={formAction} className="space-y-4">
