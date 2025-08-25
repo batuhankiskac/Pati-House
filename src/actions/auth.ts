@@ -7,11 +7,15 @@ export async function authenticate(prevState: string | undefined, formData: Form
   try {
     await signIn('credentials', formData);
   } catch (error) {
-    if (error instanceof AuthError && error.type === 'CredentialsSignin') {
-      return 'CredentialsSignin';
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'CredentialsSignin';
+        default:
+          throw error;
+      }
     }
-    // Başarılı girişten sonra signIn bir yönlendirme hatası fırlatır,
-    // bu hatanın yeniden fırlatılması gerekir.
+    // Yönlendirme hatası gibi diğer hataları yeniden fırlat
     throw error;
   }
 }
