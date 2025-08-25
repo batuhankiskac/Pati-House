@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { PawPrint, UserCircle2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { PawPrint } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +10,6 @@ export default function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/profile', label: 'Profile' },
   ];
 
   return (
@@ -38,12 +36,6 @@ export default function Header() {
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-4">
-            <Button variant="outline">
-              <UserCircle2 className="mr-2 h-4 w-4" />
-              Login
-            </Button>
-          </div>
         </div>
       </div>
     </header>
