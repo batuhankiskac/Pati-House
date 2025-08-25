@@ -23,7 +23,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
     signIn: '/login',
   },
   callbacks: {
-    async authorized({auth, request}) {
+    authorized({auth, request}) {
       const {pathname} = request.nextUrl;
       if (pathname.startsWith('/admin')) {
         return !!auth;
@@ -41,6 +41,14 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
         session.user.id = token.id as string;
       }
       return session;
+    },
+    redirect({url, baseUrl}) {
+      // Allows relative callback URLs
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      // Redirect to admin page after login
+      return baseUrl + '/admin';
     },
   },
 });
