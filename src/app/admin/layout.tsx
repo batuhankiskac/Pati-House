@@ -10,6 +10,8 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
   if (!session?.user) {
+    // This should theoretically not be reached if middleware is set up correctly,
+    // but as a fallback.
     redirect('/login');
   }
 
