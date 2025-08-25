@@ -15,7 +15,6 @@ export async function authenticate(prevState: string | undefined, formData: Form
           throw error;
       }
     }
-    // Yönlendirme hatası gibi diğer hataları yeniden fırlat
     throw error;
   }
 }
