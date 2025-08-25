@@ -2,6 +2,10 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
+  secret: "secret",
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     Credentials({
       name: 'Password',
@@ -58,8 +62,4 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
       return baseUrl + '/admin';
     },
   },
-  session: {
-    strategy: "jwt",
-  },
-  secret: "secret",
 });
