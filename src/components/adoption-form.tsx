@@ -20,11 +20,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
 const adoptionFormSchema = z.object({
-  fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  phone: z.string().min(10, { message: 'Phone number must be at least 10 digits.' }),
-  address: z.string().min(10, { message: 'Address must be at least 10 characters.' }),
-  reason: z.string().min(20, { message: 'Please tell us a bit more (at least 20 characters).' }).max(500),
+  fullName: z.string().min(2, { message: 'Tam adınız en az 2 karakter olmalıdır.' }),
+  email: z.string().email({ message: 'Lütfen geçerli bir e-posta adresi girin.' }),
+  phone: z.string().min(10, { message: 'Telefon numarası en az 10 rakam olmalıdır.' }),
+  address: z.string().min(10, { message: 'Adres en az 10 karakter olmalıdır.' }),
+  reason: z.string().min(20, { message: 'Lütfen bize biraz daha bilgi verin (en az 20 karakter).' }).max(500),
 });
 
 type AdoptionFormValues = z.infer<typeof adoptionFormSchema>;
@@ -49,17 +49,17 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
   });
 
   async function onSubmit(data: AdoptionFormValues) {
-    // In a real app, you would send this data to your backend.
-    console.log('Adoption Application Submitted:', { catName, ...data });
+    // Gerçek bir uygulamada bu verileri arka uca gönderirsiniz.
+    console.log('Sahiplenme Başvurusu Gönderildi:', { catName, ...data });
 
     toast({
-      title: 'Application Sent!',
-      description: `Your adoption application for ${catName} has been submitted. We'll be in touch soon!`,
+      title: 'Başvurunuz Gönderildi!',
+      description: `${catName} için sahiplenme başvurunuz alınmıştır. Yakında sizinle iletişime geçeceğiz!`,
       variant: 'default',
       duration: 5000,
     });
     
-    // Redirect to home page after submission
+    // Gönderimden sonra ana sayfaya yönlendir
     router.push('/');
   }
 
@@ -74,9 +74,9 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>Tam Adınız</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} />
+                      <Input placeholder="Ad Soyad" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -87,9 +87,9 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>E-posta</FormLabel>
                     <FormControl>
-                      <Input placeholder="you@example.com" {...field} />
+                      <Input placeholder="siz@ornek.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -101,9 +101,9 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>Telefon Numarası</FormLabel>
                   <FormControl>
-                    <Input placeholder="(123) 456-7890" {...field} />
+                    <Input placeholder="(555) 123-4567" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,9 +114,9 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Address</FormLabel>
+                  <FormLabel>Tam Adres</FormLabel>
                   <FormControl>
-                    <Input placeholder="123 Main St, Anytown, USA" {...field} />
+                    <Input placeholder="123 Ana Cad, Herhangibiryer, Türkiye" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,23 +127,23 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
               name="reason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Why do you want to adopt {catName}?</FormLabel>
+                  <FormLabel>{catName}'i neden sahiplenmek istiyorsunuz?</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Tell us about your home, your experience with pets, and why you'd be a great fit."
+                      placeholder="Bize evinizden, evcil hayvan deneyiminizden ve neden harika bir sahip olacağınızdan bahsedin."
                       className="resize-y min-h-[120px]"
                       {...field}
                     />
                   </FormControl>
                    <FormDescription>
-                    Briefly describe your living situation and experience with pets.
+                    Yaşam durumunuzu ve evcil hayvanlarla olan deneyiminizi kısaca açıklayın.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/90" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Submitting...' : `Submit Application for ${catName}`}
+              {form.formState.isSubmitting ? 'Gönderiliyor...' : `${catName} için Başvuruyu Gönder`}
             </Button>
           </form>
         </Form>

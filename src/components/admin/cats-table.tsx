@@ -27,13 +27,13 @@ export default function CatsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Breed</TableHead>
-              <TableHead className="hidden md:table-cell">Age</TableHead>
-              <TableHead className="hidden md:table-cell">Gender</TableHead>
+              <TableHead className="hidden w-[100px] sm:table-cell">Resim</TableHead>
+              <TableHead>İsim</TableHead>
+              <TableHead>Cins</TableHead>
+              <TableHead className="hidden md:table-cell">Yaş</TableHead>
+              <TableHead className="hidden md:table-cell">Cinsiyet</TableHead>
               <TableHead>
-                <span className="sr-only">Actions</span>
+                <span className="sr-only">Eylemler</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -42,7 +42,7 @@ export default function CatsTable() {
               <TableRow key={cat.id}>
                 <TableCell className="hidden sm:table-cell">
                   <Image
-                    alt="Cat image"
+                    alt="Kedi resmi"
                     className="aspect-square rounded-md object-cover"
                     height="64"
                     src={cat.image}
@@ -54,20 +54,20 @@ export default function CatsTable() {
                 <TableCell>
                   <Badge variant="outline">{cat.breed}</Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">{cat.age} years</TableCell>
-                <TableCell className="hidden md:table-cell">{cat.gender}</TableCell>
+                <TableCell className="hidden md:table-cell">{cat.age} yaş</TableCell>
+                <TableCell className="hidden md:table-cell">{cat.gender === 'Male' ? 'Erkek' : 'Dişi'}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button aria-haspopup="true" size="icon" variant="ghost">
                         <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
+                        <span className="sr-only">Menüyü aç</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
+                      <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
+                      <DropdownMenuItem>Düzenle</DropdownMenuItem>
+                      <DropdownMenuItem>Sil</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

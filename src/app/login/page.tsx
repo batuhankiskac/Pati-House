@@ -14,13 +14,13 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
           <PawPrint className="mx-auto h-12 w-12 text-accent" />
-          <h1 className="text-3xl font-headline font-bold mt-2">Pati House Admin</h1>
+          <h1 className="text-3xl font-headline font-bold mt-2">Pati Evi Admin</h1>
         </div>
         <Card>
           <CardHeader>
-            <CardTitle>Login</CardTitle>
+            <CardTitle>Giriş Yap</CardTitle>
             <CardDescription>
-              Please enter the password to access the admin panel.
+              Lütfen admin paneline erişmek için şifreyi girin.
             </CardDescription>
           </CardHeader>
           <CardContent>

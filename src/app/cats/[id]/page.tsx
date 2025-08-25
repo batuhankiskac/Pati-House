@@ -36,11 +36,11 @@ export default function CatProfilePage({ params }: { params: { id: string } }) {
           <div className="flex flex-wrap gap-2 mb-6">
             <Badge variant="secondary" className="text-base">
               {cat.gender === 'Male' ? <Mars className="mr-2 h-4 w-4" /> : <Venus className="mr-2 h-4 w-4" />}
-              {cat.gender}
+              {cat.gender === 'Male' ? 'Erkek' : 'Dişi'}
             </Badge>
             <Badge variant="secondary" className="text-base">
               <Cake className="mr-2 h-4 w-4" />
-              {cat.age} {cat.age === 1 ? 'year old' : 'years old'}
+              {cat.age} yaşında
             </Badge>
             <Badge variant="secondary" className="text-base">
               <CatIcon className="mr-2 h-4 w-4" />
@@ -50,14 +50,14 @@ export default function CatProfilePage({ params }: { params: { id: string } }) {
 
           <Card>
             <CardHeader>
-              <CardTitle className="font-headline text-2xl">About {cat.name}</CardTitle>
+              <CardTitle className="font-headline text-2xl">{cat.name} Hakkında</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-lg leading-relaxed text-foreground/90">
                 {cat.description}
               </p>
               <Button asChild size="lg" className="mt-8 w-full sm:w-auto bg-accent hover:bg-accent/90">
-                <Link href={`/adopt/${cat.id}`}>Adopt {cat.name}</Link>
+                <Link href={`/adopt/${cat.id}`}>{cat.name}'i Sahiplen</Link>
               </Button>
             </CardContent>
           </Card>

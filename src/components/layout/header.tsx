@@ -14,7 +14,7 @@ export default function Header({user}: {user: User | null}) {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: '/', label: 'Home' },
+    { href: '/', label: 'Ana Sayfa' },
     { href: '/admin', label: 'Admin' },
   ];
 
@@ -32,7 +32,7 @@ export default function Header({user}: {user: User | null}) {
             'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
           )}
         >
-          Sign Out
+          Çıkış Yap
         </button>
       </form>
     );
@@ -45,7 +45,7 @@ export default function Header({user}: {user: User | null}) {
           <Link href="/" className="flex items-center gap-2">
             <PawPrint className="h-8 w-8 text-accent" />
             <span className="text-2xl font-bold font-headline text-primary-foreground">
-              Pati House
+              Pati Evi
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">

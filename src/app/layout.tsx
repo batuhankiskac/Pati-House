@@ -6,8 +6,8 @@ import Header from '@/components/layout/header';
 import { auth } from '@/auth';
 
 export const metadata: Metadata = {
-  title: 'Pati House - Find Your Furry Friend',
-  description: 'Adopt a cat from Pati House. We have lovely cats waiting for a warm home.',
+  title: 'Pati Evi - Tüylü Dostunuzu Bulun',
+  description: 'Pati Evi\'nden bir kedi sahiplenin. Sıcak bir yuva bekleyen sevimli kedilerimiz var.',
 };
 
 export default async function RootLayout({
@@ -17,7 +17,7 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   return (
-    <html lang="en" className="h-full">
+    <html lang="tr" className="h-full">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

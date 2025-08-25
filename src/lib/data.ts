@@ -19,17 +19,17 @@ export type AdoptionRequest = {
     id: number;
     catName: string;
     requestDate: string;
-    status: 'Pending' | 'Approved' | 'Rejected';
+    status: 'Bekliyor' | 'Onaylandı' | 'Reddedildi';
 };
 
 export const cats: Cat[] = [
   {
     id: 1,
-    name: 'Whiskers',
+    name: 'Bıyık',
     breed: 'Maine Coon',
     age: 3,
     gender: 'Male',
-    description: 'Whiskers is a gentle giant with a heart of gold. He loves to cuddle, play with feather toys, and watch birds from the window. He gets along well with other cats and would make a perfect family companion.',
+    description: 'Bıyık, altın gibi bir kalbi olan nazik bir devdir. Kucaklaşmayı, tüy oyuncaklarla oynamayı ve pencereden kuşları izlemeyi çok sever. Diğer kedilerle iyi anlaşır ve mükemmel bir aile dostu olur.',
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'maine coon cat'
   },
@@ -39,7 +39,7 @@ export const cats: Cat[] = [
     breed: 'Siamese',
     age: 1,
     gender: 'Female',
-    description: 'Luna is a talkative and intelligent Siamese who loves to be the center of attention. She is very active, enjoys climbing cat trees, and will happily engage you in conversation all day long.',
+    description: 'Luna, ilgi odağı olmayı seven konuşkan ve zeki bir Siyam kedisidir. Çok aktiftir, kedi ağaçlarına tırmanmaktan hoşlanır ve gün boyu sizinle mutlu bir şekilde sohbet eder.',
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'siamese cat'
   },
@@ -49,7 +49,7 @@ export const cats: Cat[] = [
     breed: 'British Shorthair',
     age: 5,
     gender: 'Male',
-    description: "Oliver is a calm and dignified cat with a plush, blue-gray coat. He's an easygoing companion who enjoys napping in sunbeams and quiet evenings. He is a bit shy at first but warms up quickly.",
+    description: "Oliver, pelüş, mavi-gri kürküyle sakin ve ağırbaşlı bir kedidir. Güneş ışığında kestirmekten ve sakin akşamlardan hoşlanan uysal bir arkadaştır. İlk başta biraz utangaçtır ama çabuk alışır.",
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'british shorthair cat'
   },
@@ -59,7 +59,7 @@ export const cats: Cat[] = [
     breed: 'Bengal',
     age: 2,
     gender: 'Female',
-    description: "Cleo is a stunning Bengal with a wild look and a playful personality. She's full of energy, loves interactive toys, and needs a home that can keep her entertained. She is very smart and can be taught tricks.",
+    description: "Cleo, vahşi bir görünüme ve oyuncu bir kişiliğe sahip çarpıcı bir Bengal kedisidir. Enerji doludur, interaktif oyuncakları sever ve onu eğlendirebilecek bir yuvaya ihtiyacı vardır. Çok akıllıdır ve numaralar öğretilebilir.",
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'bengal cat'
   },
@@ -69,7 +69,7 @@ export const cats: Cat[] = [
     breed: 'Persian',
     age: 4,
     gender: 'Male',
-    description: "Simba is a majestic Persian with a luxurious long coat. He is a sweet and quiet soul who prefers a calm environment. He requires regular grooming to keep his fur looking its best.",
+    description: "Simba, lüks uzun tüyleri olan görkemli bir İran kedisidir. Sakin bir ortamı tercih eden tatlı ve sessiz bir ruhtur. Kürkünün en iyi şekilde görünmesi için düzenli tüy bakımına ihtiyacı vardır.",
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'persian cat white'
   },
@@ -79,7 +79,7 @@ export const cats: Cat[] = [
     breed: 'Ragdoll',
     age: 2,
     gender: 'Female',
-    description: 'Nala is a classic Ragdoll who goes limp with happiness when you pick her up. She is incredibly affectionate, loves being held, and follows her humans around the house like a puppy.',
+    description: 'Nala, kucağınıza aldığınızda mutluluktan gevşeyen klasik bir Ragdoll kedisidir. İnanılmaz derecede sevgi doludur, kucakta tutulmayı sever ve insanlarını bir köpek yavrusu gibi evin içinde takip eder.',
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'ragdoll cat blue eyes'
   },
@@ -89,7 +89,7 @@ export const cats: Cat[] = [
     breed: 'Scottish Fold',
     age: 0.5,
     gender: 'Male',
-    description: "Milo is an adorable Scottish Fold kitten with the cutest folded ears. He's curious, playful, and loves to pounce on anything that moves. He's looking for a family to grow up with.",
+    description: "Milo, en sevimli kıvrık kulaklara sahip, tapılası bir Scottish Fold yavrusudur. Meraklı, oyuncu ve hareket eden her şeye atlamayı sever. Birlikte büyüyebileceği bir aile arıyor.",
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'scottish fold kitten'
   },
@@ -99,7 +99,7 @@ export const cats: Cat[] = [
     breed: 'Siamese',
     age: 8,
     gender: 'Female',
-    description: "Zoe is a sweet senior Siamese looking for a quiet retirement home. She is very gentle, loves warm laps, and is content with a peaceful life. She has a lot of love left to give.",
+    description: "Zoe, sakin bir emeklilik yuvası arayan tatlı, yaşlı bir Siyam kedisidir. Çok naziktir, sıcak kucakları sever ve huzurlu bir yaşamdan memnundur. Verecek çok sevgisi var.",
     image: 'https://placehold.co/600x600.png',
     dataAiHint: 'old siamese cat'
   }
@@ -107,7 +107,7 @@ export const cats: Cat[] = [
 
 
 export const adoptionRequests: AdoptionRequest[] = [
-    { id: 1, catName: 'Simba', requestDate: '2024-05-15', status: 'Approved' },
-    { id: 2, catName: 'Milo', requestDate: '2024-06-01', status: 'Pending' },
-    { id: 3, catName: 'Whiskers', requestDate: '2024-04-20', status: 'Rejected' },
+    { id: 1, catName: 'Simba', requestDate: '2024-05-15', status: 'Onaylandı' },
+    { id: 2, catName: 'Milo', requestDate: '2024-06-01', status: 'Bekliyor' },
+    { id: 3, catName: 'Bıyık', requestDate: '2024-04-20', status: 'Reddedildi' },
 ];

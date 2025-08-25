@@ -29,10 +29,10 @@ export default function CatCard({ cat }: CatCardProps) {
           <CardTitle className="text-xl font-headline mb-2">{cat.name}</CardTitle>
           <div className="flex items-center text-sm text-muted-foreground gap-2">
             {cat.gender === 'Male' ? <Mars className="h-4 w-4" /> : <Venus className="h-4 w-4" />}
-            <span>{cat.gender}</span>
+            <span>{cat.gender === 'Male' ? 'Erkek' : 'Dişi'}</span>
             <span className="text-muted-foreground/50">|</span>
             <Cake className="h-4 w-4" />
-            <span>{cat.age} {cat.age === 1 ? 'yr' : 'yrs'}</span>
+            <span>{cat.age} yaş</span>
           </div>
         </CardContent>
         <CardFooter className="p-4 pt-0">

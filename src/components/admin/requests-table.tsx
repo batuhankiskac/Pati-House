@@ -27,11 +27,11 @@ export default function RequestsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Cat Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="hidden md:table-cell">Request Date</TableHead>
+              <TableHead>Kedi Adı</TableHead>
+              <TableHead>Durum</TableHead>
+              <TableHead className="hidden md:table-cell">Talep Tarihi</TableHead>
               <TableHead>
-                <span className="sr-only">Actions</span>
+                <span className="sr-only">Eylemler</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -43,9 +43,9 @@ export default function RequestsTable() {
                   <Badge
                     variant="outline"
                     className={cn({
-                      'bg-green-100 text-green-800 border-green-300': request.status === 'Approved',
-                      'bg-yellow-100 text-yellow-800 border-yellow-300': request.status === 'Pending',
-                      'bg-red-100 text-red-800 border-red-300': request.status === 'Rejected',
+                      'bg-green-100 text-green-800 border-green-300': request.status === 'Onaylandı',
+                      'bg-yellow-100 text-yellow-800 border-yellow-300': request.status === 'Bekliyor',
+                      'bg-red-100 text-red-800 border-red-300': request.status === 'Reddedildi',
                     })}
                   >
                     {request.status}
@@ -57,14 +57,14 @@ export default function RequestsTable() {
                     <DropdownMenuTrigger asChild>
                       <Button aria-haspopup="true" size="icon" variant="ghost">
                         <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
+                        <span className="sr-only">Menüyü aç</span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Approve</DropdownMenuItem>
-                      <DropdownMenuItem>Reject</DropdownMenuItem>
-                      <DropdownMenuItem>View Application</DropdownMenuItem>
+                      <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
+                      <DropdownMenuItem>Onayla</DropdownMenuItem>
+                      <DropdownMenuItem>Reddet</DropdownMenuItem>
+                      <DropdownMenuItem>Başvuruyu Görüntüle</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

@@ -25,9 +25,9 @@ export default function Home() {
         return false;
       }
       if (age !== 'all') {
-        if (age === 'kitten' && cat.age >= 1) return false;
-        if (age === 'adult' && (cat.age < 1 || cat.age >= 8)) return false;
-        if (age === 'senior' && cat.age < 8) return false;
+        if (age === 'yavru' && cat.age >= 1) return false;
+        if (age === 'yetişkin' && (cat.age < 1 || cat.age >= 8)) return false;
+        if (age === 'yaşlı' && cat.age < 8) return false;
       }
       if (gender !== 'all' && cat.gender !== gender) {
         return false;
@@ -40,10 +40,10 @@ export default function Home() {
     <div className="container mx-auto px-4 py-8">
       <section className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-headline font-bold text-accent mb-4">
-          Find Your New Best Friend
+          Yeni En İyi Arkadaşınızı Bulun
         </h1>
         <p className="max-w-2xl mx-auto text-lg text-foreground/80">
-          Welcome to Pati House! We are dedicated to finding loving homes for cats in need. Browse our available cats and start your adoption journey today.
+          Pati Evi'ne hoş geldiniz! İhtiyaç sahibi kedilere sevgi dolu yuvalar bulmaya adandık. Mevcut kedilerimize göz atın ve sahiplenme yolculuğunuza bugün başlayın.
         </p>
       </section>
 
@@ -64,9 +64,9 @@ export default function Home() {
       ) : (
         <div className="text-center py-16">
            <PawPrint className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-          <h2 className="text-2xl font-headline font-semibold text-foreground">No Cats Found</h2>
+          <h2 className="text-2xl font-headline font-semibold text-foreground">Kedi Bulunamadı</h2>
           <p className="text-muted-foreground mt-2">
-            Try adjusting your search filters to find more furry friends.
+            Daha fazla tüylü dost bulmak için arama filtrelerinizi değiştirmeyi deneyin.
           </p>
         </div>
       )}

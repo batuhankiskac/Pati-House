@@ -8,9 +8,9 @@ import { Button } from '../ui/button';
 import { signOut } from 'next-auth/react';
 
 const navLinks = [
-  { href: '/admin', label: 'Dashboard', icon: Home },
-  { href: '/admin/cats', label: 'Manage Cats', icon: Cat },
-  { href: '/admin/requests', label: 'Adoption Requests', icon: Mail },
+  { href: '/admin', label: 'Panel', icon: Home },
+  { href: '/admin/cats', label: 'Kedileri Yönet', icon: Cat },
+  { href: '/admin/requests', label: 'Sahiplenme Talepleri', icon: Mail },
 ];
 
 export default function AdminSidebar() {
@@ -50,7 +50,7 @@ export default function AdminSidebar() {
       <div className="p-4 border-t">
         <Button variant="ghost" className="w-full justify-start" onClick={() => signOut({ callbackUrl: '/' })}>
           <LogOut className="mr-2 h-4 w-4" />
-          Sign Out
+          Çıkış Yap
         </Button>
       </div>
     </aside>

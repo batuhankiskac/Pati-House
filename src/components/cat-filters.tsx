@@ -35,7 +35,7 @@ export default function CatFilters({ filters, onFilterChange }: CatFiltersProps)
              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
              <Input
                 type="text"
-                placeholder="Search by name..."
+                placeholder="İsme göre ara..."
                 value={filters.search}
                 onChange={handleInputChange}
                 className="pl-10"
@@ -43,10 +43,10 @@ export default function CatFilters({ filters, onFilterChange }: CatFiltersProps)
           </div>
           <Select value={filters.breed} onValueChange={handleSelectChange('breed')}>
             <SelectTrigger>
-              <SelectValue placeholder="All Breeds" />
+              <SelectValue placeholder="Tüm Cinsler" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Breeds</SelectItem>
+              <SelectItem value="all">Tüm Cinsler</SelectItem>
               {breeds.map((breed) => (
                 <SelectItem key={breed} value={breed}>{breed}</SelectItem>
               ))}
@@ -54,23 +54,23 @@ export default function CatFilters({ filters, onFilterChange }: CatFiltersProps)
           </Select>
           <Select value={filters.age} onValueChange={handleSelectChange('age')}>
             <SelectTrigger>
-              <SelectValue placeholder="All Ages" />
+              <SelectValue placeholder="Tüm Yaşlar" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Ages</SelectItem>
-              <SelectItem value="kitten">Kitten (0-1 yr)</SelectItem>
-              <SelectItem value="adult">Adult (1-8 yrs)</SelectItem>
-              <SelectItem value="senior">Senior (8+ yrs)</SelectItem>
+              <SelectItem value="all">Tüm Yaşlar</SelectItem>
+              <SelectItem value="yavru">Yavru (0-1 yaş)</SelectItem>
+              <SelectItem value="yetişkin">Yetişkin (1-8 yaş)</SelectItem>
+              <SelectItem value="yaşlı">Yaşlı (8+ yaş)</SelectItem>
             </SelectContent>
           </Select>
           <Select value={filters.gender} onValueChange={handleSelectChange('gender')}>
             <SelectTrigger>
-              <SelectValue placeholder="All Genders" />
+              <SelectValue placeholder="Tüm Cinsiyetler" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Genders</SelectItem>
-              <SelectItem value="Male">Male</SelectItem>
-              <SelectItem value="Female">Female</SelectItem>
+              <SelectItem value="all">Tüm Cinsiyetler</SelectItem>
+              <SelectItem value="Male">Erkek</SelectItem>
+              <SelectItem value="Female">Dişi</SelectItem>
             </SelectContent>
           </Select>
         </div>

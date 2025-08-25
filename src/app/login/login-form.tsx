@@ -15,7 +15,7 @@ export function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Şifre</Label>
         <Input
           id="password"
           type="password"
@@ -27,8 +27,8 @@ export function LoginForm() {
       {state === 'CredentialsSignin' && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Invalid password.</AlertDescription>
+          <AlertTitle>Hata</AlertTitle>
+          <AlertDescription>Geçersiz şifre.</AlertDescription>
         </Alert>
       )}
       <LoginButton />
@@ -41,7 +41,7 @@ function LoginButton() {
 
   return (
     <Button type="submit" className="w-full" aria-disabled={pending}>
-      {pending ? 'Logging in...' : 'Login'}
+      {pending ? 'Giriş yapılıyor...' : 'Giriş Yap'}
     </Button>
   );
 }
