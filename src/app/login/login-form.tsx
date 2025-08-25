@@ -3,7 +3,7 @@
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
-import {signIn} from '@/auth';
+import {authenticate} from '@/actions/auth';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
@@ -44,15 +44,4 @@ function LoginButton() {
       {pending ? 'Logging in...' : 'Login'}
     </Button>
   );
-}
-
-async function authenticate(prevState: string | undefined, formData: FormData) {
-  try {
-    await signIn('credentials', formData);
-  } catch (error) {
-    if ((error as Error).message.includes('CredentialsSignin')) {
-      return 'CredentialsSignin';
-    }
-    throw error;
-  }
 }
