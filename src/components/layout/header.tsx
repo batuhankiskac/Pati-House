@@ -11,6 +11,7 @@ export default function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
+    { href: '/admin', label: 'Admin' },
   ];
 
   return (
@@ -29,9 +30,9 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  buttonVariants({ variant: pathname === link.href ? 'default' : 'ghost', size: 'sm' }),
+                  buttonVariants({ variant: 'ghost', size: 'sm' }),
                   'transition-all duration-300',
-                  pathname === link.href
+                  pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href
                     ? 'bg-accent text-accent-foreground shadow-md'
                     : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
                 )}
