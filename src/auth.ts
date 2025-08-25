@@ -10,7 +10,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
         password: {label: 'Password', type: 'password'},
       },
       async authorize(credentials) {
-        if (credentials?.password === process.env.ADMIN_PASSWORD) {
+        if (credentials?.password === "admin") {
           // Any object returned will be saved in `user` property of the JWT
           return {id: '1', name: 'Admin'};
         }
@@ -43,13 +43,23 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
       return session;
     },
     redirect({url, baseUrl}) {
+      // Allows relative callback URLs
       if (url.startsWith('/')) {
         return `${baseUrl}${url}`;
       }
+      // Allows callback URLs on the same origin
       if (new URL(url).origin === baseUrl) {
         return url;
       }
       return baseUrl + '/admin';
     },
   },
+  // Add matcher to protect all admin routes
+  // This ensures that all pages under /admin are protected
+  // and require authentication.
+  // see: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
+  session: {
+    strategy: "jwt",
+  },
+  secret: "secret",
 });

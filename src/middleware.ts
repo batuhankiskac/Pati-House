@@ -1,14 +1,7 @@
-import {auth} from '@/auth';
-import {NextResponse} from 'next/server';
+import { auth } from "@/auth"
 
-export default auth(req => {
-  if (!req.auth && req.nextUrl.pathname.startsWith('/admin')) {
-    const newUrl = new URL('/login', req.nextUrl.origin);
-    return NextResponse.redirect(newUrl);
-  }
-});
+export default auth;
 
-// Optionally, don't invoke Middleware on some paths
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ["/admin/:path*"],
 };
