@@ -8,12 +8,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-  if (!session?.user) {
-    // This should theoretically not be reached if middleware is set up correctly,
-    // but as a fallback.
-    redirect('/login');
-  }
+  // Bu kontrol artık middleware tarafından yapılıyor.
+  // const session = await auth();
+  // if (!session?.user) {
+  //   redirect('/login');
+  // }
 
   return (
     <div className="flex min-h-screen">
