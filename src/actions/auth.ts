@@ -15,11 +15,9 @@ export async function authenticate(
         case 'CredentialsSignin':
           return 'CredentialsSignin';
         default:
-          // Diğer tüm AuthError hatalarını yeniden fırlat (yönlendirme dahil)
           throw error;
       }
     }
-    // AuthError olmayan diğer tüm hataları yeniden fırlat
     throw error;
   }
 }

@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { PawPrint } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
-import { auth } from '@/auth';
+import { buttonVariants, Button } from '@/components/ui/button';
 import { signOut } from 'next-auth/react';
 import {type User} from 'next-auth';
 
@@ -17,26 +16,6 @@ export default function Header({user}: {user: User | null}) {
     { href: '/', label: 'Ana Sayfa' },
     { href: '/admin', label: 'Admin' },
   ];
-
-  const SignOut = () => {
-    return (
-      <form
-        action={async () => {
-          await signOut();
-        }}
-      >
-        <button
-          className={cn(
-            buttonVariants({ variant: 'ghost', size: 'sm' }),
-            'transition-all duration-300',
-            'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
-          )}
-        >
-          Çıkış Yap
-        </button>
-      </form>
-    );
-  };
 
   return (
     <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-50">
@@ -64,7 +43,16 @@ export default function Header({user}: {user: User | null}) {
                 {link.label}
               </Link>
             ))}
-            {user && <SignOut />}
+            {user && (
+               <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="transition-all duration-300 text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground"
+              >
+                Çıkış Yap
+              </Button>
+            )}
           </nav>
         </div>
       </div>
