@@ -46,11 +46,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
       return session;
     },
     redirect({url, baseUrl}) {
-      // Successful sign-in redirects to the admin page
-      if (url.startsWith(baseUrl + "/admin")) {
-        return url;
-      }
-       // Allows relative callback URLs
+      // Allows relative callback URLs
       if (url.startsWith('/')) {
         return `${baseUrl}${url}`;
       }
