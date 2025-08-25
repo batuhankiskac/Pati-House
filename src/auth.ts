@@ -32,17 +32,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      // Başarılı girişten sonra her zaman /admin'e yönlendir
-      if (url.startsWith(baseUrl + "/login")) {
-         return `${baseUrl}/admin`;
-      }
-      // Allows relative callback URLs
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
-      if (new URL(url).origin === baseUrl) return url;
-
-      return baseUrl + '/admin';
+    async redirect({ baseUrl }) {
+      return `${baseUrl}/admin`;
+    },
+    async authorized({ auth }) {
+      // Oturum açılmışsa (auth nesnesi varsa) true döner.
+      // Bu, middleware veya korunan sayfalarda kullanılabilir.
+      return !!auth?.user;
     },
   },
 });
