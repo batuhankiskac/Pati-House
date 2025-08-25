@@ -1,0 +1,57 @@
+'use client';
+
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {signIn} from '@/auth';
+import {useFormState, useFormStatus} from 'react-dom';
+import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
+import {AlertCircle} from 'lucide-react';
+
+export function LoginForm() {
+  const [state, formAction] = useFormState(authenticate, undefined);
+
+  return (
+    <form action={formAction} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          name="password"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+      {state === 'CredentialsSignin' && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>Invalid password.</AlertDescription>
+        </Alert>
+      )}
+      <LoginButton />
+    </form>
+  );
+}
+
+function LoginButton() {
+  const {pending} = useFormStatus();
+
+  return (
+    <Button type="submit" className="w-full" aria-disabled={pending}>
+      {pending ? 'Logging in...' : 'Login'}
+    </Button>
+  );
+}
+
+async function authenticate(prevState: string | undefined, formData: FormData) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if ((error as Error).message.includes('CredentialsSignin')) {
+      return 'CredentialsSignin';
+    }
+    throw error;
+  }
+}

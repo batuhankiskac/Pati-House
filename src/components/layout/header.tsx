@@ -5,14 +5,38 @@ import { PawPrint } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import { auth } from '@/auth';
+import { signOut } from 'next-auth/react';
+import {type User} from 'next-auth';
 
-export default function Header() {
+
+export default function Header({user}: {user: User | null}) {
   const pathname = usePathname();
 
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/admin', label: 'Admin' },
   ];
+
+  const SignOut = () => {
+    return (
+      <form
+        action={async () => {
+          await signOut();
+        }}
+      >
+        <button
+          className={cn(
+            buttonVariants({ variant: 'ghost', size: 'sm' }),
+            'transition-all duration-300',
+            'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
+          )}
+        >
+          Sign Out
+        </button>
+      </form>
+    );
+  };
 
   return (
     <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-50">
@@ -32,7 +56,7 @@ export default function Header() {
                 className={cn(
                   buttonVariants({ variant: 'ghost', size: 'sm' }),
                   'transition-all duration-300',
-                  pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href
+                  (pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href
                     ? 'bg-accent text-accent-foreground shadow-md'
                     : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
                 )}
@@ -40,6 +64,7 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+            {user && <SignOut />}
           </nav>
         </div>
       </div>
