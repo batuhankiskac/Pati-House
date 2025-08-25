@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import {redirect} from 'next/navigation';
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
   providers: [
@@ -43,7 +42,11 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
       return session;
     },
     redirect({url, baseUrl}) {
-      // Allows relative callback URLs
+      // Successful sign-in redirects to the admin page
+      if (url.startsWith(baseUrl + "/admin")) {
+        return url;
+      }
+       // Allows relative callback URLs
       if (url.startsWith('/')) {
         return `${baseUrl}${url}`;
       }
@@ -51,13 +54,10 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
       if (new URL(url).origin === baseUrl) {
         return url;
       }
+      
       return baseUrl + '/admin';
     },
   },
-  // Add matcher to protect all admin routes
-  // This ensures that all pages under /admin are protected
-  // and require authentication.
-  // see: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
   session: {
     strategy: "jwt",
   },
