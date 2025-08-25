@@ -20,6 +20,13 @@ export type AdoptionRequest = {
     catName: string;
     requestDate: string;
     status: 'Bekliyor' | 'Onaylandı' | 'Reddedildi';
+    applicant: {
+      name: string;
+      email: string;
+      phone: string;
+      address: string;
+      reason: string;
+    };
 };
 
 export const cats: Cat[] = [
@@ -107,7 +114,43 @@ export const cats: Cat[] = [
 
 
 export const adoptionRequests: AdoptionRequest[] = [
-    { id: 1, catName: 'Simba', requestDate: '2024-05-15', status: 'Onaylandı' },
-    { id: 2, catName: 'Milo', requestDate: '2024-06-01', status: 'Bekliyor' },
-    { id: 3, catName: 'Bıyık', requestDate: '2024-04-20', status: 'Reddedildi' },
+    { 
+      id: 1, 
+      catName: 'Simba', 
+      requestDate: '2024-05-15', 
+      status: 'Onaylandı',
+      applicant: {
+        name: 'Ayşe Yılmaz',
+        email: 'ayse.yilmaz@example.com',
+        phone: '555-111-2233',
+        address: 'Gül Sokak, No: 12, Çankaya, Ankara',
+        reason: 'Simba\'yı uzun zamandır takip ediyorum ve ona sevgi dolu bir yuva sağlayabileceğime inanıyorum. Evde başka evcil hayvan yok ve tüm vaktimi ona ayırabilirim.'
+      }
+    },
+    { 
+      id: 2, 
+      catName: 'Milo', 
+      requestDate: '2024-06-01', 
+      status: 'Bekliyor',
+      applicant: {
+        name: 'Mehmet Öztürk',
+        email: 'mehmet.ozturk@example.com',
+        phone: '544-222-3344',
+        address: 'Menekşe Caddesi, No: 8 Daire: 5, Beşiktaş, İstanbul',
+        reason: 'Çocuklarım bir kedi yavrusu çok istiyor. Milo\'nun enerjisine ayak uydurabilecek, bahçeli bir evimiz var. Daha önce de kedi baktım.'
+      }
+    },
+    { 
+      id: 3, 
+      catName: 'Bıyık', 
+      requestDate: '2024-04-20', 
+      status: 'Reddedildi',
+      applicant: {
+        name: 'Fatma Kaya',
+        email: 'fatma.kaya@example.com',
+        phone: '533-333-4455',
+        address: 'Lale Apartmanı, Kat: 3, Alsancak, İzmir',
+        reason: 'Bıyık\'ın fotoğrafını gördüm ve çok etkilendim. Sakin bir yapısı olduğu için bana iyi bir arkadaş olacağını düşünüyorum.'
+      }
+    },
 ];
