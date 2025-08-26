@@ -7,18 +7,13 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { signOut } from 'next-auth/react';
 
-export default function Header() {
+export default function Header({ showSignOut }: { showSignOut: boolean }) {
   const pathname = usePathname();
 
   const navLinks = [
     { href: '/', label: 'Ana Sayfa' },
     { href: '/admin', label: 'Admin' },
   ];
-
-  // This is a temporary workaround. We will restore the sign out button later.
-  // A proper fix would involve using a session provider or a different pattern
-  // to get session data without crashing the root layout.
-  const showSignOut = pathname.startsWith('/admin');
 
   return (
     <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-50">
