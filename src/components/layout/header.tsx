@@ -17,7 +17,8 @@ export default function Header() {
     const checkAuth = () => {
       const cookies = document.cookie.split(';');
       const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth-token='));
-      setIsAuthenticated(!!authCookie);
+      const hasValidToken = authCookie && authCookie.includes('authenticated');
+      setIsAuthenticated(!!hasValidToken);
     };
 
     checkAuth();
@@ -27,8 +28,11 @@ export default function Header() {
     return () => clearInterval(interval);
   }, [pathname]);
 
-  const navLinks = [
+  const publicNavLinks = [
     { href: '/', label: 'Ana Sayfa' },
+  ];
+
+  const adminNavLinks = [
     { href: '/admin', label: 'Admin' },
   ];
 
@@ -43,7 +47,22 @@ export default function Header() {
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">
-            {navLinks.map((link) => (
+            {publicNavLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  buttonVariants({ variant: 'ghost', size: 'sm' }),
+                  'transition-all duration-300',
+                  (pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href
+                    ? 'bg-accent text-accent-foreground shadow-md'
+                    : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {isAuthenticated && adminNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
