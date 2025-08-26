@@ -4,12 +4,9 @@ import Link from 'next/link';
 import { PawPrint } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { buttonVariants, Button } from '@/components/ui/button';
-import { signOut } from 'next-auth/react';
-import {type User} from 'next-auth';
+import { buttonVariants } from '@/components/ui/button';
 
-
-export default function Header({user}: {user: User | null}) {
+export default function Header() {
   const pathname = usePathname();
 
   const navLinks = [
@@ -43,16 +40,6 @@ export default function Header({user}: {user: User | null}) {
                 {link.label}
               </Link>
             ))}
-            {user && (
-               <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="transition-all duration-300 text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground"
-              >
-                Çıkış Yap
-              </Button>
-            )}
           </nav>
         </div>
       </div>
