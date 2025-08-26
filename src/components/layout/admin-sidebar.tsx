@@ -16,6 +16,14 @@ const navLinks = [
 export default function AdminSidebar() {
   const pathname = usePathname();
 
+  const handleSignOut = async () => {
+    try {
+      await signOut({ callbackUrl: '/' });
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
   return (
     <aside className="w-64 flex-shrink-0 bg-card border-r hidden md:flex flex-col">
       <div className="flex h-16 items-center justify-center border-b">
@@ -48,7 +56,7 @@ export default function AdminSidebar() {
         </ul>
       </nav>
       <div className="p-4 border-t">
-        <Button variant="ghost" className="w-full justify-start" onClick={() => signOut({ callbackUrl: '/' })}>
+        <Button variant="ghost" className="w-full justify-start" onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
           Çıkış Yap
         </Button>

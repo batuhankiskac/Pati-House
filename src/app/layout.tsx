@@ -3,7 +3,6 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster"
 import Header from '@/components/layout/header';
-import { auth } from '@/auth';
 
 export const metadata: Metadata = {
   title: 'Pati Evi - Tüylü Dostunuzu Bulun',
@@ -15,8 +14,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
-
   return (
     <html lang="tr" className="h-full">
       <head>
@@ -30,7 +27,7 @@ export default async function RootLayout({
         )}
       >
         <div className="relative flex min-h-screen flex-col">
-          <Header showSignOut={!!session?.user} />
+          <Header />
           <main className="flex-1">
             {children}
           </main>

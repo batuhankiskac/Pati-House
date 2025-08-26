@@ -24,11 +24,11 @@ export function LoginForm() {
           required
         />
       </div>
-      {state === 'CredentialsSignin' && (
+      {state && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Hata</AlertTitle>
-          <AlertDescription>Geçersiz şifre.</AlertDescription>
+          <AlertDescription>{state}</AlertDescription>
         </Alert>
       )}
       <LoginButton />

@@ -5,10 +5,27 @@ import { PawPrint } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import { signOut } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import SignOutForm from '@/components/auth/signout-form';
 
-export default function Header({ showSignOut }: { showSignOut: boolean }) {
+export default function Header() {
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Client-side'da cookie kontrolü
+    const checkAuth = () => {
+      const cookies = document.cookie.split(';');
+      const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth-token='));
+      setIsAuthenticated(!!authCookie);
+    };
+
+    checkAuth();
+
+    // Path değiştiğinde tekrar kontrol et
+    const interval = setInterval(checkAuth, 1000);
+    return () => clearInterval(interval);
+  }, [pathname]);
 
   const navLinks = [
     { href: '/', label: 'Ana Sayfa' },
@@ -41,16 +58,8 @@ export default function Header({ showSignOut }: { showSignOut: boolean }) {
                 {link.label}
               </Link>
             ))}
-             {showSignOut && (
-               <button
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className={cn(
-                  buttonVariants({ variant: 'ghost', size: 'sm' }),
-                  'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
-                  )}
-              >
-                Çıkış Yap
-              </button>
+            {isAuthenticated && (
+              <SignOutForm />
             )}
           </nav>
         </div>

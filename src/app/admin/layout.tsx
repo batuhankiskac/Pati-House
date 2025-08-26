@@ -1,15 +1,15 @@
 import AdminSidebar from '@/components/layout/admin-sidebar';
-import { auth } from '@/auth';
+import { isAuthenticated } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-  if (!session?.user) {
+  const authenticated = await isAuthenticated();
+
+  if (!authenticated) {
     redirect('/login');
   }
 

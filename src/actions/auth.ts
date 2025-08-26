@@ -1,23 +1,34 @@
 'use server';
 
-import { signIn } from '@/auth';
-import { AuthError } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { createSession, destroySession } from '@/lib/auth';
 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData
 ) {
   try {
-    await signIn('credentials', formData);
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'CredentialsSignin';
-        default:
-          throw error;
-      }
+    const password = formData.get('password') as string;
+
+    if (!password) {
+      return 'Şifre gerekli';
     }
-    throw error;
+
+    const success = await createSession(password);
+
+    if (!success) {
+      return 'Geçersiz şifre';
+    }
+
+  } catch (error) {
+    return 'Bir hata oluştu';
   }
+
+  // Başarılı giriş - redirect'i try-catch dışında yap
+  redirect('/admin');
+}
+
+export async function signOut() {
+  await destroySession();
+  redirect('/');
 }

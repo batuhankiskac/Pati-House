@@ -23,14 +23,43 @@ import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RequestDetailsDialog from './request-details-dialog';
+import { updateRequestStatus } from '@/actions/admin';
+import { useToast } from '@/hooks/use-toast';
 
 export default function RequestsTable() {
   const [selectedRequest, setSelectedRequest] = useState<AdoptionRequest | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleViewRequest = (request: AdoptionRequest) => {
     setSelectedRequest(request);
     setIsDialogOpen(true);
+  };
+
+  const handleStatusChange = async (requestId: number, status: 'Onaylandı' | 'Reddedildi') => {
+    try {
+      const result = await updateRequestStatus(requestId, status);
+      if (result.success) {
+        toast({
+          title: 'Başarılı',
+          description: `Başvuru ${status.toLowerCase()}.`,
+        });
+        // Sayfayı yenile
+        window.location.reload();
+      } else {
+        toast({
+          title: 'Hata',
+          description: result.error || 'Durum güncellenirken hata oluştu.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Hata',
+        description: 'Beklenmeyen bir hata oluştu.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -77,8 +106,16 @@ export default function RequestsTable() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
-                        <DropdownMenuItem>Onayla</DropdownMenuItem>
-                        <DropdownMenuItem>Reddet</DropdownMenuItem>
+                        {request.status !== 'Onaylandı' && (
+                          <DropdownMenuItem onClick={() => handleStatusChange(request.id, 'Onaylandı')}>
+                            Onayla
+                          </DropdownMenuItem>
+                        )}
+                        {request.status !== 'Reddedildi' && (
+                          <DropdownMenuItem onClick={() => handleStatusChange(request.id, 'Reddedildi')}>
+                            Reddet
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => handleViewRequest(request)}>
                           Başvuruyu Görüntüle
                         </DropdownMenuItem>
@@ -92,7 +129,7 @@ export default function RequestsTable() {
         </CardContent>
       </Card>
       {selectedRequest && (
-         <RequestDetailsDialog 
+         <RequestDetailsDialog
             isOpen={isDialogOpen}
             onOpenChange={setIsDialogOpen}
             request={selectedRequest}
