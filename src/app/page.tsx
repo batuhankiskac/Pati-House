@@ -7,7 +7,6 @@ import { cats as allCats, type Cat } from '@/lib/data';
 import { PawPrint } from 'lucide-react';
 
 export default function Home() {
-  const [cats, setCats] = useState<Cat[]>(allCats);
   const [filters, setFilters] = useState({
     search: '',
     breed: 'all',
@@ -16,7 +15,7 @@ export default function Home() {
   });
 
   const filteredCats = useMemo(() => {
-    return cats.filter((cat) => {
+    return allCats.filter((cat) => {
       const { search, breed, age, gender } = filters;
       if (search && !cat.name.toLowerCase().includes(search.toLowerCase())) {
         return false;
@@ -34,7 +33,7 @@ export default function Home() {
       }
       return true;
     });
-  }, [cats, filters]);
+  }, [filters]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -43,7 +42,7 @@ export default function Home() {
           Yeni En İyi Arkadaşınızı Bulun
         </h1>
         <p className="max-w-2xl mx-auto text-lg text-foreground/80">
-          Pati Evi'ne hoş geldiniz! İhtiyaç sahibi kedilere sevgi dolu yuvalar bulmaya adandık. Mevcut kedilerimize göz atın ve sahiplenme yolculuğunuza bugün başlayın.
+          Pati House'a hoş geldiniz! İhtiyaç sahibi kedilere sevgi dolu yuvalar bulmaya adandık. Mevcut kedilerimize göz atın ve sahiplenme yolculuğunuza bugün başlayın.
         </p>
       </section>
 

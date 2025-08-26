@@ -1,14 +1,14 @@
 'use server';
 
 import { adoptionRequests, cats, type Cat } from '@/lib/data';
-import { revalidatePath } from 'next/cache';
+// import { revalidatePath } from 'next/cache'; // Auth sorununa neden oluyor, kaldırıldı
 
 export async function updateRequestStatus(requestId: number, status: 'Onaylandı' | 'Reddedildi' | 'Bekliyor') {
   try {
     const requestIndex = adoptionRequests.findIndex(req => req.id === requestId);
     if (requestIndex !== -1) {
       adoptionRequests[requestIndex].status = status;
-      revalidatePath('/admin/requests');
+      // revalidatePath('/admin/requests'); // Auth sorununa neden oluyor, kaldırıldı
       return { success: true };
     }
     return { success: false, error: 'Başvuru bulunamadı' };
@@ -22,7 +22,7 @@ export async function deleteCat(catId: number) {
     const catIndex = cats.findIndex(cat => cat.id === catId);
     if (catIndex !== -1) {
       cats.splice(catIndex, 1);
-      revalidatePath('/admin/cats');
+      // revalidatePath('/admin/cats'); // Auth sorununa neden oluyor, kaldırıldı
       return { success: true };
     }
     return { success: false, error: 'Kedi bulunamadı' };
@@ -37,12 +37,13 @@ export async function updateCat(catId: number, catData: Partial<{
   age: number;
   gender: 'Male' | 'Female';
   description: string;
+  image: string;
 }>) {
   try {
     const catIndex = cats.findIndex(cat => cat.id === catId);
     if (catIndex !== -1) {
       cats[catIndex] = { ...cats[catIndex], ...catData };
-      revalidatePath('/admin/cats');
+      // revalidatePath('/admin/cats'); // Auth sorununa neden oluyor, kaldırıldı
       return { success: true };
     }
     return { success: false, error: 'Kedi bulunamadı' };
@@ -58,17 +59,17 @@ export async function addCat(catData: {
   gender: 'Male' | 'Female';
   description: string;
   image: string;
-  dataAiHint: string;
 }) {
   try {
     const newId = Math.max(...cats.map(cat => cat.id)) + 1;
     const newCat: Cat = {
       id: newId,
-      ...catData
+      ...catData,
+      dataAiHint: '' // Varsayılan değer
     };
 
     cats.push(newCat);
-    revalidatePath('/admin/cats');
+    // revalidatePath('/admin/cats'); // Auth sorununa neden oluyor, kaldırıldı
     return { success: true };
   } catch (error) {
     return { success: false, error: 'Kedi eklenirken hata oluştu' };

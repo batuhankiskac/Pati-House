@@ -6,8 +6,8 @@ import Header from '@/components/layout/header';
 import { AuthProvider } from '@/contexts/auth-context';
 
 export const metadata: Metadata = {
-  title: 'Pati Evi - Tüylü Dostunuzu Bulun',
-  description: 'Pati Evi\'nden bir kedi sahiplenin. Sıcak bir yuva bekleyen sevimli kedilerimiz var.',
+  title: 'Pati House - Tüylü Dostunuzu Bulun',
+  description: 'Pati House\'tan bir kedi sahiplenin. Sıcak bir yuva bekleyen sevimli kedilerimiz var.',
 };
 
 export default async function RootLayout({

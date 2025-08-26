@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import AdoptionForm from '@/components/adoption-form';
 import { PawPrint } from 'lucide-react';
 
-export default function AdoptPage({ params }: { params: { id: string } }) {
-  const cat = cats.find((c) => c.id === parseInt(params.id, 10));
+export default async function AdoptPage({ params }: { params: { id: string } }) {
+  const resolvedParams = await params;
+  const cat = cats.find((c) => c.id === parseInt(resolvedParams.id, 10));
 
   if (!cat) {
     notFound();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cats, type Cat } from '@/lib/data';
 import { Button } from '../ui/button';
-import { MoreHorizontal, Plus } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,11 +26,16 @@ import { deleteCat } from '@/actions/admin';
 import { useToast } from '@/hooks/use-toast';
 import CatEditDialog from './cat-edit-dialog';
 
-export default function CatsTable() {
+export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () => void }) {
   const { toast } = useToast();
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Force refresh function
+  const forceRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   const handleDelete = async (catId: number, catName: string) => {
     if (window.confirm(`${catName} isimli kediyi silmek istediğinize emin misiniz?`)) {
@@ -42,7 +47,7 @@ export default function CatsTable() {
             description: 'Kedi başarıyla silindi.',
           });
           // Sayfayı yenile
-          window.location.reload();
+          if (onRefreshAction) onRefreshAction();
         } else {
           toast({
             title: 'Hata',
@@ -65,23 +70,14 @@ export default function CatsTable() {
     setIsEditDialogOpen(true);
   };
 
-  const handleAdd = () => {
-    setSelectedCat(null);
-    setIsAddDialogOpen(true);
-  };
-
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader>
           <CardTitle>Kediler</CardTitle>
-          <Button onClick={handleAdd} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Yeni Kedi Ekle
-          </Button>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table key={refreshKey}>
             <TableHeader>
               <TableRow>
                 <TableHead className="hidden w-[100px] sm:table-cell">Resim</TableHead>
@@ -148,14 +144,10 @@ export default function CatsTable() {
         onOpenChange={setIsEditDialogOpen}
         cat={selectedCat}
         isEditing={true}
-      />
-
-      {/* Add Dialog */}
-      <CatEditDialog
-        isOpen={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-        cat={null}
-        isEditing={false}
+        onSuccess={() => {
+          if (onRefreshAction) onRefreshAction();
+          forceRefresh();
+        }}
       />
     </>
   );

@@ -26,7 +26,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <PawPrint className="h-8 w-8 text-accent" />
             <span className="text-2xl font-bold font-headline text-primary-foreground">
-              Pati Evi
+              Pati House
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">

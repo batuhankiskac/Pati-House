@@ -23,9 +23,10 @@ interface CatEditDialogProps {
   onOpenChange: (open: boolean) => void;
   cat?: Cat | null;
   isEditing?: boolean;
+  onSuccess?: () => void;
 }
 
-export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = false }: CatEditDialogProps) {
+export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = false, onSuccess }: CatEditDialogProps) {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: cat?.name || '',
@@ -33,8 +34,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
     age: cat?.age || 1,
     gender: cat?.gender || 'Male' as 'Male' | 'Female',
     description: cat?.description || '',
-    image: cat?.image || 'https://placehold.co/600x600.png',
-    dataAiHint: cat?.dataAiHint || ''
+    image: cat?.image || 'https://placehold.co/600x600.png'
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,7 +57,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           description: isEditing ? 'Kedi başarıyla güncellendi.' : 'Kedi başarıyla eklendi.',
         });
         onOpenChange(false);
-        window.location.reload();
+        if (onSuccess) onSuccess();
       } else {
         toast({
           title: 'Hata',
@@ -161,19 +161,6 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
               value={formData.image}
               onChange={(e) => setFormData(prev => ({...prev, image: e.target.value}))}
               className="col-span-3"
-              required
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="dataAiHint" className="text-right">
-              AI İpucu
-            </Label>
-            <Input
-              id="dataAiHint"
-              value={formData.dataAiHint}
-              onChange={(e) => setFormData(prev => ({...prev, dataAiHint: e.target.value}))}
-              className="col-span-3"
-              placeholder="Örn: persian cat, siamese kitten"
               required
             />
           </div>

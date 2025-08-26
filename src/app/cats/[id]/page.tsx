@@ -7,8 +7,9 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Cake, Cat as CatIcon, Venus, Mars } from 'lucide-react';
 
-export default function CatProfilePage({ params }: { params: { id: string } }) {
-  const cat = cats.find((c) => c.id === parseInt(params.id, 10));
+export default async function CatProfilePage({ params }: { params: { id: string } }) {
+  const resolvedParams = await params;
+  const cat = cats.find((c) => c.id === parseInt(resolvedParams.id, 10));
 
   if (!cat) {
     notFound();

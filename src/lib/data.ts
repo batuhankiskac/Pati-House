@@ -114,10 +114,10 @@ export const cats: Cat[] = [
 
 
 export const adoptionRequests: AdoptionRequest[] = [
-    { 
-      id: 1, 
-      catName: 'Simba', 
-      requestDate: '2024-05-15', 
+    {
+      id: 1,
+      catName: 'Simba',
+      requestDate: '2024-05-15',
       status: 'Onaylandı',
       applicant: {
         name: 'Ayşe Yılmaz',
@@ -127,10 +127,10 @@ export const adoptionRequests: AdoptionRequest[] = [
         reason: 'Simba\'yı uzun zamandır takip ediyorum ve ona sevgi dolu bir yuva sağlayabileceğime inanıyorum. Evde başka evcil hayvan yok ve tüm vaktimi ona ayırabilirim.'
       }
     },
-    { 
-      id: 2, 
-      catName: 'Milo', 
-      requestDate: '2024-06-01', 
+    {
+      id: 2,
+      catName: 'Milo',
+      requestDate: '2024-06-01',
       status: 'Bekliyor',
       applicant: {
         name: 'Mehmet Öztürk',
@@ -140,10 +140,10 @@ export const adoptionRequests: AdoptionRequest[] = [
         reason: 'Çocuklarım bir kedi yavrusu çok istiyor. Milo\'nun enerjisine ayak uydurabilecek, bahçeli bir evimiz var. Daha önce de kedi baktım.'
       }
     },
-    { 
-      id: 3, 
-      catName: 'Bıyık', 
-      requestDate: '2024-04-20', 
+    {
+      id: 3,
+      catName: 'Bıyık',
+      requestDate: '2024-04-20',
       status: 'Reddedildi',
       applicant: {
         name: 'Fatma Kaya',
