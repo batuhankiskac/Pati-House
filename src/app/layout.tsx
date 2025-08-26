@@ -3,6 +3,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster"
 import Header from '@/components/layout/header';
+import { AuthProvider } from '@/contexts/auth-context';
 
 export const metadata: Metadata = {
   title: 'Pati Evi - Tüylü Dostunuzu Bulun',
@@ -26,13 +27,15 @@ export default async function RootLayout({
           "h-full font-body antialiased",
         )}
       >
-        <div className="relative flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">
-            {children}
-          </main>
-        </div>
-        <Toaster />
+        <AuthProvider>
+          <div className="relative flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+          </div>
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

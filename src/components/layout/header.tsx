@@ -5,28 +5,11 @@ import { PawPrint } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
-import SignOutForm from '@/components/auth/signout-form';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function Header() {
   const pathname = usePathname();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Client-side'da cookie kontrolü
-    const checkAuth = () => {
-      const cookies = document.cookie.split(';');
-      const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth-token='));
-      const hasValidToken = authCookie && authCookie.includes('authenticated');
-      setIsAuthenticated(!!hasValidToken);
-    };
-
-    checkAuth();
-
-    // Path değiştiğinde tekrar kontrol et
-    const interval = setInterval(checkAuth, 1000);
-    return () => clearInterval(interval);
-  }, [pathname]);
+  const { isAuthenticated, logout, loading } = useAuth();
 
   const publicNavLinks = [
     { href: '/', label: 'Ana Sayfa' },
@@ -47,38 +30,50 @@ export default function Header() {
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-4 text-sm">
-            {publicNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  buttonVariants({ variant: 'ghost', size: 'sm' }),
-                  'transition-all duration-300',
-                  (pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href
-                    ? 'bg-accent text-accent-foreground shadow-md'
-                    : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
+            {!loading && (
+              <>
+                {publicNavLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      buttonVariants({ variant: 'ghost', size: 'sm' }),
+                      'transition-all duration-300',
+                      (pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href
+                        ? 'bg-accent text-accent-foreground shadow-md'
+                        : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                {isAuthenticated && adminNavLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      buttonVariants({ variant: 'ghost', size: 'sm' }),
+                      'transition-all duration-300',
+                      (pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href
+                        ? 'bg-accent text-accent-foreground shadow-md'
+                        : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                {isAuthenticated && (
+                  <button
+                    onClick={logout}
+                    className={cn(
+                      buttonVariants({ variant: 'ghost', size: 'sm' }),
+                      'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
+                    )}
+                  >
+                    Çıkış Yap
+                  </button>
                 )}
-              >
-                {link.label}
-              </Link>
-            ))}
-            {isAuthenticated && adminNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  buttonVariants({ variant: 'ghost', size: 'sm' }),
-                  'transition-all duration-300',
-                  (pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href
-                    ? 'bg-accent text-accent-foreground shadow-md'
-                    : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-            {isAuthenticated && (
-              <SignOutForm />
+              </>
             )}
           </nav>
         </div>
