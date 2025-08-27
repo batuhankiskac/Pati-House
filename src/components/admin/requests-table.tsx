@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
-import { adoptionRequests, type AdoptionRequest } from '@/lib/data';
+import { type AdoptionRequest } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -25,11 +25,13 @@ import { cn } from '@/lib/utils';
 import RequestDetailsDialog from './request-details-dialog';
 import { updateRequestStatus } from '@/actions/admin';
 import { useToast } from '@/hooks/use-toast';
+import { useRequests } from '@/hooks/use-requests';
 
 export default function RequestsTable() {
   const [selectedRequest, setSelectedRequest] = useState<AdoptionRequest | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { requests: adoptionRequests, refreshRequests, refreshKey } = useRequests();
 
   const handleViewRequest = (request: AdoptionRequest) => {
     setSelectedRequest(request);
@@ -45,7 +47,7 @@ export default function RequestsTable() {
           description: `Başvuru ${status.toLowerCase()}.`,
         });
         // Sayfayı yenile
-        window.location.reload();
+        refreshRequests();
       } else {
         toast({
           title: 'Hata',
@@ -66,7 +68,7 @@ export default function RequestsTable() {
     <>
       <Card>
         <CardContent>
-          <Table>
+          <Table key={refreshKey}>
             <TableHeader>
               <TableRow>
                 <TableHead>Kedi Adı</TableHead>

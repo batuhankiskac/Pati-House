@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { PawPrint, Home, Cat, Mail, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
-import { signOut } from 'next-auth/react';
+import { useAuth } from '@/contexts/auth-context';
 
 const navLinks = [
   { href: '/admin', label: 'Panel', icon: Home },
@@ -15,10 +15,11 @@ const navLinks = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   const handleSignOut = async () => {
     try {
-      await signOut({ callbackUrl: '/' });
+      await logout();
     } catch (error) {
       console.error('Sign out error:', error);
     }

@@ -1,10 +1,16 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PawPrint, Mail } from 'lucide-react';
-import { cats, adoptionRequests } from '@/lib/data';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useCats } from '@/hooks/use-cats';
+import { useRequests } from '@/hooks/use-requests';
 
 export default function AdminDashboard() {
+  const { cats } = useCats();
+  const { requests: adoptionRequests } = useRequests();
+
   const totalCats = cats.length;
   const pendingRequests = adoptionRequests.filter(req => req.status === 'Bekliyor').length;
 

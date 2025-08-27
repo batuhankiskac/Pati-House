@@ -5,13 +5,14 @@ import { PlusCircle } from 'lucide-react';
 import CatsTable from '@/components/admin/cats-table';
 import { useState } from 'react';
 import CatEditDialog from '@/components/admin/cat-edit-dialog';
+import { useCats } from '@/hooks/use-cats';
 
 export default function ManageCatsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const { refreshCats } = useCats();
 
   const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
+    refreshCats();
   };
 
   return (
@@ -23,7 +24,7 @@ export default function ManageCatsPage() {
           Yeni Kedi Ekle
         </Button>
       </div>
-      <CatsTable key={refreshKey} onRefreshAction={handleRefresh} />
+      <CatsTable onRefreshAction={handleRefresh} />
 
       {/* Add Dialog */}
       <CatEditDialog

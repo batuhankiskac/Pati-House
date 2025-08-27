@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cats, type Cat } from '@/lib/data';
+import { type Cat } from '@/lib/data';
 import { Button } from '../ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import {
@@ -25,16 +25,17 @@ import { Badge } from '../ui/badge';
 import { deleteCat } from '@/actions/admin';
 import { useToast } from '@/hooks/use-toast';
 import CatEditDialog from './cat-edit-dialog';
+import { useCats } from '@/hooks/use-cats';
 
 export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () => void }) {
   const { toast } = useToast();
+  const { cats, refreshCats, refreshKey } = useCats();
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   // Force refresh function
   const forceRefresh = () => {
-    setRefreshKey(prev => prev + 1);
+    refreshCats();
   };
 
   const handleDelete = async (catId: number, catName: string) => {
@@ -47,6 +48,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
             description: 'Kedi başarıyla silindi.',
           });
           // Sayfayı yenile
+          refreshCats();
           if (onRefreshAction) onRefreshAction();
         } else {
           toast({
@@ -145,6 +147,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
         cat={selectedCat}
         isEditing={true}
         onSuccess={() => {
+          refreshCats();
           if (onRefreshAction) onRefreshAction();
           forceRefresh();
         }}

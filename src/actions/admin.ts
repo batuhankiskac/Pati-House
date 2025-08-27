@@ -3,6 +3,8 @@
 import { adoptionRequests, cats, type Cat } from '@/lib/data';
 // import { revalidatePath } from 'next/cache'; // Auth sorununa neden oluyor, kaldırıldı
 
+// Note: Server actions'da client-side events çalışmaz, component'ler kendi refresh'lerini yapacak
+
 export async function updateRequestStatus(requestId: number, status: 'Onaylandı' | 'Reddedildi' | 'Bekliyor') {
   try {
     const requestIndex = adoptionRequests.findIndex(req => req.id === requestId);

@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { submitAdoptionRequest } from '@/actions/auth';
 
 const adoptionFormSchema = z.object({
   fullName: z.string().min(2, { message: 'Tam adınız en az 2 karakter olmalıdır.' }),
@@ -49,18 +50,40 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
   });
 
   async function onSubmit(data: AdoptionFormValues) {
-    // Gerçek bir uygulamada bu verileri arka uca gönderirsiniz.
-    console.log('Sahiplenme Başvurusu Gönderildi:', { catName, ...data });
+    try {
+      const result = await submitAdoptionRequest({
+        catName,
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        reason: data.reason,
+      });
 
-    toast({
-      title: 'Başvurunuz Gönderildi!',
-      description: `${catName} için sahiplenme başvurunuz alınmıştır. Yakında sizinle iletişime geçeceğiz!`,
-      variant: 'default',
-      duration: 5000,
-    });
-    
-    // Gönderimden sonra ana sayfaya yönlendir
-    router.push('/');
+      if (result.success) {
+        toast({
+          title: 'Başvurunuz Gönderildi!',
+          description: `${catName} için sahiplenme başvurunuz alınmıştır. Yakında sizinle iletişime geçeceğiz!`,
+          variant: 'default',
+          duration: 5000,
+        });
+
+        // Gönderimden sonra ana sayfaya yönlendir
+        router.push('/');
+      } else {
+        toast({
+          title: 'Hata',
+          description: result.error || 'Başvuru gönderilirken hata oluştu.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Hata',
+        description: 'Beklenmeyen bir hata oluştu.',
+        variant: 'destructive',
+      });
+    }
   }
 
   return (
