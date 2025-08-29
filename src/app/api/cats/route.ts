@@ -22,6 +22,19 @@ function validatePayload(body: any) {
   return errors;
 }
 
+/**
+ * Normalize breed into Title Case (trim + single spaces).
+ * Example input: "  siamese  mix " -> "Siamese Mix"
+ */
+function normalizeBreed(value: string) {
+  return value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
 // GET /api/cats  -> list all
 export async function GET() {
   try {
@@ -48,7 +61,7 @@ export async function POST(request: Request) {
     const newCat: Cat = {
       id: nextId,
       name: body.name.trim(),
-      breed: body.breed.trim(),
+      breed: normalizeBreed(body.breed),
       age: body.age,
       gender: body.gender,
       description: body.description.trim(),

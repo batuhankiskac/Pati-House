@@ -22,16 +22,34 @@ function sanitizePatch(body: any) {
   }
   const patch: any = {};
 
-  if (body.status !== undefined) patch.status = body.status;
-  if (body.applicant && typeof body.applicant === 'object') {
-    patch.applicant = {};
-    const a = body.applicant;
-    if (a.name !== undefined) patch.applicant.name = a.name;
-    if (a.email !== undefined) patch.applicant.email = a.email;
-    if (a.phone !== undefined) patch.applicant.phone = a.phone;
-    if (a.address !== undefined) patch.applicant.address = a.address;
-    if (a.reason !== undefined) patch.applicant.reason = a.reason;
+  if (body.status !== undefined) {
+    patch.status = body.status;
   }
+
+  if (body.applicant && typeof body.applicant === 'object') {
+    const a = body.applicant;
+    const cleaned: any = {};
+    const assignIf = (key: string, val: any, opts?: { lower?: boolean }) => {
+      if (val !== undefined) {
+        if (typeof val === 'string') {
+          let v = val.trim().replace(/\s+/g, ' ');
+          if (opts?.lower) v = v.toLowerCase();
+          cleaned[key] = v;
+        } else {
+          cleaned[key] = val;
+        }
+      }
+    };
+    assignIf('name', a.name);
+    assignIf('email', a.email, { lower: true });
+    assignIf('phone', a.phone);
+    assignIf('address', a.address);
+    assignIf('reason', a.reason);
+    if (Object.keys(cleaned).length) {
+      patch.applicant = cleaned;
+    }
+  }
+
   return { patch, allowedStatus };
 }
 

@@ -7,10 +7,19 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Cake, Cat as CatIcon, Venus, Mars } from 'lucide-react';
 
-export default async function CatProfilePage({ params }: { params: { id: string } }) {
-  const resolvedParams = await params;
-  const cat = cats.find((c) => c.id === parseInt(resolvedParams.id, 10));
+/**
+ * Simplified dynamic cat page.
+ * Previous fetch-based version failed (TypeError: Failed to parse URL) due to
+ * relative fetch in a context requiring absolute URL. We revert to direct
+ * in-memory access but force dynamic rendering so new cats (pushed by API)
+ * are visible on each request.
+ */
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
+export default function CatProfilePage({ params }: { params: { id: string } }) {
+  const idNum = Number(params.id);
+  const cat = cats.find(c => c.id === idNum);
   if (!cat) {
     notFound();
   }
@@ -28,6 +37,7 @@ export default async function CatProfilePage({ params }: { params: { id: string 
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
                 data-ai-hint={cat.dataAiHint}
+                unoptimized
               />
             </div>
           </Card>
@@ -69,3 +79,4 @@ export default async function CatProfilePage({ params }: { params: { id: string 
 }
 
 // Ensure fade-in animation is available
+

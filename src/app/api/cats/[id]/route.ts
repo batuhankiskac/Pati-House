@@ -14,12 +14,33 @@ function findCatIndex(idNum: number) {
   return cats.findIndex(c => c.id === idNum);
 }
 
+/**
+ * Normalize breed into Title Case (trim + single spaces).
+ * Example: "  siamese  mix " -> "Siamese Mix"
+ */
+function normalizeBreed(value: string) {
+  return value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
 function sanitizePatch(body: any): Partial<Cat> {
+  if (!body || typeof body !== 'object') return {};
   const allowed: (keyof Cat)[] = ['name', 'breed', 'age', 'gender', 'description', 'image', 'dataAiHint'];
   const result: Partial<Cat> = {};
   for (const key of allowed) {
     if (body[key] !== undefined) {
-      (result as any)[key] = body[key];
+      let val = body[key];
+      if (typeof val === 'string') {
+        val = val.trim();
+      }
+      if (key === 'breed' && typeof val === 'string') {
+        val = normalizeBreed(val);
+      }
+      (result as any)[key] = val;
     }
   }
   return result;
@@ -27,12 +48,12 @@ function sanitizePatch(body: any): Partial<Cat> {
 
 function validatePatch(patch: Partial<Cat>) {
   const errors: string[] = [];
-  if (patch.name !== undefined && (typeof patch.name !== 'string' || !patch.name.trim())) errors.push('Geçersiz name');
-  if (patch.breed !== undefined && (typeof patch.breed !== 'string' || !patch.breed.trim())) errors.push('Geçersiz breed');
+  if (patch.name !== undefined && (typeof patch.name !== 'string' || !patch.name)) errors.push('Geçersiz name');
+  if (patch.breed !== undefined && (typeof patch.breed !== 'string' || !patch.breed)) errors.push('Geçersiz breed');
   if (patch.age !== undefined && (typeof patch.age !== 'number' || patch.age < 0)) errors.push('Geçersiz age');
   if (patch.gender !== undefined && patch.gender !== 'Male' && patch.gender !== 'Female') errors.push('Geçersiz gender');
-  if (patch.description !== undefined && (typeof patch.description !== 'string' || !patch.description.trim())) errors.push('Geçersiz description');
-  if (patch.image !== undefined && (typeof patch.image !== 'string' || !patch.image.trim())) errors.push('Geçersiz image');
+  if (patch.description !== undefined && (typeof patch.description !== 'string' || !patch.description)) errors.push('Geçersiz description');
+  if (patch.image !== undefined && (typeof patch.image !== 'string' || !patch.image)) errors.push('Geçersiz image');
   return errors;
 }
 
