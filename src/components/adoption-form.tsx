@@ -18,7 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { submitAdoptionRequest } from '@/actions/auth';
+import { useRequests } from '@/hooks/use-requests';
 
 const adoptionFormSchema = z.object({
   fullName: z.string().min(2, { message: 'Tam adınız en az 2 karakter olmalıdır.' }),
@@ -49,9 +49,11 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
     },
   });
 
+  const { createRequest } = useRequests();
+
   async function onSubmit(data: AdoptionFormValues) {
     try {
-      const result = await submitAdoptionRequest({
+      const result = await createRequest({
         catName,
         fullName: data.fullName,
         email: data.email,
@@ -67,8 +69,6 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
           variant: 'default',
           duration: 5000,
         });
-
-        // Gönderimden sonra ana sayfaya yönlendir
         router.push('/');
       } else {
         toast({

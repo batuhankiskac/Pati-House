@@ -11,6 +11,9 @@ import {
 import { Button } from '@/components/ui/button';
 import type { AdoptionRequest } from '@/lib/data';
 import { User, Mail, Phone, Home, FileText } from 'lucide-react';
+import { useRequests } from '@/hooks/use-requests';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 interface RequestDetailsDialogProps {
   isOpen: boolean;
@@ -23,7 +26,34 @@ export default function RequestDetailsDialog({
   onOpenChange,
   request,
 }: RequestDetailsDialogProps) {
-  const { applicant, catName } = request;
+  const { applicant, catName, id, status } = request;
+  const { updateStatus } = useRequests();
+  const { toast } = useToast();
+  const [submitting, setSubmitting] = useState<'Onaylandı' | 'Reddedildi' | null>(null);
+
+  const changeStatus = async (next: 'Onaylandı' | 'Reddedildi') => {
+    if (status === next) {
+      onOpenChange(false);
+      return;
+    }
+    setSubmitting(next);
+    const res = await updateStatus(id, next);
+    if (res.success) {
+      toast({
+        title: 'Durum güncellendi',
+        description: `Başvuru ${next.toLowerCase()}.`,
+      });
+      onOpenChange(false);
+    } else {
+      toast({
+        title: 'Hata',
+        description: res.error || 'Durum güncellenemedi',
+        variant: 'destructive',
+      });
+    }
+    setSubmitting(null);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px]">
@@ -48,7 +78,7 @@ export default function RequestDetailsDialog({
             </div>
             <div className="col-span-3">{applicant.email}</div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4">
             <div className="col-span-1 flex items-center text-muted-foreground">
               <Phone className="mr-2 h-4 w-4" />
               <span className="font-semibold">Telefon</span>
@@ -63,19 +93,30 @@ export default function RequestDetailsDialog({
             <div className="col-span-3">{applicant.address}</div>
           </div>
           <div className="grid grid-cols-4 items-start gap-4">
-             <div className="col-span-1 flex items-center text-muted-foreground pt-1">
+            <div className="col-span-1 flex items-center text-muted-foreground pt-1">
               <FileText className="mr-2 h-4 w-4" />
               <span className="font-semibold">Neden</span>
             </div>
             <div className="col-span-3 bg-muted/50 p-3 rounded-md border text-sm">
-                {applicant.reason}
+              {applicant.reason}
             </div>
           </div>
         </div>
         <DialogFooter>
           <Button variant="secondary" onClick={() => onOpenChange(false)}>Kapat</Button>
-          <Button variant="outline">Reddet</Button>
-          <Button>Onayla</Button>
+          <Button
+            variant="outline"
+            disabled={submitting !== null}
+            onClick={() => changeStatus('Reddedildi')}
+          >
+            {submitting === 'Reddedildi' ? 'İşleniyor...' : 'Reddet'}
+          </Button>
+          <Button
+            disabled={submitting !== null}
+            onClick={() => changeStatus('Onaylandı')}
+          >
+            {submitting === 'Onaylandı' ? 'İşleniyor...' : 'Onayla'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

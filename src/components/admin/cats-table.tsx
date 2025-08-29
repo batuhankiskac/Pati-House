@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -22,48 +22,39 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
-import { deleteCat } from '@/actions/admin';
 import { useToast } from '@/hooks/use-toast';
 import CatEditDialog from './cat-edit-dialog';
 import { useCats } from '@/hooks/use-cats';
 
 export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () => void }) {
   const { toast } = useToast();
-  const { cats, refreshCats, refreshKey } = useCats();
+  const { cats, loading, error, refresh, deleteCat } = useCats();
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  // Force refresh function
-  const forceRefresh = () => {
-    refreshCats();
+  // Manual refresh handler (if external parent wants)
+  const triggerExternalRefresh = () => {
+    refresh();
+    onRefreshAction && onRefreshAction();
   };
 
   const handleDelete = async (catId: number, catName: string) => {
-    if (window.confirm(`${catName} isimli kediyi silmek istediğinize emin misiniz?`)) {
-      try {
-        const result = await deleteCat(catId);
-        if (result.success) {
-          toast({
-            title: 'Başarılı',
-            description: 'Kedi başarıyla silindi.',
-          });
-          // Sayfayı yenile
-          refreshCats();
-          if (onRefreshAction) onRefreshAction();
-        } else {
-          toast({
-            title: 'Hata',
-            description: result.error || 'Kedi silinirken hata oluştu.',
-            variant: 'destructive',
-          });
-        }
-      } catch (error) {
-        toast({
-          title: 'Hata',
-          description: 'Beklenmeyen bir hata oluştu.',
-          variant: 'destructive',
-        });
-      }
+    if (!window.confirm(`${catName} isimli kediyi silmek istediğinize emin misiniz?`)) return;
+    const result = await deleteCat(catId);
+    if (result.success) {
+      toast({
+        title: 'Başarılı',
+        description: 'Kedi silindi (optimistic).',
+      });
+      triggerExternalRefresh();
+    } else {
+      toast({
+        title: 'Hata',
+        description: result.error || 'Kedi silinirken hata oluştu.',
+        variant: 'destructive',
+      });
+      // Attempt to resync from server
+      refresh();
     }
   };
 
@@ -79,7 +70,10 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
           <CardTitle>Kediler</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table key={refreshKey}>
+          {loading && <div className="py-4 text-sm text-muted-foreground">Yükleniyor...</div>}
+          {error && !loading && <div className="py-2 text-sm text-red-600">Hata: {error}</div>}
+          {!loading && !error && (
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="hidden w-[100px] sm:table-cell">Resim</TableHead>
@@ -137,6 +131,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
               ))}
             </TableBody>
           </Table>
+          )}
         </CardContent>
       </Card>
 
@@ -147,9 +142,8 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
         cat={selectedCat}
         isEditing={true}
         onSuccess={() => {
-          refreshCats();
-          if (onRefreshAction) onRefreshAction();
-          forceRefresh();
+          refresh();
+          triggerExternalRefresh();
         }}
       />
     </>

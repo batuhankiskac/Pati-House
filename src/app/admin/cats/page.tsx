@@ -3,17 +3,21 @@
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import CatsTable from '@/components/admin/cats-table';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import CatEditDialog from '@/components/admin/cat-edit-dialog';
 import { useCats } from '@/hooks/use-cats';
 
+/**
+ * Uses useCats() hook. Hook exposes `refresh`, not `refreshCats`.
+ * Previous code destructured a non-existent refreshCats causing TypeError.
+ */
 export default function ManageCatsPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const { refreshCats } = useCats();
+  const { refresh } = useCats();
 
-  const handleRefresh = () => {
-    refreshCats();
-  };
+  const handleRefresh = useCallback(() => {
+    refresh();
+  }, [refresh]);
 
   return (
     <div>
