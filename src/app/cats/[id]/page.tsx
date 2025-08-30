@@ -1,4 +1,3 @@
-import { cats } from '@/lib/data';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,9 +16,42 @@ import { Cake, Cat as CatIcon, Venus, Mars } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default function CatProfilePage({ params }: { params: { id: string } }) {
-  const idNum = Number(params.id);
-  const cat = cats.find(c => c.id === idNum);
+// Kedi tipini tanımla
+type Cat = {
+  id: number;
+  name: string;
+  breed: string;
+  age: number; // in years
+  gender: 'Male' | 'Female';
+  description: string;
+  image: string;
+  dataAiHint: string;
+};
+
+export default async function CatProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const idNum = Number(id);
+
+  // API'den kedi verisini çek
+  let cat: Cat | null = null;
+  try {
+    // Geliştirme sunucusunun adresini al
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const host = process.env.VERCEL_URL ? process.env.VERCEL_URL : 'localhost:3000';
+    const baseUrl = `${protocol}://${host}`;
+    
+    const res = await fetch(`${baseUrl}/api/cats/${idNum}`, {
+      cache: 'no-store' // Önbelleği devre dışı bırak
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      cat = data.data;
+    }
+  } catch (error) {
+    console.error('Kedi verisi çekilirken hata oluştu:', error);
+  }
+
   if (!cat) {
     notFound();
   }
