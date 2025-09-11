@@ -1,18 +1,7 @@
 import { notFound } from 'next/navigation';
 import AdoptionForm from '@/components/adoption-form';
 import { PawPrint } from 'lucide-react';
-
-// Kedi tipini tanımla
-type Cat = {
-  id: number;
-  name: string;
-  breed: string;
-  age: number; // in years
-  gender: 'Male' | 'Female';
-  description: string;
-  image: string;
-  dataAiHint: string;
-};
+import { Cat } from '@/lib/data';
 
 export default async function AdoptPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,11 +14,11 @@ export default async function AdoptPage({ params }: { params: Promise<{ id: stri
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const host = process.env.VERCEL_URL ? process.env.VERCEL_URL : 'localhost:3000';
     const baseUrl = `${protocol}://${host}`;
-    
+
     const res = await fetch(`${baseUrl}/api/cats/${idNum}`, {
       cache: 'no-store' // Önbelleği devre dışı bırak
     });
-    
+
     if (res.ok) {
       const data = await res.json();
       cat = data.data;

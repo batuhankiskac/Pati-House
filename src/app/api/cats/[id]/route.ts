@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cats, type Cat } from '@/lib/data';
+import { normalizeBreed } from '@/lib/utils';
 
 /**
  * Item-level API for a single cat.
@@ -12,19 +13,6 @@ import { cats, type Cat } from '@/lib/data';
 
 function findCatIndex(idNum: number) {
   return cats.findIndex(c => c.id === idNum);
-}
-
-/**
- * Normalize breed into Title Case (trim + single spaces).
- * Example: "  siamese  mix " -> "Siamese Mix"
- */
-function normalizeBreed(value: string) {
-  return value
-    .trim()
-    .replace(/\s+/g, ' ')
-    .split(' ')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(' ');
 }
 
 function sanitizePatch(body: any): Partial<Cat> {

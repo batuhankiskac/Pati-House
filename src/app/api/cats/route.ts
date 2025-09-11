@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cats, type Cat } from '@/lib/data';
+import { normalizeBreed } from '@/lib/utils';
 
 /**
  * Simple in-memory API for cats.
@@ -20,19 +21,6 @@ function validatePayload(body: any) {
   if (typeof body.description !== 'string' || body.description.trim().length === 0) errors.push('Geçersiz description');
   if (typeof body.image !== 'string' || body.image.trim().length === 0) errors.push('Geçersiz image');
   return errors;
-}
-
-/**
- * Normalize breed into Title Case (trim + single spaces).
- * Example input: "  siamese  mix " -> "Siamese Mix"
- */
-function normalizeBreed(value: string) {
-  return value
-    .trim()
-    .replace(/\s+/g, ' ')
-    .split(' ')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(' ');
 }
 
 // GET /api/cats  -> list all
