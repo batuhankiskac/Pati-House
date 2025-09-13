@@ -2,10 +2,11 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createSession, getSession, destroySession } from '@/lib/auth';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (password: string) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
 }
@@ -19,25 +20,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // İlk yüklemede cookie kontrolü
   useEffect(() => {
-    const checkInitialAuth = () => {
-      if (typeof document === 'undefined') return;
+    const checkInitialAuth = async () => {
+      if (typeof document === 'undefined') {
+        setLoading(false);
+        return;
+      }
 
-      const cookies = document.cookie.split(';');
-      const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth-token='));
-      const hasValidToken = authCookie && authCookie.includes('authenticated');
-
-      setIsAuthenticated(!!hasValidToken);
+      // Use the getSession function to check authentication
+      const session = await getSession();
+      setIsAuthenticated(!!session);
       setLoading(false);
     };
 
     checkInitialAuth();
   }, []);
 
-  const login = async (password: string): Promise<boolean> => {
-    if (password === 'admin') {
-      // Cookie set et
-      document.cookie = 'auth-token=authenticated; path=/; max-age=604800; SameSite=Lax';
+  const login = async (username: string, password: string): Promise<boolean> => {
+    const success = await createSession(username, password);
 
+    if (success) {
       // State güncelle
       setIsAuthenticated(true);
 
@@ -49,9 +50,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
-  const logout = () => {
-    // Cookie sil
-    document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  const logout = async () => {
+    // Use the destroySession function to clear the cookie
+    await destroySession();
     setIsAuthenticated(false);
     router.push('/');
   };

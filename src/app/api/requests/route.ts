@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
-import { adoptionRequests, type AdoptionRequest } from '@/lib/data';
+import { adoptionRequestRepository, type AdoptionRequest } from '@/lib/data';
+import { requireAuth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import cacheUtils from '@/lib/cache/cache-utils';
 
 /**
- * In-memory adoption requests collection endpoint.
+ * Database adoption requests collection endpoint.
  * GET /api/requests   -> list all
  * POST /api/requests  -> create new request
- * Non-persistent: resets on server restart / redeploy.
+ * Persistent: stores data in PostgreSQL database.
  */
 
 function validateCreate(body: any): string[] {
@@ -24,10 +27,28 @@ function validateCreate(body: any): string[] {
 }
 
 // GET /api/requests
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Require authentication for viewing requests
+  const authResult = await requireAuth(request);
+  if (!authResult.success) {
+    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+  }
+
   try {
-    console.debug('[API][GET /api/requests] returning', { count: adoptionRequests.length });
-    return NextResponse.json({ success: true, data: adoptionRequests });
+    // Try to get from cache first
+    const cachedRequests = await cacheUtils.getCachedRequests();
+    if (cachedRequests) {
+      console.debug('[API][GET /api/requests] returning cached data', { count: cachedRequests.length });
+      return NextResponse.json({ success: true, data: cachedRequests });
+    }
+
+    const requests = await adoptionRequestRepository.getAll();
+    console.debug('[API][GET /api/requests] returning', { count: requests.length });
+
+    // Cache the result
+    await cacheUtils.setCachedRequests(requests);
+
+    return NextResponse.json({ success: true, data: requests });
   } catch (err) {
     console.error('[API][GET /api/requests] error', err);
     return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
@@ -35,7 +56,7 @@ export async function GET() {
 }
 
 // POST /api/requests
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null);
     const errors = validateCreate(body);
@@ -43,12 +64,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: errors.join(', ') }, { status: 400 });
     }
 
-    const nextId = adoptionRequests.length
-      ? Math.max(...adoptionRequests.map(r => r.id)) + 1
-      : 1;
-
-    const newRequest: AdoptionRequest = {
-      id: nextId,
+    const newRequest: Omit<AdoptionRequest, 'id'> = {
       catName: body.catName.trim(),
       requestDate: new Date().toISOString().split('T')[0],
       status: 'Bekliyor',
@@ -61,10 +77,13 @@ export async function POST(request: Request) {
       },
     };
 
-    adoptionRequests.push(newRequest);
-    console.debug('[API][POST /api/requests] created', { id: newRequest.id, total: adoptionRequests.length });
+    const createdRequest = await adoptionRequestRepository.create(newRequest);
+    console.debug('[API][POST /api/requests] created', { id: createdRequest.id, total: (await adoptionRequestRepository.getAll()).length });
 
-    return NextResponse.json({ success: true, data: newRequest }, { status: 201 });
+    // Invalidate cache after creating a new request
+    await cacheUtils.invalidateRequestsCache();
+
+    return NextResponse.json({ success: true, data: createdRequest }, { status: 201 });
   } catch (err) {
     console.error('[API][POST /api/requests] error', err);
     return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });

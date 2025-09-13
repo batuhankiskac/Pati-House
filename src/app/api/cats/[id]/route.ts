@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
-import { cats, type Cat } from '@/lib/data';
+import { catRepository, type Cat } from '@/lib/data';
 import { normalizeBreed } from '@/lib/utils';
+import { requireAuth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import cacheUtils from '@/lib/cache/cache-utils';
 
 /**
  * Item-level API for a single cat.
@@ -8,12 +11,8 @@ import { normalizeBreed } from '@/lib/utils';
  *  GET /api/cats/:id
  *  PATCH /api/cats/:id
  *  DELETE /api/cats/:id
- * In-memory only (non-persistent).
+ * Persistent database storage.
  */
-
-function findCatIndex(idNum: number) {
-  return cats.findIndex(c => c.id === idNum);
-}
 
 function sanitizePatch(body: any): Partial<Cat> {
   if (!body || typeof body !== 'object') return {};
@@ -52,23 +51,42 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
   if (Number.isNaN(idNum)) {
     return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
   }
-  const cat = cats.find(c => c.id === idNum);
+
+  // Try to get from cache first
+  const cachedCat = await cacheUtils.getCachedCat(idNum);
+  if (cachedCat) {
+    console.debug('[API][GET /api/cats/:id] returning cached data', { id: idNum });
+    return NextResponse.json({ success: true, data: cachedCat });
+  }
+
+  const cat = await catRepository.getById(idNum);
   if (!cat) {
     return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
   }
+
+  // Cache the result
+  await cacheUtils.setCachedCat(idNum, cat);
+
   console.debug('[API][GET /api/cats/:id] found', { id: idNum });
   return NextResponse.json({ success: true, data: cat });
 }
 
 // PATCH /api/cats/:id
-export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  // Require authentication for updating cats
+  const authResult = await requireAuth(request);
+  if (!authResult.success) {
+    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+  }
+
   const { id } = await context.params;
   const idNum = Number(id);
   if (Number.isNaN(idNum)) {
     return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
   }
-  const idx = findCatIndex(idNum);
-  if (idx === -1) {
+
+  const existingCat = await catRepository.getById(idNum);
+  if (!existingCat) {
     return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
   }
 
@@ -80,9 +98,17 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
       return NextResponse.json({ success: false, error: errors.join(', ') }, { status: 400 });
     }
 
-    cats[idx] = { ...cats[idx], ...patch };
+    const updatedCat = await catRepository.update(idNum, patch);
+    if (!updatedCat) {
+      return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
+    }
+
+    // Invalidate cache after updating a cat
+    await cacheUtils.invalidateCatCache(idNum);
+    await cacheUtils.invalidateCatsCache();
+
     console.debug('[API][PATCH /api/cats/:id] updated', { id: idNum });
-    return NextResponse.json({ success: true, data: cats[idx] });
+    return NextResponse.json({ success: true, data: updatedCat });
   } catch (err) {
     console.error('[API][PATCH /api/cats/:id] error', err);
     return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
@@ -90,18 +116,38 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 }
 
 // DELETE /api/cats/:id
-export async function DELETE(_request: Request, context: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  // Require authentication for deleting cats
+  const authResult = await requireAuth(request);
+  if (!authResult.success) {
+    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+  }
+
   const { id } = await context.params;
   const idNum = Number(id);
   if (Number.isNaN(idNum)) {
     return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
   }
-  const idx = findCatIndex(idNum);
-  if (idx === -1) {
+
+  const existingCat = await catRepository.getById(idNum);
+  if (!existingCat) {
     return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
   }
-  const removed = cats[idx];
-  cats.splice(idx, 1);
-  console.debug('[API][DELETE /api/cats/:id] removed', { id: idNum, remaining: cats.length });
-  return NextResponse.json({ success: true, data: removed });
+
+  try {
+    const success = await catRepository.delete(idNum);
+    if (!success) {
+      return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
+    }
+
+    // Invalidate cache after deleting a cat
+    await cacheUtils.invalidateCatCache(idNum);
+    await cacheUtils.invalidateCatsCache();
+
+    console.debug('[API][DELETE /api/cats/:id] removed', { id: idNum });
+    return NextResponse.json({ success: true, data: existingCat });
+  } catch (err) {
+    console.error('[API][DELETE /api/cats/:id] error', err);
+    return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+  }
 }

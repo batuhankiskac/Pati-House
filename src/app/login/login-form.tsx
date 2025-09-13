@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 export function LoginForm() {
   const { login } = useAuth();
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,10 +20,10 @@ export function LoginForm() {
     setLoading(true);
     setError('');
 
-    const success = await login(password);
+    const success = await login(username, password);
 
     if (!success) {
-      setError('Geçersiz şifre');
+      setError('Geçersiz kullanıcı adı veya şifre');
     }
 
     setLoading(false);
@@ -31,13 +32,24 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
+        <Label htmlFor="username">Kullanıcı Adı</Label>
+        <Input
+          id="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Kullanıcı adınızı girin"
+          required
+        />
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="password">Şifre</Label>
         <Input
           id="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
+          placeholder="•••••••"
           required
         />
       </div>

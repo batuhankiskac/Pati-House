@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Cat } from '@/lib/data';
+import cacheUtils from '@/lib/cache/cache-utils';
 
 type CreateCatInput = {
   name: string;
@@ -34,12 +35,24 @@ export function useCats(): UseCatsResult {
     setLoading(true);
     setError(null);
     try {
+      // Try to get from cache first
+      const cachedCats = await cacheUtils.getCachedCats();
+      if (cachedCats) {
+        console.debug('[hook][useCats] returning cached list');
+        setCats(cachedCats);
+        setLoading(false);
+        return;
+      }
+
       console.debug('[hook][useCats] fetching list');
       const res = await fetch(API_BASE, { cache: 'no-store' });
       const json = await res.json();
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Liste alınamadı');
       }
+
+      // Cache the result
+      await cacheUtils.setCachedCats(json.data);
       setCats(json.data);
       console.debug('[hook][useCats] fetched', json.data.length);
     } catch (e: any) {
@@ -67,6 +80,8 @@ export function useCats(): UseCatsResult {
         return { success: false, error: json.error || 'Kedi eklenemedi' };
       }
       setCats(prev => [...prev, json.data]);
+      // Invalidate cache after creating a new cat
+      await cacheUtils.invalidateCatsCache();
       console.debug('[hook][useCats] createCat ok id', json.data.id);
       return { success: true, cat: json.data };
     } catch (e: any) {
@@ -100,6 +115,9 @@ export function useCats(): UseCatsResult {
       }
       // Ensure server version
       setCats(p => p.map(c => (c.id === id ? json.data : c)));
+      // Invalidate cache after updating a cat
+      await cacheUtils.invalidateCatsCache();
+      await cacheUtils.invalidateCatCache(id);
       console.debug('[hook][useCats] updateCat ok', { id });
       return { success: true, cat: json.data };
     } catch (e: any) {
@@ -121,6 +139,9 @@ export function useCats(): UseCatsResult {
         setCats(prev);
         return { success: false, error: json.error || 'Kedi silinemedi' };
       }
+      // Invalidate cache after deleting a cat
+      await cacheUtils.invalidateCatsCache();
+      await cacheUtils.invalidateCatCache(id);
       console.debug('[hook][useCats] deleteCat ok', { id });
       return { success: true };
     } catch (e: any) {
@@ -133,7 +154,11 @@ export function useCats(): UseCatsResult {
     cats,
     loading,
     error,
-    refresh: fetchCats,
+    refresh: async () => {
+      // Invalidate cache and fetch fresh data
+      await cacheUtils.invalidateCatsCache();
+      await fetchCats();
+    },
     createCat,
     updateCat,
     deleteCat,

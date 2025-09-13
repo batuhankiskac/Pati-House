@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
-import { cats, type Cat } from '@/lib/data';
+import { catRepository, type Cat } from '@/lib/data';
 import { normalizeBreed } from '@/lib/utils';
+import { requireAuth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import cacheUtils from '@/lib/cache/cache-utils';
 
 /**
- * Simple in-memory API for cats.
- * NOTE: This is non-persistent and resets on server restart.
+ * Simple database API for cats.
+ * NOTE: This is persistent and stores data in PostgreSQL.
  * Debug logs included to verify mutations propagate.
  */
 
@@ -26,7 +29,19 @@ function validatePayload(body: any) {
 // GET /api/cats  -> list all
 export async function GET() {
   try {
+    // Try to get from cache first
+    const cachedCats = await cacheUtils.getCachedCats();
+    if (cachedCats) {
+      console.debug('[API][GET /api/cats] returning cached data', { count: cachedCats.length });
+      return NextResponse.json({ success: true, data: cachedCats });
+    }
+
+    const cats = await catRepository.getAll();
     console.debug('[API][GET /api/cats] returning', { count: cats.length });
+
+    // Cache the result
+    await cacheUtils.setCachedCats(cats);
+
     return NextResponse.json({ success: true, data: cats });
   } catch (err) {
     console.error('[API][GET /api/cats] error', err);
@@ -34,8 +49,14 @@ export async function GET() {
   }
 }
 
-// POST /api/cats  -> create
-export async function POST(request: Request) {
+// POST /api/cats -> create
+export async function POST(request: NextRequest) {
+  // Require authentication for creating cats
+  const authResult = await requireAuth(request);
+  if (!authResult.success) {
+    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+  }
+
   try {
     const body = await request.json().catch(() => null);
 
@@ -44,10 +65,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: errors.join(', ') }, { status: 400 });
     }
 
-    const nextId = cats.length ? Math.max(...cats.map(c => c.id)) + 1 : 1;
-
-    const newCat: Cat = {
-      id: nextId,
+    const newCat: Omit<Cat, 'id'> = {
       name: body.name.trim(),
       breed: normalizeBreed(body.breed),
       age: body.age,
@@ -57,10 +75,13 @@ export async function POST(request: Request) {
       dataAiHint: body.dataAiHint ? String(body.dataAiHint) : ''
     };
 
-    cats.push(newCat);
-    console.debug('[API][POST /api/cats] created', { id: newCat.id, total: cats.length });
+    const createdCat = await catRepository.create(newCat);
+    console.debug('[API][POST /api/cats] created', { id: createdCat.id, total: (await catRepository.getAll()).length });
 
-    return NextResponse.json({ success: true, data: newCat }, { status: 201 });
+    // Invalidate cache after creating a new cat
+    await cacheUtils.invalidateCatsCache();
+
+    return NextResponse.json({ success: true, data: createdCat }, { status: 201 });
   } catch (err) {
     console.error('[API][POST /api/cats] error', err);
     return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });

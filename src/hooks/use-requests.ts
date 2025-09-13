@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AdoptionRequest } from '@/lib/data';
+import cacheUtils from '@/lib/cache/cache-utils';
 
 const API_BASE = '/api/requests';
 
@@ -29,12 +30,24 @@ export function useRequests(): UseRequestsResult {
     setLoading(true);
     setError(null);
     try {
+      // Try to get from cache first
+      const cachedRequests = await cacheUtils.getCachedRequests();
+      if (cachedRequests) {
+        console.debug('[hook][useRequests] returning cached list');
+        setRequests(cachedRequests);
+        setLoading(false);
+        return;
+      }
+
       console.debug('[hook][useRequests] fetching list');
       const res = await fetch(API_BASE, { cache: 'no-store' });
       const json = await res.json();
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Başvurular alınamadı');
       }
+
+      // Cache the result
+      await cacheUtils.setCachedRequests(json.data);
       setRequests(json.data);
       console.debug('[hook][useRequests] fetched', json.data.length);
     } catch (e: any) {
@@ -62,6 +75,8 @@ export function useRequests(): UseRequestsResult {
         return { success: false, error: json.error || 'Başvuru oluşturulamadı' };
       }
       setRequests(prev => [...prev, json.data]);
+      // Invalidate cache after creating a new request
+      await cacheUtils.invalidateRequestsCache();
       return { success: true, request: json.data };
     } catch (e: any) {
       console.error('[hook][useRequests] create error', e);
@@ -90,6 +105,9 @@ export function useRequests(): UseRequestsResult {
         return { success: false, error: json.error || 'Durum güncellenemedi' };
       }
       setRequests(p => p.map(r => (r.id === id ? json.data : r)));
+      // Invalidate cache after updating a request
+      await cacheUtils.invalidateRequestsCache();
+      await cacheUtils.invalidateRequestCache(id);
       return { success: true, request: json.data };
     } catch (e: any) {
       console.error('[hook][useRequests] updateStatus error', e);
@@ -108,6 +126,9 @@ export function useRequests(): UseRequestsResult {
         setRequests(prev); // rollback
         return { success: false, error: json.error || 'Silinemedi' };
       }
+      // Invalidate cache after deleting a request
+      await cacheUtils.invalidateRequestsCache();
+      await cacheUtils.invalidateRequestCache(id);
       return { success: true };
     } catch (e: any) {
       console.error('[hook][useRequests] delete error', e);
@@ -119,7 +140,11 @@ export function useRequests(): UseRequestsResult {
     requests,
     loading,
     error,
-    refresh: fetchRequests,
+    refresh: async () => {
+      // Invalidate cache and fetch fresh data
+      await cacheUtils.invalidateRequestsCache();
+      await fetchRequests();
+    },
     createRequest,
     updateStatus,
     deleteRequest,

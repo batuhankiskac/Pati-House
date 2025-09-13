@@ -1,19 +1,18 @@
 import { NextResponse } from 'next/server';
-import { adoptionRequests } from '@/lib/data';
+import { adoptionRequestRepository } from '@/lib/data';
+import { requireAuth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import cacheUtils from '@/lib/cache/cache-utils';
 
 /**
  * Item-level adoption request endpoint.
  *  GET    /api/requests/:id      -> fetch single request
  *  PATCH  /api/requests/:id      -> update status or applicant fields
  *  DELETE /api/requests/:id      -> remove request (optional)
- * In-memory only (non-persistent).
+ * Persistent database storage.
  */
 
 type Status = 'Bekliyor' | 'Onaylandı' | 'Reddedildi';
-
-function findIndex(idNum: number) {
-  return adoptionRequests.findIndex(r => r.id === idNum);
-}
 
 function sanitizePatch(body: any) {
   const allowedStatus: Status[] = ['Bekliyor', 'Onaylandı', 'Reddedildi'];
@@ -71,29 +70,55 @@ function validatePatch(patch: any, allowedStatus: Status[]): string[] {
 }
 
 // GET /api/requests/:id
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  // Require authentication for viewing requests
+  const authResult = await requireAuth(request);
+  if (!authResult.success) {
+    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+  }
+
   const idNum = Number(params.id);
   if (Number.isNaN(idNum)) {
     return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
   }
-  const item = adoptionRequests.find(r => r.id === idNum);
+
+  // Try to get from cache first
+  const cachedRequest = await cacheUtils.getCachedRequest(idNum);
+  if (cachedRequest) {
+    console.debug('[API][GET /api/requests/:id] returning cached data', { id: idNum });
+    return NextResponse.json({ success: true, data: cachedRequest });
+  }
+
+  const item = await adoptionRequestRepository.getById(idNum);
   if (!item) {
     return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
   }
+
+  // Cache the result
+  await cacheUtils.setCachedRequest(idNum, item);
+
   console.debug('[API][GET /api/requests/:id]', { id: idNum });
   return NextResponse.json({ success: true, data: item });
 }
 
 // PATCH /api/requests/:id
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  // Require authentication for updating requests
+  const authResult = await requireAuth(request);
+  if (!authResult.success) {
+    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+  }
+
   const idNum = Number(params.id);
   if (Number.isNaN(idNum)) {
     return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
   }
-  const idx = findIndex(idNum);
-  if (idx === -1) {
+
+  const existingRequest = await adoptionRequestRepository.getById(idNum);
+  if (!existingRequest) {
     return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
   }
+
   try {
     const body = await request.json().catch(() => ({}));
     const { patch, allowedStatus } = sanitizePatch(body);
@@ -102,26 +127,21 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       return NextResponse.json({ success: false, error: errors.join(', ') }, { status: 400 });
     }
 
-    // Merge
-    adoptionRequests[idx] = {
-      ...adoptionRequests[idx],
-      ...(patch.status !== undefined ? { status: patch.status } : {}),
-      ...(patch.applicant
-        ? {
-            applicant: {
-              ...adoptionRequests[idx].applicant,
-              ...patch.applicant,
-            },
-          }
-        : {}),
-    };
+    const updatedRequest = await adoptionRequestRepository.update(idNum, patch);
+    if (!updatedRequest) {
+      return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
+    }
+
+    // Invalidate cache after updating a request
+    await cacheUtils.invalidateRequestCache(idNum);
+    await cacheUtils.invalidateRequestsCache();
 
     console.debug('[API][PATCH /api/requests/:id] updated', {
       id: idNum,
-      status: adoptionRequests[idx].status,
+      status: updatedRequest.status,
     });
 
-    return NextResponse.json({ success: true, data: adoptionRequests[idx] });
+    return NextResponse.json({ success: true, data: updatedRequest });
   } catch (err) {
     console.error('[API][PATCH /api/requests/:id] error', err);
     return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
@@ -129,20 +149,39 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 }
 
 // DELETE /api/requests/:id
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  // Require authentication for deleting requests
+  const authResult = await requireAuth(request);
+  if (!authResult.success) {
+    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+  }
+
   const idNum = Number(params.id);
   if (Number.isNaN(idNum)) {
     return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
   }
-  const idx = findIndex(idNum);
-  if (idx === -1) {
+
+  const existingRequest = await adoptionRequestRepository.getById(idNum);
+ if (!existingRequest) {
     return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
   }
-  const removed = adoptionRequests[idx];
-  adoptionRequests.splice(idx, 1);
-  console.debug('[API][DELETE /api/requests/:id] removed', {
-    id: idNum,
-    remaining: adoptionRequests.length,
-  });
-  return NextResponse.json({ success: true, data: removed });
+
+  try {
+    const success = await adoptionRequestRepository.delete(idNum);
+    if (!success) {
+      return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
+    }
+
+    // Invalidate cache after deleting a request
+    await cacheUtils.invalidateRequestCache(idNum);
+    await cacheUtils.invalidateRequestsCache();
+
+    console.debug('[API][DELETE /api/requests/:id] removed', {
+      id: idNum,
+    });
+    return NextResponse.json({ success: true, data: existingRequest });
+  } catch (err) {
+    console.error('[API][DELETE /api/requests/:id] error', err);
+    return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+  }
 }
