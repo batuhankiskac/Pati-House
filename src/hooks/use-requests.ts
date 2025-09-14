@@ -45,7 +45,7 @@ export function useRequests(): UseRequestsResult {
       console.debug('[hook][useRequests] createRequest');
       const result = await createRequest(data);
       if (result.success && result.request) {
-        setRequests(prev => [...prev, result.request!]);
+        setRequests(prev => [...prev, result.request as AdoptionRequest]);
         return { success: true, request: result.request };
       } else {
         return { success: false, error: result.error || 'Failed to create request' };
@@ -68,7 +68,7 @@ export function useRequests(): UseRequestsResult {
 
       const result = await updateStatus(id, status);
       if (result.success && result.request) {
-        setRequests(p => p.map(r => (r.id === id ? result.request! : r)));
+        setRequests(p => p.map(r => (r.id === id ? result.request as AdoptionRequest : r)));
         return { success: true, request: result.request };
       } else {
         setRequests(prev); // rollback

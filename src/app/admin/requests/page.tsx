@@ -4,7 +4,7 @@ import RequestsTable from '@/components/admin/requests-table';
 import { useRequests } from '@/hooks/use-requests';
 
 export default function AdoptionRequestsPage() {
-  const { refreshRequests } = useRequests();
+  const { refresh } = useRequests();
 
   return (
     <div>

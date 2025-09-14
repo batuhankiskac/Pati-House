@@ -45,8 +45,8 @@ export function useCats(): UseCatsResult {
       console.debug('[hook][useCats] createCat start');
       const result = await createCat(data);
       if (result.success && result.cat) {
-        setCats(prev => [...prev, result.cat!]);
-        console.debug('[hook][useCats] createCat ok id', result.cat!.id);
+        setCats(prev => [...prev, result.cat as Cat]);
+        console.debug('[hook][useCats] createCat ok id', (result.cat as Cat).id);
         return { success: true, cat: result.cat };
       } else {
         return { success: false, error: result.error || 'Failed to add cat' };
@@ -72,7 +72,7 @@ export function useCats(): UseCatsResult {
       const result = await updateCat(id, data);
       if (result.success && result.cat) {
         // Ensure server version
-        setCats(p => p.map(c => (c.id === id ? result.cat! : c)));
+        setCats(p => p.map(c => (c.id === id ? result.cat as Cat : c)));
         console.debug('[hook][useCats] updateCat ok', { id });
         return { success: true, cat: result.cat };
       } else {

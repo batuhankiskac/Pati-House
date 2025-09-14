@@ -4,7 +4,7 @@ export type Cat = {
   id: number;
   name: string;
   breed: string;
- age: number; // in years
+  age: number; // in years
   gender: 'Male' | 'Female';
   description: string;
   image: string;
@@ -15,7 +15,7 @@ export type User = {
   id: string;
   username: string;
   email: string;
- password: string; // hashed password
+  password: string; // hashed password
   name: string;
   avatar?: string;
 };

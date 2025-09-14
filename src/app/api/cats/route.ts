@@ -11,18 +11,28 @@ import cacheUtils from '@/lib/cache/cache-utils';
  * Debug logs included to verify mutations propagate.
  */
 
-function validatePayload(body: any) {
+function validatePayload(body: unknown): string[] {
   const errors: string[] = [];
   if (!body) {
     errors.push('Body is empty');
     return errors;
   }
-  if (typeof body.name !== 'string' || body.name.trim().length === 0) errors.push('Invalid name');
-  if (typeof body.breed !== 'string' || body.breed.trim().length === 0) errors.push('Invalid breed');
-  if (typeof body.age !== 'number' || body.age < 0) errors.push('Invalid age');
-  if (body.gender !== 'Male' && body.gender !== 'Female') errors.push('Invalid gender');
-  if (typeof body.description !== 'string' || body.description.trim().length === 0) errors.push('Invalid description');
-  if (typeof body.image !== 'string' || body.image.trim().length === 0) errors.push('Invalid image');
+
+  // Type guard to ensure body is an object
+  if (typeof body !== 'object' || body === null) {
+    errors.push('Body must be an object');
+    return errors;
+  }
+
+  // Type assertion after validation
+  const payload = body as Record<string, unknown>;
+
+  if (typeof payload.name !== 'string' || payload.name.trim().length === 0) errors.push('Invalid name');
+  if (typeof payload.breed !== 'string' || payload.breed.trim().length === 0) errors.push('Invalid breed');
+  if (typeof payload.age !== 'number' || payload.age < 0) errors.push('Invalid age');
+  if (payload.gender !== 'Male' && payload.gender !== 'Female') errors.push('Invalid gender');
+  if (typeof payload.description !== 'string' || payload.description.trim().length === 0) errors.push('Invalid description');
+  if (typeof payload.image !== 'string' || payload.image.trim().length === 0) errors.push('Invalid image');
   return errors;
 }
 
@@ -65,14 +75,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: errors.join(', ') }, { status: 400 });
     }
 
+    // Type assertion after validation
+    const validatedBody = body as Record<string, unknown>;
+
     const newCat: Omit<Cat, 'id'> = {
-      name: body.name.trim(),
-      breed: normalizeBreed(body.breed),
-      age: body.age,
-      gender: body.gender,
-      description: body.description.trim(),
-      image: body.image.trim(),
-      dataAiHint: body.dataAiHint ? String(body.dataAiHint) : ''
+      name: (validatedBody.name as string).trim(),
+      breed: normalizeBreed(validatedBody.breed as string),
+      age: validatedBody.age as number,
+      gender: validatedBody.gender as 'Male' | 'Female',
+      description: (validatedBody.description as string).trim(),
+      image: (validatedBody.image as string).trim(),
+      dataAiHint: validatedBody.dataAiHint ? String(validatedBody.dataAiHint) : ''
     };
 
     const createdCat = await catRepository.create(newCat);

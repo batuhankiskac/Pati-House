@@ -14,26 +14,26 @@ import cacheUtils from '@/lib/cache/cache-utils';
  * Persistent database storage.
  */
 
-function sanitizePatch(body: any): Partial<Cat> {
+function sanitizePatch(body: unknown): Partial<Cat> {
   if (!body || typeof body !== 'object') return {};
   const allowed: (keyof Cat)[] = ['name', 'breed', 'age', 'gender', 'description', 'image', 'dataAiHint'];
   const result: Partial<Cat> = {};
   for (const key of allowed) {
-    if (body[key] !== undefined) {
-      let val = body[key];
+    if ((body as Record<string, unknown>)[key] !== undefined) {
+      let val = (body as Record<string, unknown>)[key];
       if (typeof val === 'string') {
         val = val.trim();
       }
       if (key === 'breed' && typeof val === 'string') {
         val = normalizeBreed(val);
       }
-      (result as any)[key] = val;
+      (result as Record<string, unknown>)[key] = val;
     }
   }
   return result;
 }
 
-function validatePatch(patch: Partial<Cat>) {
+function validatePatch(patch: Partial<Cat>): string[] {
   const errors: string[] = [];
   if (patch.name !== undefined && (typeof patch.name !== 'string' || !patch.name)) errors.push('Invalid name');
   if (patch.breed !== undefined && (typeof patch.breed !== 'string' || !patch.breed)) errors.push('Invalid breed');

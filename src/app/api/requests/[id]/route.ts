@@ -14,21 +14,22 @@ import cacheUtils from '@/lib/cache/cache-utils';
 
 type Status = 'Pending' | 'Approved' | 'Rejected';
 
-function sanitizePatch(body: any) {
+function sanitizePatch(body: unknown) {
   const allowedStatus: Status[] = ['Pending', 'Approved', 'Rejected'];
   if (!body || typeof body !== 'object') {
     return { patch: {}, allowedStatus };
   }
-  const patch: any = {};
+  const patch: Record<string, unknown> = {};
 
-  if (body.status !== undefined) {
-    patch.status = body.status;
+  if ((body as Record<string, unknown>).status !== undefined) {
+    patch.status = (body as Record<string, unknown>).status;
   }
 
-  if (body.applicant && typeof body.applicant === 'object') {
-    const a = body.applicant;
-    const cleaned: any = {};
-    const assignIf = (key: string, val: any, opts?: { lower?: boolean }) => {
+  const bodyObj = body as Record<string, unknown>;
+  if (bodyObj.applicant && typeof bodyObj.applicant === 'object' && bodyObj.applicant !== null) {
+    const a = bodyObj.applicant as Record<string, unknown>;
+    const cleaned: Record<string, unknown> = {};
+    const assignIf = (key: string, val: unknown, opts?: { lower?: boolean }) => {
       if (val !== undefined) {
         if (typeof val === 'string') {
           let v = val.trim().replace(/\s+/g, ' ');
@@ -52,17 +53,17 @@ function sanitizePatch(body: any) {
   return { patch, allowedStatus };
 }
 
-function validatePatch(patch: any, allowedStatus: Status[]): string[] {
+function validatePatch(patch: Record<string, unknown>, allowedStatus: Status[]): string[] {
   const errors: string[] = [];
-  if (patch.status !== undefined && !allowedStatus.includes(patch.status)) {
+  if (patch.status !== undefined && !allowedStatus.includes(patch.status as Status)) {
     errors.push('Invalid status');
   }
   if (patch.applicant) {
-    const a = patch.applicant;
-    if (a.email !== undefined && (typeof a.email !== 'string' || !a.email.includes('@'))) {
+    const a = patch.applicant as Record<string, unknown>;
+    if (a.email !== undefined && (typeof a.email !== 'string' || !(a.email as string).includes('@'))) {
       errors.push('Invalid applicant.email');
     }
-    if (a.name !== undefined && (typeof a.name !== 'string' || !a.name.trim())) {
+    if (a.name !== undefined && (typeof a.name !== 'string' || !(a.name as string).trim())) {
       errors.push('Invalid applicant.name');
     }
   }

@@ -11,18 +11,28 @@ import cacheUtils from '@/lib/cache/cache-utils';
  * Persistent: stores data in PostgreSQL database.
  */
 
-function validateCreate(body: any): string[] {
+function validateCreate(body: unknown): string[] {
   const errors: string[] = [];
   if (!body) {
     errors.push('Body is empty');
     return errors;
   }
-  if (typeof body.catName !== 'string' || !body.catName.trim()) errors.push('Invalid catName');
-  if (typeof body.fullName !== 'string' || !body.fullName.trim()) errors.push('Invalid fullName');
-  if (typeof body.email !== 'string' || !body.email.includes('@')) errors.push('Invalid email');
-  if (typeof body.phone !== 'string' || body.phone.trim().length < 5) errors.push('Invalid phone');
-  if (typeof body.address !== 'string' || body.address.trim().length < 5) errors.push('Invalid address');
-  if (typeof body.reason !== 'string' || body.reason.trim().length < 10) errors.push('Invalid reason');
+
+  // Type guard to ensure body is an object
+  if (typeof body !== 'object' || body === null) {
+    errors.push('Body must be an object');
+    return errors;
+  }
+
+  // Type assertion after validation
+  const payload = body as Record<string, unknown>;
+
+  if (typeof payload.catName !== 'string' || !payload.catName.trim()) errors.push('Invalid catName');
+  if (typeof payload.fullName !== 'string' || !payload.fullName.trim()) errors.push('Invalid fullName');
+  if (typeof payload.email !== 'string' || !payload.email.includes('@')) errors.push('Invalid email');
+  if (typeof payload.phone !== 'string' || payload.phone.trim().length < 5) errors.push('Invalid phone');
+  if (typeof payload.address !== 'string' || payload.address.trim().length < 5) errors.push('Invalid address');
+  if (typeof payload.reason !== 'string' || payload.reason.trim().length < 10) errors.push('Invalid reason');
   return errors;
 }
 
@@ -64,16 +74,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: errors.join(', ') }, { status: 400 });
     }
 
+    // Type assertion after validation
+    const validatedBody = body as Record<string, unknown>;
+
     const newRequest: Omit<AdoptionRequest, 'id'> = {
-      catName: body.catName.trim(),
+      catName: (validatedBody.catName as string).trim(),
       requestDate: new Date().toISOString().split('T')[0],
       status: 'Pending',
       applicant: {
-        name: body.fullName.trim(),
-        email: body.email.trim(),
-        phone: body.phone.trim(),
-        address: body.address.trim(),
-        reason: body.reason.trim(),
+        name: (validatedBody.fullName as string).trim(),
+        email: (validatedBody.email as string).trim(),
+        phone: (validatedBody.phone as string).trim(),
+        address: (validatedBody.address as string).trim(),
+        reason: (validatedBody.reason as string).trim(),
       },
     };
 
