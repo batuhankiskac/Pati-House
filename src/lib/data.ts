@@ -24,7 +24,7 @@ export type AdoptionRequest = {
   id: number;
   catName: string;
   requestDate: string;
-  status: 'Bekliyor' | 'Onaylandı' | 'Reddedildi';
+  status: 'Pending' | 'Approved' | 'Rejected';
   applicant: {
     name: string;
     email: string;

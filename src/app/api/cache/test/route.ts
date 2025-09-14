@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   // Require authentication for cache testing
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   try {

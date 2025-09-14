@@ -39,18 +39,18 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
   };
 
   const handleDelete = async (catId: number, catName: string) => {
-    if (!window.confirm(`${catName} isimli kediyi silmek istediğinize emin misiniz?`)) return;
+    if (!window.confirm(`Are you sure you want to delete the cat named ${catName}?`)) return;
     const result = await deleteCat(catId);
     if (result.success) {
       toast({
-        title: 'Başarılı',
-        description: 'Kedi silindi (optimistic).',
+        title: 'Success',
+        description: 'Cat deleted (optimistic).',
       });
       triggerExternalRefresh();
     } else {
       toast({
-        title: 'Hata',
-        description: result.error || 'Kedi silinirken hata oluştu.',
+        title: 'Error',
+        description: result.error || 'An error occurred while deleting the cat.',
         variant: 'destructive',
       });
       // Attempt to resync from server
@@ -67,22 +67,22 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Kediler</CardTitle>
+          <CardTitle>Cats</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading && <div className="py-4 text-sm text-muted-foreground">Yükleniyor...</div>}
-          {error && !loading && <div className="py-2 text-sm text-red-600">Hata: {error}</div>}
+          {loading && <div className="py-4 text-sm text-muted-foreground">Loading...</div>}
+          {error && !loading && <div className="py-2 text-sm text-red-600">Error: {error}</div>}
           {!loading && !error && (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="hidden w-[100px] sm:table-cell">Resim</TableHead>
-                <TableHead>İsim</TableHead>
-                <TableHead>Cins</TableHead>
-                <TableHead className="hidden md:table-cell">Yaş</TableHead>
-                <TableHead className="hidden md:table-cell">Cinsiyet</TableHead>
+                <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Breed</TableHead>
+                <TableHead className="hidden md:table-cell">Age</TableHead>
+                <TableHead className="hidden md:table-cell">Gender</TableHead>
                 <TableHead>
-                  <span className="sr-only">Eylemler</span>
+                  <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -91,11 +91,12 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                 <TableRow key={cat.id}>
                   <TableCell className="hidden sm:table-cell">
                     <Image
-                      alt="Kedi resmi"
+                      alt="Cat image"
                       className="aspect-square rounded-md object-cover"
                       height="64"
                       src={cat.image}
                       width="64"
+                      sizes="64px"
                       data-ai-hint={cat.dataAiHint}
                     />
                   </TableCell>
@@ -103,26 +104,26 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                   <TableCell>
                     <Badge variant="outline">{cat.breed}</Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{cat.age} yaş</TableCell>
-                  <TableCell className="hidden md:table-cell">{cat.gender === 'Male' ? 'Erkek' : 'Dişi'}</TableCell>
+                  <TableCell className="hidden md:table-cell">{cat.age} years</TableCell>
+                  <TableCell className="hidden md:table-cell">{cat.gender === 'Male' ? 'Male' : 'Female'}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button aria-haspopup="true" size="icon" variant="ghost">
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Menüyü aç</span>
+                          <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => handleEdit(cat)}>
-                          Düzenle
+                          Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(cat.id, cat.name)}
                           className="text-red-600"
                         >
-                          Sil
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

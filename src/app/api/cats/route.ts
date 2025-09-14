@@ -14,15 +14,15 @@ import cacheUtils from '@/lib/cache/cache-utils';
 function validatePayload(body: any) {
   const errors: string[] = [];
   if (!body) {
-    errors.push('Body boş');
+    errors.push('Body is empty');
     return errors;
   }
-  if (typeof body.name !== 'string' || body.name.trim().length === 0) errors.push('Geçersiz name');
-  if (typeof body.breed !== 'string' || body.breed.trim().length === 0) errors.push('Geçersiz breed');
-  if (typeof body.age !== 'number' || body.age < 0) errors.push('Geçersiz age');
-  if (body.gender !== 'Male' && body.gender !== 'Female') errors.push('Geçersiz gender');
-  if (typeof body.description !== 'string' || body.description.trim().length === 0) errors.push('Geçersiz description');
-  if (typeof body.image !== 'string' || body.image.trim().length === 0) errors.push('Geçersiz image');
+  if (typeof body.name !== 'string' || body.name.trim().length === 0) errors.push('Invalid name');
+  if (typeof body.breed !== 'string' || body.breed.trim().length === 0) errors.push('Invalid breed');
+  if (typeof body.age !== 'number' || body.age < 0) errors.push('Invalid age');
+  if (body.gender !== 'Male' && body.gender !== 'Female') errors.push('Invalid gender');
+  if (typeof body.description !== 'string' || body.description.trim().length === 0) errors.push('Invalid description');
+  if (typeof body.image !== 'string' || body.image.trim().length === 0) errors.push('Invalid image');
   return errors;
 }
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   // Require authentication for creating cats
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   try {

@@ -14,15 +14,15 @@ import cacheUtils from '@/lib/cache/cache-utils';
 function validateCreate(body: any): string[] {
   const errors: string[] = [];
   if (!body) {
-    errors.push('Body boş');
+    errors.push('Body is empty');
     return errors;
   }
-  if (typeof body.catName !== 'string' || !body.catName.trim()) errors.push('Geçersiz catName');
-  if (typeof body.fullName !== 'string' || !body.fullName.trim()) errors.push('Geçersiz fullName');
-  if (typeof body.email !== 'string' || !body.email.includes('@')) errors.push('Geçersiz email');
-  if (typeof body.phone !== 'string' || body.phone.trim().length < 5) errors.push('Geçersiz phone');
-  if (typeof body.address !== 'string' || body.address.trim().length < 5) errors.push('Geçersiz address');
-  if (typeof body.reason !== 'string' || body.reason.trim().length < 10) errors.push('Geçersiz reason');
+  if (typeof body.catName !== 'string' || !body.catName.trim()) errors.push('Invalid catName');
+  if (typeof body.fullName !== 'string' || !body.fullName.trim()) errors.push('Invalid fullName');
+  if (typeof body.email !== 'string' || !body.email.includes('@')) errors.push('Invalid email');
+  if (typeof body.phone !== 'string' || body.phone.trim().length < 5) errors.push('Invalid phone');
+  if (typeof body.address !== 'string' || body.address.trim().length < 5) errors.push('Invalid address');
+  if (typeof body.reason !== 'string' || body.reason.trim().length < 10) errors.push('Invalid reason');
   return errors;
 }
 
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   // Require authentication for viewing requests
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   try {

@@ -35,12 +35,12 @@ function sanitizePatch(body: any): Partial<Cat> {
 
 function validatePatch(patch: Partial<Cat>) {
   const errors: string[] = [];
-  if (patch.name !== undefined && (typeof patch.name !== 'string' || !patch.name)) errors.push('Geçersiz name');
-  if (patch.breed !== undefined && (typeof patch.breed !== 'string' || !patch.breed)) errors.push('Geçersiz breed');
-  if (patch.age !== undefined && (typeof patch.age !== 'number' || patch.age < 0)) errors.push('Geçersiz age');
-  if (patch.gender !== undefined && patch.gender !== 'Male' && patch.gender !== 'Female') errors.push('Geçersiz gender');
-  if (patch.description !== undefined && (typeof patch.description !== 'string' || !patch.description)) errors.push('Geçersiz description');
-  if (patch.image !== undefined && (typeof patch.image !== 'string' || !patch.image)) errors.push('Geçersiz image');
+  if (patch.name !== undefined && (typeof patch.name !== 'string' || !patch.name)) errors.push('Invalid name');
+  if (patch.breed !== undefined && (typeof patch.breed !== 'string' || !patch.breed)) errors.push('Invalid breed');
+  if (patch.age !== undefined && (typeof patch.age !== 'number' || patch.age < 0)) errors.push('Invalid age');
+  if (patch.gender !== undefined && patch.gender !== 'Male' && patch.gender !== 'Female') errors.push('Invalid gender');
+  if (patch.description !== undefined && (typeof patch.description !== 'string' || !patch.description)) errors.push('Invalid description');
+  if (patch.image !== undefined && (typeof patch.image !== 'string' || !patch.image)) errors.push('Invalid image');
   return errors;
 }
 
@@ -49,7 +49,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
   const { id } = await context.params;
   const idNum = Number(id);
   if (Number.isNaN(idNum)) {
-    return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Invalid id' }, { status: 400 });
   }
 
   // Try to get from cache first
@@ -61,7 +61,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
 
   const cat = await catRepository.getById(idNum);
   if (!cat) {
-    return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
+    return NextResponse.json({ success: false, error: 'Cat not found' }, { status: 404 });
   }
 
   // Cache the result
@@ -76,18 +76,18 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   // Require authentication for updating cats
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   const { id } = await context.params;
   const idNum = Number(id);
   if (Number.isNaN(idNum)) {
-    return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Invalid id' }, { status: 400 });
   }
 
   const existingCat = await catRepository.getById(idNum);
   if (!existingCat) {
-    return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
+    return NextResponse.json({ success: false, error: 'Cat not found' }, { status: 404 });
   }
 
   try {
@@ -100,7 +100,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
     const updatedCat = await catRepository.update(idNum, patch);
     if (!updatedCat) {
-      return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Cat not found' }, { status: 404 });
     }
 
     // Invalidate cache after updating a cat
@@ -120,24 +120,24 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
   // Require authentication for deleting cats
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   const { id } = await context.params;
   const idNum = Number(id);
   if (Number.isNaN(idNum)) {
-    return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Invalid id' }, { status: 400 });
   }
 
   const existingCat = await catRepository.getById(idNum);
   if (!existingCat) {
-    return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
+    return NextResponse.json({ success: false, error: 'Cat not found' }, { status: 404 });
   }
 
   try {
     const success = await catRepository.delete(idNum);
     if (!success) {
-      return NextResponse.json({ success: false, error: 'Kedi bulunamadı' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Cat not found' }, { status: 404 });
     }
 
     // Invalidate cache after deleting a cat

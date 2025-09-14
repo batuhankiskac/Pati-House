@@ -56,9 +56,8 @@ export default async function CatProfilePage({ params }: { params: Promise<{ id:
                 alt={`Photo of ${cat.name}`}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 data-ai-hint={cat.dataAiHint}
-                unoptimized
               />
             </div>
           </Card>

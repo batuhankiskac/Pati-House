@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
     if (!username || !password) {
       return NextResponse.json(
-        { error: 'Kullanıcı adı ve şifre gereklidir' },
+        { error: 'Username and password are required' },
         { status: 400 }
       );
     }
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const user = await authenticateUser(username, password);
     if (!user) {
       return NextResponse.json(
-        { error: 'Geçersiz kullanıcı adı veya şifre' },
+        { error: 'Invalid username or password' },
         { status: 401 }
       );
     }
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const sessionResult = await createSession(username, password);
     if (!sessionResult.success) {
       return NextResponse.json(
-        { error: 'Oturum oluşturulamadı' },
+        { error: 'Session could not be created' },
         { status: 500 }
       );
     }
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({
-      message: 'Giriş başarılı',
+      message: 'Login successful',
       user: {
         id: user.id,
         username: user.username,
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { error: 'Sunucu hatası' },
+      { error: 'Server error' },
       { status: 500 }
     );
   }

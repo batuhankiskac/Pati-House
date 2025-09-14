@@ -1,23 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AdoptionRequest } from '@/lib/data';
-import cacheUtils from '@/lib/cache/cache-utils';
-
-const API_BASE = '/api/requests';
+import { fetchRequests, createRequest, updateStatus, deleteRequest, type CreateRequestInput } from '@/services/requests-service';
 
 interface UseRequestsResult {
   requests: AdoptionRequest[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  createRequest: (data: {
-    catName: string;
-    fullName: string;
-    email: string;
-    phone: string;
-    address: string;
-    reason: string;
-  }) => Promise<{ success: boolean; request?: AdoptionRequest; error?: string }>;
-  updateStatus: (id: number, status: 'Onaylandı' | 'Reddedildi' | 'Bekliyor') => Promise<{ success: boolean; request?: AdoptionRequest; error?: string }>;
+  createRequest: (data: CreateRequestInput) => Promise<{ success: boolean; request?: AdoptionRequest; error?: string }>;
+  updateStatus: (id: number, status: 'Approved' | 'Rejected' | 'Pending') => Promise<{ success: boolean; request?: AdoptionRequest; error?: string }>;
   deleteRequest: (id: number) => Promise<{ success: boolean; error?: string }>;
 }
 
@@ -26,113 +17,84 @@ export function useRequests(): UseRequestsResult {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRequests = useCallback(async () => {
+  const fetchRequestsCallback = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Try to get from cache first
-      const cachedRequests = await cacheUtils.getCachedRequests();
-      if (cachedRequests) {
-        console.debug('[hook][useRequests] returning cached list');
-        setRequests(cachedRequests);
-        setLoading(false);
-        return;
+      const result = await fetchRequests();
+      if (result.success && result.data) {
+        setRequests(result.data);
+      } else {
+        throw new Error(result.error || 'Failed to fetch requests');
       }
-
-      console.debug('[hook][useRequests] fetching list');
-      const res = await fetch(API_BASE, { cache: 'no-store' });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.error || 'Başvurular alınamadı');
-      }
-
-      // Cache the result
-      await cacheUtils.setCachedRequests(json.data);
-      setRequests(json.data);
-      console.debug('[hook][useRequests] fetched', json.data.length);
     } catch (e: any) {
       console.error('[hook][useRequests] fetch error', e);
-      setError(e.message || 'Hata');
+      setError(e.message || 'Error');
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchRequests();
-  }, [fetchRequests]);
+    fetchRequestsCallback();
+ }, [fetchRequestsCallback]);
 
-  const createRequest: UseRequestsResult['createRequest'] = useCallback(async (data) => {
+  const createRequestCallback: UseRequestsResult['createRequest'] = useCallback(async (data) => {
     try {
       console.debug('[hook][useRequests] createRequest');
-      const res = await fetch(API_BASE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        return { success: false, error: json.error || 'Başvuru oluşturulamadı' };
+      const result = await createRequest(data);
+      if (result.success && result.request) {
+        setRequests(prev => [...prev, result.request!]);
+        return { success: true, request: result.request };
+      } else {
+        return { success: false, error: result.error || 'Failed to create request' };
       }
-      setRequests(prev => [...prev, json.data]);
-      // Invalidate cache after creating a new request
-      await cacheUtils.invalidateRequestsCache();
-      return { success: true, request: json.data };
     } catch (e: any) {
       console.error('[hook][useRequests] create error', e);
-      return { success: false, error: e.message || 'Beklenmeyen hata' };
+      return { success: false, error: e.message || 'Unexpected error' };
     }
   }, []);
 
-  const updateStatus: UseRequestsResult['updateStatus'] = useCallback(async (id, status) => {
+  const updateStatusCallback: UseRequestsResult['updateStatus'] = useCallback(async (id, status) => {
     try {
       console.debug('[hook][useRequests] updateStatus', { id, status });
       // optimistic
       const prev = requests;
       const idx = prev.findIndex(r => r.id === id);
-      if (idx === -1) return { success: false, error: 'Başvuru bulunamadı (lokal)' };
+      if (idx === -1) return { success: false, error: 'Request not found (local)' };
       const optimistic = { ...prev[idx], status };
       setRequests(p => p.map(r => (r.id === id ? optimistic : r)));
 
-      const res = await fetch(`${API_BASE}/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
+      const result = await updateStatus(id, status);
+      if (result.success && result.request) {
+        setRequests(p => p.map(r => (r.id === id ? result.request! : r)));
+        return { success: true, request: result.request };
+      } else {
         setRequests(prev); // rollback
-        return { success: false, error: json.error || 'Durum güncellenemedi' };
+        return { success: false, error: result.error || 'Failed to update status' };
       }
-      setRequests(p => p.map(r => (r.id === id ? json.data : r)));
-      // Invalidate cache after updating a request
-      await cacheUtils.invalidateRequestsCache();
-      await cacheUtils.invalidateRequestCache(id);
-      return { success: true, request: json.data };
     } catch (e: any) {
       console.error('[hook][useRequests] updateStatus error', e);
-      return { success: false, error: e.message || 'Beklenmeyen hata' };
+      return { success: false, error: e.message || 'Unexpected error' };
     }
   }, [requests]);
 
-  const deleteRequest: UseRequestsResult['deleteRequest'] = useCallback(async (id) => {
+  const deleteRequestCallback: UseRequestsResult['deleteRequest'] = useCallback(async (id) => {
     try {
       console.debug('[hook][useRequests] delete', { id });
       const prev = requests;
       setRequests(p => p.filter(r => r.id !== id));
-      const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
+
+      const result = await deleteRequest(id);
+      if (result.success) {
+        return { success: true };
+      } else {
         setRequests(prev); // rollback
-        return { success: false, error: json.error || 'Silinemedi' };
+        return { success: false, error: result.error || 'Failed to delete' };
       }
-      // Invalidate cache after deleting a request
-      await cacheUtils.invalidateRequestsCache();
-      await cacheUtils.invalidateRequestCache(id);
-      return { success: true };
     } catch (e: any) {
       console.error('[hook][useRequests] delete error', e);
-      return { success: false, error: e.message || 'Beklenmeyen hata' };
+      return { success: false, error: e.message || 'Unexpected error' };
     }
   }, [requests]);
 
@@ -142,11 +104,12 @@ export function useRequests(): UseRequestsResult {
     error,
     refresh: async () => {
       // Invalidate cache and fetch fresh data
-      await cacheUtils.invalidateRequestsCache();
-      await fetchRequests();
+      // Note: In a real application, you might want to have a service method for this
+      // For now, we'll just refetch
+      await fetchRequestsCallback();
     },
-    createRequest,
-    updateStatus,
-    deleteRequest,
+    createRequest: createRequestCallback,
+    updateStatus: updateStatusCallback,
+    deleteRequest: deleteRequestCallback,
   };
 }

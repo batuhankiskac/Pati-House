@@ -23,7 +23,7 @@ export function LoginForm() {
     const success = await login(username, password);
 
     if (!success) {
-      setError('Geçersiz kullanıcı adı veya şifre');
+      setError('Invalid username or password');
     }
 
     setLoading(false);
@@ -32,18 +32,18 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="username">Kullanıcı Adı</Label>
+        <Label htmlFor="username">Username</Label>
         <Input
           id="username"
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="Kullanıcı adınızı girin"
+          placeholder="Enter your username"
           required
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password">Şifre</Label>
+        <Label htmlFor="password">Password</Label>
         <Input
           id="password"
           type="password"
@@ -56,12 +56,12 @@ export function LoginForm() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Hata</AlertTitle>
+          <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
+        {loading ? 'Signing in...' : 'Sign In'}
       </Button>
     </form>
   );

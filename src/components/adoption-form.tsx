@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 import { useRequests } from '@/hooks/use-requests';
 
 const adoptionFormSchema = z.object({
-  fullName: z.string().min(2, { message: 'Tam adınız en az 2 karakter olmalıdır.' }),
+  fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Lütfen geçerli bir e-posta adresi girin.' }),
   phone: z.string().min(10, { message: 'Telefon numarası en az 10 rakam olmalıdır.' }),
   address: z.string().min(10, { message: 'Adres en az 10 karakter olmalıdır.' }),

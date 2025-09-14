@@ -12,10 +12,10 @@ import cacheUtils from '@/lib/cache/cache-utils';
  * Persistent database storage.
  */
 
-type Status = 'Bekliyor' | 'Onaylandı' | 'Reddedildi';
+type Status = 'Pending' | 'Approved' | 'Rejected';
 
 function sanitizePatch(body: any) {
-  const allowedStatus: Status[] = ['Bekliyor', 'Onaylandı', 'Reddedildi'];
+  const allowedStatus: Status[] = ['Pending', 'Approved', 'Rejected'];
   if (!body || typeof body !== 'object') {
     return { patch: {}, allowedStatus };
   }
@@ -55,15 +55,15 @@ function sanitizePatch(body: any) {
 function validatePatch(patch: any, allowedStatus: Status[]): string[] {
   const errors: string[] = [];
   if (patch.status !== undefined && !allowedStatus.includes(patch.status)) {
-    errors.push('Geçersiz status');
+    errors.push('Invalid status');
   }
   if (patch.applicant) {
     const a = patch.applicant;
     if (a.email !== undefined && (typeof a.email !== 'string' || !a.email.includes('@'))) {
-      errors.push('Geçersiz applicant.email');
+      errors.push('Invalid applicant.email');
     }
     if (a.name !== undefined && (typeof a.name !== 'string' || !a.name.trim())) {
-      errors.push('Geçersiz applicant.name');
+      errors.push('Invalid applicant.name');
     }
   }
   return errors;
@@ -74,12 +74,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   // Require authentication for viewing requests
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   const idNum = Number(params.id);
   if (Number.isNaN(idNum)) {
-    return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Invalid id' }, { status: 400 });
   }
 
   // Try to get from cache first
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
   const item = await adoptionRequestRepository.getById(idNum);
   if (!item) {
-    return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
+    return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
   }
 
   // Cache the result
@@ -106,17 +106,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   // Require authentication for updating requests
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   const idNum = Number(params.id);
   if (Number.isNaN(idNum)) {
-    return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Invalid id' }, { status: 400 });
   }
 
   const existingRequest = await adoptionRequestRepository.getById(idNum);
   if (!existingRequest) {
-    return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
+    return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
   }
 
   try {
@@ -129,7 +129,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     const updatedRequest = await adoptionRequestRepository.update(idNum, patch);
     if (!updatedRequest) {
-      return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
     }
 
     // Invalidate cache after updating a request
@@ -153,23 +153,23 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   // Require authentication for deleting requests
   const authResult = await requireAuth(request);
   if (!authResult.success) {
-    return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   const idNum = Number(params.id);
   if (Number.isNaN(idNum)) {
-    return NextResponse.json({ success: false, error: 'Geçersiz id' }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Invalid id' }, { status: 400 });
   }
 
   const existingRequest = await adoptionRequestRepository.getById(idNum);
  if (!existingRequest) {
-    return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
+    return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
   }
 
   try {
     const success = await adoptionRequestRepository.delete(idNum);
     if (!success) {
-      return NextResponse.json({ success: false, error: 'Başvuru bulunamadı' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
     }
 
     // Invalidate cache after deleting a request

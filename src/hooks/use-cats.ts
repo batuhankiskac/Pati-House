@@ -1,18 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Cat } from '@/lib/data';
-import cacheUtils from '@/lib/cache/cache-utils';
-
-type CreateCatInput = {
-  name: string;
-  breed: string;
-  age: number;
-  gender: 'Male' | 'Female';
-  description: string;
-  image: string;
-  dataAiHint?: string;
-};
-
-type UpdateCatInput = Partial<CreateCatInput>;
+import { fetchCats, createCat, updateCat, deleteCat, type CreateCatInput, type UpdateCatInput } from '@/services/cats-service';
 
 interface UseCatsResult {
   cats: Cat[];
@@ -24,129 +12,97 @@ interface UseCatsResult {
   deleteCat: (id: number) => Promise<{ success: boolean; error?: string }>;
 }
 
-const API_BASE = '/api/cats';
-
 export function useCats(): UseCatsResult {
   const [cats, setCats] = useState<Cat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCats = useCallback(async () => {
+  const fetchCatsCallback = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Try to get from cache first
-      const cachedCats = await cacheUtils.getCachedCats();
-      if (cachedCats) {
-        console.debug('[hook][useCats] returning cached list');
-        setCats(cachedCats);
-        setLoading(false);
-        return;
+      const result = await fetchCats();
+      if (result.success && result.data) {
+        setCats(result.data);
+      } else {
+        throw new Error(result.error || 'Failed to fetch cats');
       }
-
-      console.debug('[hook][useCats] fetching list');
-      const res = await fetch(API_BASE, { cache: 'no-store' });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.error || 'Liste alınamadı');
-      }
-
-      // Cache the result
-      await cacheUtils.setCachedCats(json.data);
-      setCats(json.data);
-      console.debug('[hook][useCats] fetched', json.data.length);
     } catch (e: any) {
       console.error('[hook][useCats] fetch error', e);
-      setError(e.message || 'Hata');
+      setError(e.message || 'Error');
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchCats();
-  }, [fetchCats]);
+    fetchCatsCallback();
+  }, [fetchCatsCallback]);
 
-  const createCat: UseCatsResult['createCat'] = useCallback(async (data) => {
+  const createCatCallback: UseCatsResult['createCat'] = useCallback(async (data) => {
     try {
       console.debug('[hook][useCats] createCat start');
-      const res = await fetch(API_BASE, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        return { success: false, error: json.error || 'Kedi eklenemedi' };
+      const result = await createCat(data);
+      if (result.success && result.cat) {
+        setCats(prev => [...prev, result.cat!]);
+        console.debug('[hook][useCats] createCat ok id', result.cat!.id);
+        return { success: true, cat: result.cat };
+      } else {
+        return { success: false, error: result.error || 'Failed to add cat' };
       }
-      setCats(prev => [...prev, json.data]);
-      // Invalidate cache after creating a new cat
-      await cacheUtils.invalidateCatsCache();
-      console.debug('[hook][useCats] createCat ok id', json.data.id);
-      return { success: true, cat: json.data };
     } catch (e: any) {
       console.error('[hook][useCats] createCat error', e);
-      return { success: false, error: e.message || 'Beklenmeyen hata' };
+      return { success: false, error: e.message || 'Unexpected error' };
     }
   }, []);
 
-  const updateCat: UseCatsResult['updateCat'] = useCallback(async (id, data) => {
+  const updateCatCallback: UseCatsResult['updateCat'] = useCallback(async (id, data) => {
     try {
       console.debug('[hook][useCats] updateCat start', { id });
       // Optimistic snapshot
       const prev = cats;
       const idx = prev.findIndex(c => c.id === id);
       if (idx === -1) {
-        return { success: false, error: 'Kedi bulunamadı (lokal)' };
+        return { success: false, error: 'Cat not found (local)' };
       }
       const optimistic: Cat = { ...prev[idx], ...data };
       setCats(p => p.map(c => (c.id === id ? optimistic : c)));
 
-      const res = await fetch(`${API_BASE}/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
+      const result = await updateCat(id, data);
+      if (result.success && result.cat) {
+        // Ensure server version
+        setCats(p => p.map(c => (c.id === id ? result.cat! : c)));
+        console.debug('[hook][useCats] updateCat ok', { id });
+        return { success: true, cat: result.cat };
+      } else {
         // rollback
         setCats(prev);
-        return { success: false, error: json.error || 'Kedi güncellenemedi' };
+        return { success: false, error: result.error || 'Failed to update cat' };
       }
-      // Ensure server version
-      setCats(p => p.map(c => (c.id === id ? json.data : c)));
-      // Invalidate cache after updating a cat
-      await cacheUtils.invalidateCatsCache();
-      await cacheUtils.invalidateCatCache(id);
-      console.debug('[hook][useCats] updateCat ok', { id });
-      return { success: true, cat: json.data };
     } catch (e: any) {
       console.error('[hook][useCats] updateCat error', e);
-      return { success: false, error: e.message || 'Beklenmeyen hata' };
+      return { success: false, error: e.message || 'Unexpected error' };
     }
   }, [cats]);
 
-  const deleteCat: UseCatsResult['deleteCat'] = useCallback(async (id) => {
+  const deleteCatCallback: UseCatsResult['deleteCat'] = useCallback(async (id) => {
     try {
       console.debug('[hook][useCats] deleteCat start', { id });
       const prev = cats;
       setCats(p => p.filter(c => c.id !== id));
 
-      const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
+      const result = await deleteCat(id);
+      if (result.success) {
+        console.debug('[hook][useCats] deleteCat ok', { id });
+        return { success: true };
+      } else {
         // rollback
         setCats(prev);
-        return { success: false, error: json.error || 'Kedi silinemedi' };
+        return { success: false, error: result.error || 'Failed to delete cat' };
       }
-      // Invalidate cache after deleting a cat
-      await cacheUtils.invalidateCatsCache();
-      await cacheUtils.invalidateCatCache(id);
-      console.debug('[hook][useCats] deleteCat ok', { id });
-      return { success: true };
     } catch (e: any) {
       console.error('[hook][useCats] deleteCat error', e);
-      return { success: false, error: e.message || 'Beklenmeyen hata' };
+      return { success: false, error: e.message || 'Unexpected error' };
     }
   }, [cats]);
 
@@ -156,11 +112,12 @@ export function useCats(): UseCatsResult {
     error,
     refresh: async () => {
       // Invalidate cache and fetch fresh data
-      await cacheUtils.invalidateCatsCache();
-      await fetchCats();
+      // Note: In a real application, you might want to have a service method for this
+      // For now, we'll just refetch
+      await fetchCatsCallback();
     },
-    createCat,
-    updateCat,
-    deleteCat,
+    createCat: createCatCallback,
+    updateCat: updateCatCallback,
+    deleteCat: deleteCatCallback,
   };
 }

@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // İlk yüklemede cookie kontrolü
+  // Check cookie on initial load
   useEffect(() => {
     const checkInitialAuth = async () => {
       if (typeof document === 'undefined') {
@@ -39,10 +39,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const success = await createSession(username, password);
 
     if (success) {
-      // State güncelle
+      // Update state
       setIsAuthenticated(true);
 
-      // Admin sayfasına git
+      // Go to admin page
       router.push('/admin');
 
       return true;

@@ -51,22 +51,22 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
 
       if (result.success) {
         toast({
-          title: 'Başarılı',
-          description: isEditing ? 'Kedi başarıyla güncellendi.' : 'Kedi başarıyla eklendi.',
+          title: 'Success',
+          description: isEditing ? 'Cat successfully updated.' : 'Cat successfully added.',
         });
         onOpenChange(false);
         onSuccess && onSuccess();
       } else {
         toast({
-          title: 'Hata',
-          description: result.error || 'İşlem başarısız',
+          title: 'Error',
+          description: result.error || 'Operation failed',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Hata',
-        description: 'Beklenmeyen bir hata oluştu.',
+        title: 'Error',
+        description: 'An unexpected error occurred.',
         variant: 'destructive',
       });
     } finally {
@@ -78,15 +78,15 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Kedi Düzenle' : 'Yeni Kedi Ekle'}</DialogTitle>
+          <DialogTitle>{isEditing ? 'Edit Cat' : 'Add New Cat'}</DialogTitle>
           <DialogDescription>
-            {isEditing ? 'Kedi bilgilerini güncelleyin.' : 'Yeni kedi bilgilerini girin.'}
+            {isEditing ? 'Update cat information.' : 'Enter new cat information.'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              İsim
+              Name
             </Label>
             <Input
               id="name"
@@ -98,7 +98,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="breed" className="text-right">
-              Cins
+              Breed
             </Label>
             <Input
               id="breed"
@@ -110,7 +110,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           </div>
             <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="age" className="text-right">
-              Yaş
+              Age
             </Label>
             <Input
               id="age"
@@ -125,21 +125,21 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="gender" className="text-right">
-              Cinsiyet
+              Gender
             </Label>
             <Select value={formData.gender} onValueChange={(value: 'Male' | 'Female') => setFormData(prev => ({ ...prev, gender: value }))}>
               <SelectTrigger className="col-span-3">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Male">Erkek</SelectItem>
-                <SelectItem value="Female">Dişi</SelectItem>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="grid grid-cols-4 items-start gap-4">
             <Label htmlFor="description" className="text-right mt-2">
-              Açıklama
+              Description
             </Label>
             <Textarea
               id="description"
@@ -152,7 +152,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="image" className="text-right">
-              Resim URL
+              Image URL
             </Label>
             <Input
               id="image"
@@ -164,10 +164,10 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              İptal
+              Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Kaydediliyor...' : (isEditing ? 'Güncelle' : 'Ekle')}
+              {isSubmitting ? 'Saving...' : (isEditing ? 'Update' : 'Add')}
             </Button>
           </DialogFooter>
         </form>
