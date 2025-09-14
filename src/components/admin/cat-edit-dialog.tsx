@@ -18,6 +18,9 @@ import { Cat } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { useCats } from '@/hooks/use-cats';
 import { AdminErrorBoundary } from '@/components/admin/error-boundary';
+import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
+import { validateData } from '@/lib/validation/utils';
+import type { CatFormData } from '@/lib/validation/cats';
 
 interface CatEditDialogProps {
   isOpen: boolean;
@@ -44,6 +47,21 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Validate form data
+    const validationSchema = isEditing ? catUpdateSchema : catFormSchema;
+    const validationResult = validateData(validationSchema, formData);
+
+    if (!validationResult.success) {
+      // Display validation errors
+      toast({
+        title: 'Validation Error',
+        description: 'Please check the form for errors.',
+        variant: 'destructive',
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const result = isEditing && cat

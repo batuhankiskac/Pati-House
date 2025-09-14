@@ -19,7 +19,7 @@ const mockRequest: AdoptionRequest = {
   id: 1,
   catName: 'Test Cat',
   requestDate: '2023-01-01',
-  status: 'Bekliyor',
+  status: 'Pending',
   applicant: {
     name: 'Test Applicant',
     email: 'test@example.com',

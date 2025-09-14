@@ -8,6 +8,9 @@ import {AlertCircle} from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useState } from 'react';
 import { ErrorBoundary } from '@/components/layout/error-boundary';
+import { loginSchema } from '@/lib/validation/auth';
+import { validateData } from '@/lib/validation/utils';
+import type { LoginFormData } from '@/lib/validation/auth';
 
 export function LoginForm() {
   const { login } = useAuth();
@@ -20,6 +23,16 @@ export function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Validate form data
+    const formData: LoginFormData = { username, password };
+    const validationResult = validateData(loginSchema, formData);
+
+    if (!validationResult.success) {
+      setError('Please check your username and password.');
+      setLoading(false);
+      return;
+    }
 
     const success = await login(username, password);
 

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS adoption_requests (
     id SERIAL PRIMARY KEY,
     cat_name VARCHAR(255) NOT NULL,
     request_date DATE NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('Bekliyor', 'Onaylandı', 'Reddedildi')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('Pending', 'Approved', 'Rejected')),
     applicant_name VARCHAR(255) NOT NULL,
     applicant_email VARCHAR(255) NOT NULL,
     applicant_phone VARCHAR(50) NOT NULL,

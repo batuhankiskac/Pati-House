@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AdoptionRequest } from '@/lib/data';
 import { fetchRequests, createRequest, updateStatus, deleteRequest, type CreateRequestInput } from '@/services/requests-service';
+import type { AdoptionRequestFormData } from '@/lib/validation/requests';
 
 interface UseRequestsResult {
   requests: AdoptionRequest[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  createRequest: (data: CreateRequestInput) => Promise<{ success: boolean; request?: AdoptionRequest; error?: string }>;
+  createRequest: (data: AdoptionRequestFormData) => Promise<{ success: boolean; request?: AdoptionRequest; error?: string }>;
   updateStatus: (id: number, status: 'Approved' | 'Rejected' | 'Pending') => Promise<{ success: boolean; request?: AdoptionRequest; error?: string }>;
   deleteRequest: (id: number) => Promise<{ success: boolean; error?: string }>;
 }
@@ -39,7 +40,7 @@ export function useRequests(): UseRequestsResult {
     fetchRequestsCallback();
  }, [fetchRequestsCallback]);
 
-  const createRequestCallback: UseRequestsResult['createRequest'] = useCallback(async (data) => {
+  const createRequestCallback: UseRequestsResult['createRequest'] = useCallback(async (data: AdoptionRequestFormData) => {
     try {
       console.debug('[hook][useRequests] createRequest');
       const result = await createRequest(data);

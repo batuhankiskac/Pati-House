@@ -38,7 +38,11 @@ export default function RequestsTable() {
   };
 
   const handleStatusChange = async (requestId: number, status: 'Onaylandı' | 'Reddedildi') => {
-    const result = await updateStatus(requestId, status);
+    // Map Turkish status values to English ones
+    const englishStatus = status === 'Onaylandı' ? 'Approved' :
+                           status === 'Reddedildi' ? 'Rejected' :
+                           'Pending';
+    const result = await updateStatus(requestId, englishStatus);
     if (result.success) {
       toast({
         title: 'Başarılı',
@@ -90,9 +94,9 @@ export default function RequestsTable() {
                       <Badge
                         variant="outline"
                         className={cn({
-                          'bg-green-100 text-green-800 border-green-300': request.status === 'Onaylandı',
-                          'bg-yellow-100 text-yellow-800 border-yellow-300': request.status === 'Bekliyor',
-                          'bg-red-100 text-red-800 border-red-300': request.status === 'Reddedildi',
+                          'bg-green-100 text-green-800 border-green-300': request.status === 'Approved',
+                          'bg-yellow-100 text-yellow-800 border-yellow-300': request.status === 'Pending',
+                          'bg-red-100 text-red-800 border-red-300': request.status === 'Rejected',
                         })}
                       >
                         {request.status}
@@ -109,12 +113,12 @@ export default function RequestsTable() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
-                          {request.status !== 'Onaylandı' && (
+                          {request.status !== 'Approved' && (
                             <DropdownMenuItem onClick={() => handleStatusChange(request.id, 'Onaylandı')}>
                               Onayla
                             </DropdownMenuItem>
                           )}
-                          {request.status !== 'Reddedildi' && (
+                          {request.status !== 'Rejected' && (
                             <DropdownMenuItem onClick={() => handleStatusChange(request.id, 'Reddedildi')}>
                               Reddet
                             </DropdownMenuItem>

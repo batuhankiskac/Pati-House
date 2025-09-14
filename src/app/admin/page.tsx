@@ -12,7 +12,7 @@ export default function AdminDashboard() {
   const { requests: adoptionRequests } = useRequests();
 
   const totalCats = cats.length;
-  const pendingRequests = adoptionRequests.filter(req => req.status === 'Bekliyor').length;
+  const pendingRequests = adoptionRequests.filter(req => req.status === 'Pending').length;
 
   return (
     <div>

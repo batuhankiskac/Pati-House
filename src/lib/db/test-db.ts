@@ -41,7 +41,7 @@ async function testDatabaseOperations() {
     const newRequest = await AdoptionRequestRepository.create({
       catName: 'Test Cat',
       requestDate: new Date().toISOString().split('T')[0],
-      status: 'Bekliyor',
+      status: 'Pending',
       applicant: {
         name: 'Test Applicant',
         email: 'test@example.com',
@@ -62,7 +62,7 @@ async function testDatabaseOperations() {
 
     // Update request
     const updatedRequest = await AdoptionRequestRepository.update(newRequest.id, {
-      status: 'Onaylandı'
+      status: 'Approved'
     });
     console.log('Updated request:', updatedRequest);
 

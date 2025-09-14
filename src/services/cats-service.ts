@@ -1,19 +1,13 @@
 // Service for cat-related API calls and business logic
 import type { Cat } from '@/lib/data';
 import cacheUtils from '@/lib/cache/cache-utils';
+import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
+import { validateData } from '@/lib/validation/utils';
+import type { CatFormData, CatUpdateData } from '@/lib/validation/cats';
 
-type CreateCatInput = {
-  name: string;
-  breed: string;
-  age: number;
-  gender: 'Male' | 'Female';
-  description: string;
-  image: string;
-  dataAiHint?: string;
-};
 
-type UpdateCatInput = Partial<CreateCatInput>;
-
+type CreateCatInput = CatFormData;
+type UpdateCatInput = CatUpdateData;
 const API_BASE = '/api/cats';
 
 async function fetchCats(): Promise<{ success: boolean; data?: Cat[]; error?: string }> {
@@ -45,6 +39,14 @@ async function fetchCats(): Promise<{ success: boolean; data?: Cat[]; error?: st
 async function createCat(data: CreateCatInput): Promise<{ success: boolean; cat?: Cat; error?: string }> {
   try {
     console.debug('[service][cats] createCat start');
+
+    // Validate input data
+    const validationResult = validateData(catFormSchema, data);
+    if (!validationResult.success) {
+      const firstError = validationResult.errors?.[0];
+      return { success: false, error: firstError?.message || 'Validation failed' };
+    }
+
     const res = await fetch(API_BASE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -67,6 +69,14 @@ async function createCat(data: CreateCatInput): Promise<{ success: boolean; cat?
 async function updateCat(id: number, data: UpdateCatInput): Promise<{ success: boolean; cat?: Cat; error?: string }> {
   try {
     console.debug('[service][cats] updateCat start', { id });
+
+    // Validate input data
+    const validationResult = validateData(catUpdateSchema, data);
+    if (!validationResult.success) {
+      const firstError = validationResult.errors?.[0];
+      return { success: false, error: firstError?.message || 'Validation failed' };
+    }
+
     const res = await fetch(`${API_BASE}/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

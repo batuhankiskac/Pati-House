@@ -1,14 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Cat } from '@/lib/data';
 import { fetchCats, createCat, updateCat, deleteCat, type CreateCatInput, type UpdateCatInput } from '@/services/cats-service';
+import type { CatFormData, CatUpdateData } from '@/lib/validation/cats';
 
 interface UseCatsResult {
   cats: Cat[];
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  createCat: (data: CreateCatInput) => Promise<{ success: boolean; cat?: Cat; error?: string }>;
-  updateCat: (id: number, data: UpdateCatInput) => Promise<{ success: boolean; cat?: Cat; error?: string }>;
+  createCat: (data: CatFormData) => Promise<{ success: boolean; cat?: Cat; error?: string }>;
+  updateCat: (id: number, data: CatUpdateData) => Promise<{ success: boolean; cat?: Cat; error?: string }>;
   deleteCat: (id: number) => Promise<{ success: boolean; error?: string }>;
 }
 
@@ -39,7 +40,7 @@ export function useCats(): UseCatsResult {
     fetchCatsCallback();
   }, [fetchCatsCallback]);
 
-  const createCatCallback: UseCatsResult['createCat'] = useCallback(async (data) => {
+  const createCatCallback: UseCatsResult['createCat'] = useCallback(async (data: CatFormData) => {
     try {
       console.debug('[hook][useCats] createCat start');
       const result = await createCat(data);
@@ -56,7 +57,7 @@ export function useCats(): UseCatsResult {
     }
   }, []);
 
-  const updateCatCallback: UseCatsResult['updateCat'] = useCallback(async (id, data) => {
+  const updateCatCallback: UseCatsResult['updateCat'] = useCallback(async (id: number, data: CatUpdateData) => {
     try {
       console.debug('[hook][useCats] updateCat start', { id });
       // Optimistic snapshot

@@ -1,15 +1,11 @@
 // Service for adoption request-related API calls and business logic
 import type { AdoptionRequest } from '@/lib/data';
 import cacheUtils from '@/lib/cache/cache-utils';
+import { adoptionRequestSchema } from '@/lib/validation/requests';
+import { validateData } from '@/lib/validation/utils';
+import type { AdoptionRequestFormData } from '@/lib/validation/requests';
 
-export type CreateRequestInput = {
-  catName: string;
-  fullName: string;
-  email: string;
- phone: string;
- address: string;
-  reason: string;
-};
+type CreateRequestInput = AdoptionRequestFormData;
 
 const API_BASE = '/api/requests';
 
@@ -42,6 +38,14 @@ async function fetchRequests(): Promise<{ success: boolean; data?: AdoptionReque
 async function createRequest(data: CreateRequestInput): Promise<{ success: boolean; request?: AdoptionRequest; error?: string }> {
   try {
     console.debug('[service][requests] createRequest');
+
+    // Validate input data
+    const validationResult = validateData(adoptionRequestSchema, data);
+    if (!validationResult.success) {
+      const firstError = validationResult.errors?.[0];
+      return { success: false, error: firstError?.message || 'Validation failed' };
+    }
+
     const res = await fetch(API_BASE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -101,4 +105,5 @@ async function deleteRequest(id: number): Promise<{ success: boolean; error?: st
 }
 
 // Export types for use in hooks and components
+export type { CreateRequestInput };
 export { fetchRequests, createRequest, updateStatus, deleteRequest };

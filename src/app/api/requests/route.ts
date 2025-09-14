@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     const newRequest: Omit<AdoptionRequest, 'id'> = {
       catName: body.catName.trim(),
       requestDate: new Date().toISOString().split('T')[0],
-      status: 'Bekliyor',
+      status: 'Pending',
       applicant: {
         name: body.fullName.trim(),
         email: body.email.trim(),

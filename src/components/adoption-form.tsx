@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -20,16 +19,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useRequests } from '@/hooks/use-requests';
 import { ErrorBoundary } from '@/components/layout/error-boundary';
+import { adoptionRequestSchema } from '@/lib/validation/requests';
+import type { AdoptionRequestFormData } from '@/lib/validation/requests';
 
-const adoptionFormSchema = z.object({
-  fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Lütfen geçerli bir e-posta adresi girin.' }),
-  phone: z.string().min(10, { message: 'Telefon numarası en az 10 rakam olmalıdır.' }),
-  address: z.string().min(10, { message: 'Adres en az 10 karakter olmalıdır.' }),
-  reason: z.string().min(20, { message: 'Lütfen bize biraz daha bilgi verin (en az 20 karakter).' }).max(500),
-});
-
-type AdoptionFormValues = z.infer<typeof adoptionFormSchema>;
+type AdoptionFormValues = AdoptionRequestFormData;
 
 interface AdoptionFormProps {
   catName: string;
@@ -40,8 +33,9 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
   const router = useRouter();
 
   const form = useForm<AdoptionFormValues>({
-    resolver: zodResolver(adoptionFormSchema),
+    resolver: zodResolver(adoptionRequestSchema),
     defaultValues: {
+      catName: '',
       fullName: '',
       email: '',
       phone: '',
@@ -55,7 +49,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
   async function onSubmit(data: AdoptionFormValues) {
     try {
       const result = await createRequest({
-        catName,
+        catName: catName,
         fullName: data.fullName,
         email: data.email,
         phone: data.phone,

@@ -29,9 +29,9 @@ export default function RequestDetailsDialog({
   const { applicant, catName, id, status } = request;
   const { updateStatus } = useRequests();
   const { toast } = useToast();
-  const [submitting, setSubmitting] = useState<'Onaylandı' | 'Reddedildi' | null>(null);
+  const [submitting, setSubmitting] = useState<'Approved' | 'Rejected' | null>(null);
 
-  const changeStatus = async (next: 'Onaylandı' | 'Reddedildi') => {
+  const changeStatus = async (next: 'Approved' | 'Rejected') => {
     if (status === next) {
       onOpenChange(false);
       return;
@@ -107,15 +107,15 @@ export default function RequestDetailsDialog({
           <Button
             variant="outline"
             disabled={submitting !== null}
-            onClick={() => changeStatus('Reddedildi')}
+            onClick={() => changeStatus('Rejected')}
           >
-            {submitting === 'Reddedildi' ? 'İşleniyor...' : 'Reddet'}
+            {submitting === 'Rejected' ? 'İşleniyor...' : 'Reddet'}
           </Button>
           <Button
             disabled={submitting !== null}
-            onClick={() => changeStatus('Onaylandı')}
+            onClick={() => changeStatus('Approved')}
           >
-            {submitting === 'Onaylandı' ? 'İşleniyor...' : 'Onayla'}
+            {submitting === 'Approved' ? 'İşleniyor...' : 'Onayla'}
           </Button>
         </DialogFooter>
       </DialogContent>
