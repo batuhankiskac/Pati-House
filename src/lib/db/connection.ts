@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import { types } from 'pg';
+import { CONNECTION_CONFIG } from '@/lib/config';
 
 // Parse numeric types as floats instead of strings
 types.setTypeParser(types.builtins.NUMERIC, (value: string) => parseFloat(value));
@@ -15,7 +16,8 @@ class DatabaseConnection {
   private constructor() {
     // Create a connection pool
     this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      // connectionString: process.env.DATABASE_URL,
+      connectionString: CONNECTION_CONFIG.DATABASE_URL,
       max: 20, // Maximum number of clients in the pool
       min: 5,  // Minimum number of clients in the pool
       idleTimeoutMillis: 30000, // Close idle clients after 30 seconds

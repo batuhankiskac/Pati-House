@@ -1,12 +1,13 @@
 import redisConnection from './connection';
 import { Cat, AdoptionRequest } from '@/lib/data';
+import { CACHE_TTL } from '@/lib/config';
 
-const CACHE_TTL = {
-  CATS_LIST: 300, // 5 minutes
-  CATS_ITEM: 600, // 10 minutes
-  REQUESTS_LIST: 300, // 5 minutes
-  REQUESTS_ITEM: 600, // 10 minutes
-};
+// const CACHE_TTL = {
+//   CATS_LIST: 300, // 5 minutes
+//   CATS_ITEM: 600, // 10 minutes
+//   REQUESTS_LIST: 300, // 5 minutes
+//   REQUESTS_ITEM: 600, // 10 minutes
+// };
 
 // Cache keys
 const CACHE_KEYS = {

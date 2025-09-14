@@ -3,6 +3,7 @@ import { adoptionRequestRepository } from '@/lib/data';
 import { requireAuth } from '@/lib/auth';
 import { NextRequest } from 'next/server';
 import cacheUtils from '@/lib/cache/cache-utils';
+import { ERROR_MESSAGES } from '@/lib/config';
 
 /**
  * Item-level adoption request endpoint.
@@ -145,7 +146,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     return NextResponse.json({ success: true, data: updatedRequest });
   } catch (err) {
     console.error('[API][PATCH /api/requests/:id] error', err);
-    return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+    // return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+    return NextResponse.json({ success: false, error: ERROR_MESSAGES.UNEXPECTED_ERROR }, { status: 500 });
   }
 }
 

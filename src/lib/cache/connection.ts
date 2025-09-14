@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import { CONNECTION_CONFIG } from '@/lib/config';
 
 class RedisConnection {
   private static instance: RedisConnection;
@@ -6,7 +7,8 @@ class RedisConnection {
 
   private constructor() {
     // Create Redis client with configuration from environment variables
-    this.client = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    // this.client = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    this.client = new Redis(CONNECTION_CONFIG.REDIS_URL);
 
     // Handle connection events
     this.client.on('connect', () => {

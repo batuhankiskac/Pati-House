@@ -3,11 +3,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { userRepository, User } from './data';
+import { AUTH_CONFIG } from '@/lib/config';
 
-const SALT_ROUNDS = 10;
-const SECRET_KEY = process.env.SECRET_KEY || 'fallback-secret-key';
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-jwt-secret';
-const COOKIE_NAME = 'auth-token';
+// const SALT_ROUNDS = 10;
+// const SECRET_KEY = process.env.SECRET_KEY || 'fallback-secret-key';
+// const JWT_SECRET = process.env.JWT_SECRET || 'fallback-jwt-secret';
+// const COOKIE_NAME = 'auth-token';
+
+const SALT_ROUNDS = AUTH_CONFIG.SALT_ROUNDS;
+const SECRET_KEY = AUTH_CONFIG.SECRET_KEY;
+const JWT_SECRET = AUTH_CONFIG.JWT_SECRET;
+const COOKIE_NAME = AUTH_CONFIG.COOKIE_NAME;
 
 export async function registerUser(username: string, email: string, password: string, name: string): Promise<User | null> {
   try {
@@ -147,7 +153,7 @@ const COOKIE_OPTIONS = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'strict' as const,
   path: '/' as const,
-  maxAge: 60 * 24 * 7 // 7 days
+  maxAge: AUTH_CONFIG.COOKIE_MAX_AGE // 7 days
 };
 
 export async function destroySession(): Promise<void> {

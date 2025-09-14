@@ -4,6 +4,7 @@ import { normalizeBreed } from '@/lib/utils';
 import { requireAuth } from '@/lib/auth';
 import { NextRequest } from 'next/server';
 import cacheUtils from '@/lib/cache/cache-utils';
+import { ERROR_MESSAGES } from '@/lib/config';
 
 /**
  * Simple database API for cats.
@@ -55,7 +56,8 @@ export async function GET() {
     return NextResponse.json({ success: true, data: cats });
   } catch (err) {
     console.error('[API][GET /api/cats] error', err);
-    return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+    // return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+    return NextResponse.json({ success: false, error: ERROR_MESSAGES.UNEXPECTED_ERROR }, { status: 500 });
   }
 }
 

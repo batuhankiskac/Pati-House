@@ -4,11 +4,13 @@ import cacheUtils from '@/lib/cache/cache-utils';
 import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
 import { validateData } from '@/lib/validation/utils';
 import type { CatFormData, CatUpdateData } from '@/lib/validation/cats';
+import { API_ENDPOINTS } from '@/lib/config';
 
 
 type CreateCatInput = CatFormData;
 type UpdateCatInput = CatUpdateData;
-const API_BASE = '/api/cats';
+// const API_BASE = '/api/cats';
+const API_BASE = API_ENDPOINTS.CATS;
 
 async function fetchCats(): Promise<{ success: boolean; data?: Cat[]; error?: string }> {
   try {

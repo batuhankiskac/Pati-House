@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSession, authenticateUser } from '@/lib/auth';
 import { cookies } from 'next/headers';
+import { APP_URLS } from '@/lib/config';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,7 +36,8 @@ export async function POST(request: NextRequest) {
     // Set JWT token in cookie
     const cookieStore = await cookies();
     const COOKIE_NAME = 'auth-token';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    // const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const appUrl = APP_URLS.BASE;
     const domain = appUrl.replace(/^https?:\/\//, '').split(':')[0];
 
     cookieStore.set(COOKIE_NAME, sessionResult.token!, {

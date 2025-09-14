@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyToken } from '@/lib/auth';
+import { AUTH_CONFIG } from '@/lib/config';
 
 // Cookie configuration
-const COOKIE_NAME = 'auth-token';
+// const COOKIE_NAME = 'auth-token';
+const COOKIE_NAME = AUTH_CONFIG.COOKIE_NAME;
 const SECURE_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',

@@ -4,10 +4,12 @@ import cacheUtils from '@/lib/cache/cache-utils';
 import { adoptionRequestSchema } from '@/lib/validation/requests';
 import { validateData } from '@/lib/validation/utils';
 import type { AdoptionRequestFormData } from '@/lib/validation/requests';
+import { API_ENDPOINTS } from '@/lib/config';
 
 type CreateRequestInput = AdoptionRequestFormData;
 
-const API_BASE = '/api/requests';
+// const API_BASE = '/api/requests';
+const API_BASE = API_ENDPOINTS.REQUESTS;
 
 async function fetchRequests(): Promise<{ success: boolean; data?: AdoptionRequest[]; error?: string }> {
   try {

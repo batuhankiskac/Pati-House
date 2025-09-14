@@ -4,6 +4,7 @@ import { normalizeBreed } from '@/lib/utils';
 import { requireAuth } from '@/lib/auth';
 import { NextRequest } from 'next/server';
 import cacheUtils from '@/lib/cache/cache-utils';
+import { ERROR_MESSAGES } from '@/lib/config';
 
 /**
  * Item-level API for a single cat.
@@ -111,7 +112,8 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     return NextResponse.json({ success: true, data: updatedCat });
   } catch (err) {
     console.error('[API][PATCH /api/cats/:id] error', err);
-    return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+    // return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
+    return NextResponse.json({ success: false, error: ERROR_MESSAGES.UNEXPECTED_ERROR }, { status: 500 });
   }
 }
 
