@@ -6,6 +6,7 @@ import CatFilters from '@/components/cat-filters';
 import { type Cat } from '@/lib/data';
 import { PawPrint } from 'lucide-react';
 import { useCats } from '@/hooks/use-cats';
+import TestErrorComponent from '@/components/test-error-component';
 
 export default function ClientHomePage() {
   const { cats: allCats } = useCats();
@@ -47,6 +48,11 @@ export default function ClientHomePage() {
           Pati House'a hoş geldiniz! İhtiyaç sahibi kedilere sevgi dolu yuvalar bulmaya adandık. Mevcut kedilerimize göz atın ve sahiplenme yolculuğunuza bugün başlayın.
         </p>
       </section>
+
+      {/* Test error component for verifying error boundaries */}
+      <div className="mb-8">
+        <TestErrorComponent />
+      </div>
 
       <CatFilters filters={filters} onFilterChange={setFilters} />
 

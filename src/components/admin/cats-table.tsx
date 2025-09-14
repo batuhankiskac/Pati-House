@@ -25,6 +25,7 @@ import { Badge } from '../ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import CatEditDialog from './cat-edit-dialog';
 import { useCats } from '@/hooks/use-cats';
+import { AdminErrorBoundary } from '@/components/admin/error-boundary';
 
 export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () => void }) {
   const { toast } = useToast();
@@ -64,7 +65,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
   };
 
   return (
-    <>
+    <AdminErrorBoundary>
       <Card>
         <CardHeader>
           <CardTitle>Cats</CardTitle>
@@ -147,6 +148,6 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
           triggerExternalRefresh();
         }}
       />
-    </>
-  );
+    </AdminErrorBoundary>
+ );
 }

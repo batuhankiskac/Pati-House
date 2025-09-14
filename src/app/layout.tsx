@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster"
 import Header from '@/components/layout/header';
 import { AuthProvider } from '@/contexts/auth-context';
+import { ErrorBoundary } from '@/components/layout/error-boundary';
 
 export const metadata: Metadata = {
   title: 'Pati House - Tüylü Dostunuzu Bulun',
@@ -28,13 +29,15 @@ export default async function RootLayout({
         )}
       >
         <AuthProvider>
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-          </div>
-          <Toaster />
+          <ErrorBoundary>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+            </div>
+            <Toaster />
+          </ErrorBoundary>
         </AuthProvider>
       </body>
     </html>
