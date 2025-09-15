@@ -47,6 +47,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
+        // Ensure proper focus management for accessibility
+        onFocus={(e) => {
+          // Call original onFocus if provided
+          props.onFocus?.(e);
+          // Ensure focus is visible
+          e.currentTarget.classList.add('focus-visible');
+        }}
+        onBlur={(e) => {
+          // Call original onBlur if provided
+          props.onBlur?.(e);
+          // Remove focus visible class
+          e.currentTarget.classList.remove('focus-visible');
+        }}
       />
     )
   }

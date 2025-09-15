@@ -19,6 +19,8 @@ const Label = React.forwardRef<
     ref={ref}
     className={cn(labelVariants(), className)}
     {...props}
+    // Add accessibility attributes
+    role="label"
   />
 ))
 Label.displayName = LabelPrimitive.Root.displayName

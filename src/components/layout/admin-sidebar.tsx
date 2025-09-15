@@ -26,10 +26,18 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="w-64 flex-shrink-0 bg-card border-r hidden md:flex flex-col">
+    <aside
+      className="w-64 flex-shrink-0 bg-card border-r hidden md:flex flex-col"
+      role="navigation"
+      aria-label="Admin navigation"
+    >
       <div className="flex h-16 items-center justify-center border-b">
-         <Link href="/" className="flex items-center gap-2">
-            <PawPrint className="h-8 w-8 text-accent" />
+         <Link
+           href="/"
+           className="flex items-center gap-2"
+           aria-label="Go to homepage"
+         >
+            <PawPrint className="h-8 w-8 text-accent" aria-hidden="true" />
             <span className="text-2xl font-bold font-headline text-primary-foreground">
               Admin
             </span>
@@ -47,8 +55,10 @@ export default function AdminSidebar() {
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary my-1',
                     isActive && 'bg-muted text-primary'
                   )}
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={link.label}
                 >
-                  <link.icon className="h-4 w-4" />
+                  <link.icon className="h-4 w-4" aria-hidden="true" />
                   {link.label}
                 </Link>
               </li>
@@ -57,8 +67,13 @@ export default function AdminSidebar() {
         </ul>
       </nav>
       <div className="p-4 border-t">
-        <Button variant="ghost" className="w-full justify-start" onClick={handleSignOut}>
-          <LogOut className="mr-2 h-4 w-4" />
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={handleSignOut}
+          aria-label="Çıkış Yap"
+        >
+          <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
           Çıkış Yap
         </Button>
       </div>

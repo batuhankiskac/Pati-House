@@ -39,9 +39,19 @@ export default function ClientHomePage() {
   }, [filters, allCats]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <section className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-headline font-bold text-accent mb-4">
+    <div
+      className="container mx-auto px-4 py-8"
+      role="main"
+      aria-label="Available cats for adoption"
+    >
+      <section
+        className="text-center mb-12"
+        aria-labelledby="welcome-heading"
+      >
+        <h1
+          id="welcome-heading"
+          className="text-4xl md:text-5xl font-headline font-bold text-accent mb-4"
+        >
           Yeni En İyi Arkadaşınızı Bulun
         </h1>
         <p className="max-w-2xl mx-auto text-lg text-foreground/80">
@@ -57,7 +67,11 @@ export default function ClientHomePage() {
       <CatFilters filters={filters} onFilterChange={setFilters} />
 
       {filteredCats.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+          role="region"
+          aria-label="List of available cats"
+        >
           {filteredCats.map((cat, index) => (
             <div
               key={cat.id}
@@ -69,8 +83,15 @@ export default function ClientHomePage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16">
-           <PawPrint className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
+        <div
+          className="text-center py-16"
+          role="status"
+          aria-live="polite"
+        >
+           <PawPrint
+             className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4"
+             aria-hidden="true"
+           />
           <h2 className="text-2xl font-headline font-semibold text-foreground">Kedi Bulunamadı</h2>
           <p className="text-muted-foreground mt-2">
             Daha fazla tüylü dost bulmak için arama filtrelerinizi değiştirmeyi deneyin.

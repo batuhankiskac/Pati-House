@@ -20,16 +20,28 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-50">
+    <header
+      className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-50"
+      role="banner"
+      aria-label="Ana başlık"
+    >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <PawPrint className="h-8 w-8 text-accent" />
+          <Link
+            href="/"
+            className="flex items-center gap-2"
+            aria-label="Pati House ana sayfa"
+          >
+            <PawPrint className="h-8 w-8 text-accent" aria-hidden="true" />
             <span className="text-2xl font-bold font-headline text-primary-foreground">
               Pati House
             </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-4 text-sm">
+          <nav
+            className="hidden md:flex items-center gap-4 text-sm"
+            role="navigation"
+            aria-label="Ana navigasyon"
+          >
             {!loading && (
               <>
                 {publicNavLinks.map((link) => (
@@ -43,6 +55,7 @@ export default function Header() {
                         ? 'bg-accent text-accent-foreground shadow-md'
                         : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
                     )}
+                    aria-current={(pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href ? 'page' : undefined}
                   >
                     {link.label}
                   </Link>
@@ -58,6 +71,7 @@ export default function Header() {
                         ? 'bg-accent text-accent-foreground shadow-md'
                         : 'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
                     )}
+                    aria-current={(pathname.startsWith(link.href) && link.href !== '/') || pathname === link.href ? 'page' : undefined}
                   >
                     {link.label}
                   </Link>
@@ -69,6 +83,7 @@ export default function Header() {
                       buttonVariants({ variant: 'ghost', size: 'sm' }),
                       'text-foreground/80 hover:bg-accent/80 hover:text-accent-foreground'
                     )}
+                    aria-label="Çıkış yap"
                   >
                     Çıkış Yap
                   </button>

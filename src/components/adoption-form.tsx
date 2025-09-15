@@ -83,21 +83,46 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
 
   return (
     <ErrorBoundary>
-      <Card>
+      <Card
+        role="form"
+        aria-label={`${catName} için sahiplenme formu`}
+      >
         <CardContent className="p-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+              aria-describedby="form-description"
+            >
+              <p id="form-description" className="sr-only">
+                {catName} için sahiplenme başvurusu yapmak için aşağıdaki formu doldurunuz.
+              </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tam Adınız</FormLabel>
+                      <FormLabel
+                        htmlFor={field.name}
+                        aria-required="true"
+                      >
+                        Tam Adınız
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Ad Soyad" {...field} />
+                        <Input
+                          placeholder="Ad Soyad"
+                          {...field}
+                          aria-describedby={form.formState.errors.fullName ? `${field.name}-error` : undefined}
+                        />
                       </FormControl>
-                      <FormMessage />
+                      {form.formState.errors.fullName && (
+                        <FormMessage
+                          id={`${field.name}-error`}
+                          role="alert"
+                          aria-live="assertive"
+                        />
+                      )}
                     </FormItem>
                   )}
                 />
@@ -106,11 +131,26 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>E-posta</FormLabel>
+                      <FormLabel
+                        htmlFor={field.name}
+                        aria-required="true"
+                      >
+                        E-posta
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="siz@ornek.com" {...field} />
+                        <Input
+                          placeholder="siz@ornek.com"
+                          {...field}
+                          aria-describedby={form.formState.errors.email ? `${field.name}-error` : undefined}
+                        />
                       </FormControl>
-                      <FormMessage />
+                      {form.formState.errors.email && (
+                        <FormMessage
+                          id={`${field.name}-error`}
+                          role="alert"
+                          aria-live="assertive"
+                        />
+                      )}
                     </FormItem>
                   )}
                 />
@@ -120,11 +160,26 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefon Numarası</FormLabel>
+                    <FormLabel
+                      htmlFor={field.name}
+                      aria-required="true"
+                    >
+                      Telefon Numarası
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="(555) 123-4567" {...field} />
+                      <Input
+                        placeholder="(555) 123-4567"
+                        {...field}
+                        aria-describedby={form.formState.errors.phone ? `${field.name}-error` : undefined}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    {form.formState.errors.phone && (
+                      <FormMessage
+                        id={`${field.name}-error`}
+                        role="alert"
+                        aria-live="assertive"
+                      />
+                    )}
                   </FormItem>
                 )}
               />
@@ -133,11 +188,26 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tam Adres</FormLabel>
+                    <FormLabel
+                      htmlFor={field.name}
+                      aria-required="true"
+                    >
+                      Tam Adres
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="123 Ana Cad, Herhangibiryer, Türkiye" {...field} />
+                      <Input
+                        placeholder="123 Ana Cad, Herhangibiryer, Türkiye"
+                        {...field}
+                        aria-describedby={form.formState.errors.address ? `${field.name}-error` : undefined}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    {form.formState.errors.address && (
+                      <FormMessage
+                        id={`${field.name}-error`}
+                        role="alert"
+                        aria-live="assertive"
+                      />
+                    )}
                   </FormItem>
                 )}
               />
@@ -146,23 +216,48 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                 name="reason"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{catName}'i neden sahiplenmek istiyorsunuz?</FormLabel>
+                    <FormLabel
+                      htmlFor={field.name}
+                      aria-required="true"
+                    >
+                      {catName}'i neden sahiplenmek istiyorsunuz?
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Bize evinizden, evcil hayvan deneyiminizden ve neden harika bir sahip olacağınızdan bahsedin."
                         className="resize-y min-h-[120px]"
                         {...field}
+                        aria-describedby={form.formState.errors.reason ? `${field.name}-error` : undefined}
                       />
                     </FormControl>
                      <FormDescription>
                       Yaşam durumunuzu ve evcil hayvanlarla olan deneyiminizi kısaca açıklayın.
                     </FormDescription>
-                    <FormMessage />
+                    {form.formState.errors.reason && (
+                      <FormMessage
+                        id={`${field.name}-error`}
+                        role="alert"
+                        aria-live="assertive"
+                      />
+                    )}
                   </FormItem>
                 )}
               />
-              <Button type="submit" size="lg" className="w-full bg-accent hover:bg-accent/90" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Gönderiliyor...' : `${catName} için Başvuruyu Gönder`}
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full bg-accent hover:bg-accent/90"
+                disabled={form.formState.isSubmitting}
+                aria-busy={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <>
+                    <span className="sr-only">Gönderiliyor</span>
+                    Gönderiliyor...
+                  </>
+                ) : (
+                  `${catName} için Başvuruyu Gönder`
+                )}
               </Button>
             </form>
           </Form>

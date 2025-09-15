@@ -31,8 +31,20 @@ export default async function RootLayout({
         <AuthProvider>
           <ErrorBoundary>
             <div className="relative flex min-h-screen flex-col">
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-background focus:p-4 focus:ring-2 focus:ring-accent"
+                aria-label="Ana içeriğe atla"
+              >
+                Ana içeriğe atla
+              </a>
               <Header />
-              <main className="flex-1">
+              <main
+                id="main-content"
+                className="flex-1"
+                role="main"
+                aria-label="Ana içerik"
+              >
                 {children}
               </main>
             </div>

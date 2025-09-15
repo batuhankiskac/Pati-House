@@ -66,23 +66,44 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
 
   return (
     <AdminErrorBoundary>
-      <Card>
+      <Card
+        role="region"
+        aria-label="Cats table"
+      >
         <CardHeader>
           <CardTitle>Cats</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading && <div className="py-4 text-sm text-muted-foreground">Loading...</div>}
-          {error && !loading && <div className="py-2 text-sm text-red-600">Error: {error}</div>}
+          {loading && (
+            <div
+              className="py-4 text-sm text-muted-foreground"
+              role="status"
+              aria-live="polite"
+            >
+              Loading...
+            </div>
+          )}
+          {error && !loading && (
+            <div
+              className="py-2 text-sm text-red-600"
+              role="alert"
+              aria-live="assertive"
+            >
+              Error: {error}
+            </div>
+          )}
           {!loading && !error && (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Breed</TableHead>
-                <TableHead className="hidden md:table-cell">Age</TableHead>
-                <TableHead className="hidden md:table-cell">Gender</TableHead>
-                <TableHead>
+                <TableHead className="hidden w-[100px] sm:table-cell">
+                  <span className="sr-only">Image</span>
+                </TableHead>
+                <TableHead scope="col">Name</TableHead>
+                <TableHead scope="col">Breed</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">Age</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">Gender</TableHead>
+                <TableHead scope="col">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
@@ -92,7 +113,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                 <TableRow key={cat.id}>
                   <TableCell className="hidden sm:table-cell">
                     <Image
-                      alt="Cat image"
+                      alt={`Image of ${cat.name}`}
                       className="aspect-square rounded-md object-cover"
                       height="64"
                       src={cat.image}
@@ -110,8 +131,13 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
+                        <Button
+                          aria-haspopup="true"
+                          size="icon"
+                          variant="ghost"
+                          aria-label={`Actions for ${cat.name}`}
+                        >
+                          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                           <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>

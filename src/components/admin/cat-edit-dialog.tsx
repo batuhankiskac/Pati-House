@@ -96,7 +96,12 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
   return (
     <AdminErrorBoundary>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent
+          className="sm:max-w-[425px]"
+          aria-label={isEditing ? 'Edit Cat' : 'Add New Cat'}
+          role="dialog"
+          aria-modal="true"
+        >
           <DialogHeader>
             <DialogTitle>{isEditing ? 'Edit Cat' : 'Add New Cat'}</DialogTitle>
             <DialogDescription>
@@ -105,7 +110,11 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+              <Label
+                htmlFor="name"
+                className="text-right"
+                aria-required="true"
+              >
                 Name
               </Label>
               <Input
@@ -114,10 +123,15 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 className="col-span-3"
                 required
+                aria-describedby="name-error"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="breed" className="text-right">
+              <Label
+                htmlFor="breed"
+                className="text-right"
+                aria-required="true"
+              >
                 Breed
               </Label>
               <Input
@@ -126,10 +140,15 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 onChange={(e) => setFormData(prev => ({ ...prev, breed: e.target.value }))}
                 className="col-span-3"
                 required
+                aria-describedby="breed-error"
               />
             </div>
               <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="age" className="text-right">
+              <Label
+                htmlFor="age"
+                className="text-right"
+                aria-required="true"
+              >
                 Age
               </Label>
               <Input
@@ -141,13 +160,22 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) || 1 }))}
                 className="col-span-3"
                 required
+                aria-describedby="age-error"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="gender" className="text-right">
+              <Label
+                htmlFor="gender"
+                className="text-right"
+                aria-required="true"
+              >
                 Gender
               </Label>
-              <Select value={formData.gender} onValueChange={(value: 'Male' | 'Female') => setFormData(prev => ({ ...prev, gender: value }))}>
+              <Select
+                value={formData.gender}
+                onValueChange={(value: 'Male' | 'Female') => setFormData(prev => ({ ...prev, gender: value }))}
+                aria-describedby="gender-error"
+              >
                 <SelectTrigger className="col-span-3">
                   <SelectValue />
                 </SelectTrigger>
@@ -158,7 +186,11 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
               </Select>
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="description" className="text-right mt-2">
+              <Label
+                htmlFor="description"
+                className="text-right mt-2"
+                aria-required="true"
+              >
                 Description
               </Label>
               <Textarea
@@ -168,10 +200,15 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="col-span-3"
                 rows={3}
                 required
+                aria-describedby="description-error"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="image" className="text-right">
+              <Label
+                htmlFor="image"
+                className="text-right"
+                aria-required="true"
+              >
                 Image URL
               </Label>
               <Input
@@ -180,14 +217,31 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
                 className="col-span-3"
                 required
+                aria-describedby="image-error"
               />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                aria-label="Cancel"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : (isEditing ? 'Update' : 'Add')}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                aria-busy={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="sr-only">Saving</span>
+                    Saving...
+                  </>
+                ) : (
+                  isEditing ? 'Update' : 'Add'
+                )}
               </Button>
             </DialogFooter>
           </form>

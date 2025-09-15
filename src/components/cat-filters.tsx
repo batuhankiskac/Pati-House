@@ -20,7 +20,7 @@ interface CatFiltersProps {
 /**
  * Dynamic breed derivation replaces former hard-coded list.
  * Ensures newly added breeds (örn. "sarman") appear automatically.
- */
+*/
 export default function CatFilters({ filters, onFilterChange }: CatFiltersProps) {
   const { cats } = useCats();
 
@@ -45,21 +45,29 @@ export default function CatFilters({ filters, onFilterChange }: CatFiltersProps)
   };
 
   return (
-    <Card className="mb-8 shadow-sm">
+    <Card
+      className="mb-8 shadow-sm"
+      role="region"
+      aria-label="Cat filters"
+    >
       <CardContent className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               type="text"
               placeholder="İsme göre ara..."
               value={filters.search}
               onChange={handleInputChange}
               className="pl-10"
+              aria-label="Search cats by name"
             />
           </div>
           <Select value={filters.breed} onValueChange={handleSelectChange('breed')}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="Filter by breed">
               <SelectValue placeholder="Tüm Cinsler" />
             </SelectTrigger>
             <SelectContent>
@@ -70,7 +78,7 @@ export default function CatFilters({ filters, onFilterChange }: CatFiltersProps)
             </SelectContent>
           </Select>
           <Select value={filters.age} onValueChange={handleSelectChange('age')}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="Filter by age">
               <SelectValue placeholder="Tüm Yaşlar" />
             </SelectTrigger>
             <SelectContent>
@@ -81,7 +89,7 @@ export default function CatFilters({ filters, onFilterChange }: CatFiltersProps)
             </SelectContent>
           </Select>
           <Select value={filters.gender} onValueChange={handleSelectChange('gender')}>
-            <SelectTrigger>
+            <SelectTrigger aria-label="Filter by gender">
               <SelectValue placeholder="Tüm Cinsiyetler" />
             </SelectTrigger>
             <SelectContent>

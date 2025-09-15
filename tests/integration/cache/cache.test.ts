@@ -1,33 +1,44 @@
-import cacheUtils from '@/lib/cache/cache-utils';
-import redisConnection from '@/lib/cache/connection';
-
 // Create mock Redis client
 let mockRedisClient: any;
 
+// Create a factory function for the mock client
+const createMockRedisClient = () => ({
+  get: jest.fn(),
+  setex: jest.fn(),
+  del: jest.fn(),
+  keys: jest.fn(),
+});
+
 // Mock the Redis connection
-jest.mock('@/lib/cache/connection', () => ({
-  __esModule: true,
-  default: {
-    getClient: jest.fn().mockImplementation(() => {
-      // Return the mock client or a default object if not initialized
-      return mockRedisClient || {
-        get: jest.fn(),
-        setex: jest.fn(),
-        del: jest.fn(),
-        keys: jest.fn(),
-      };
-    }),
-  }
-}));
+jest.mock('@/lib/cache/connection', () => {
+  // Create a mock client that we can control
+  const mockClient = {
+    getClient: jest.fn(),
+  };
+
+  return {
+    __esModule: true,
+    default: mockClient,
+  };
+});
+
+// We need to import cacheUtils and redisConnection after mocking the connection
+let cacheUtils: any;
+let redisConnection: any;
 
 beforeEach(() => {
-  // Initialize mock Redis client before each test
-  mockRedisClient = {
-    get: jest.fn(),
-    setex: jest.fn(),
-    del: jest.fn(),
-    keys: jest.fn(),
-  };
+  // Reset mock Redis client before each test
+  mockRedisClient = createMockRedisClient();
+
+  // Now import redisConnection after the mock is set up
+  jest.resetModules();
+  redisConnection = require('@/lib/cache/connection').default;
+
+  // Set up the mock implementation to return our mock client
+  redisConnection.getClient.mockReturnValue(mockRedisClient);
+
+  // Now import cacheUtils after the mock is set up
+  cacheUtils = require('@/lib/cache/cache-utils').default;
 
   // Clear all mocks
   jest.clearAllMocks();
