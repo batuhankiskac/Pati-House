@@ -12,8 +12,13 @@ module.exports = {
     '<rootDir>/tests/e2e/',
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx|jsx|js)$': ['ts-jest', {
+      tsconfig: 'tsconfig.jest.json'
+    }],
   },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(react-syntax-highlighter|lucide-react)/)'
+  ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',

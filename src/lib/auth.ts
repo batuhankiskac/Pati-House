@@ -17,11 +17,15 @@ const COOKIE_NAME = AUTH_CONFIG.COOKIE_NAME;
 
 export async function registerUser(username: string, email: string, password: string, name: string): Promise<User | null> {
   try {
-    // Check if user already exists
+    // Check if user already exists by username
     const existingUserByUsername = await userRepository.getByUsername(username);
-    const existingUserByEmail = await userRepository.getByEmail(email);
+    if (existingUserByUsername) {
+      return null; // User already exists
+    }
 
-    if (existingUserByUsername || existingUserByEmail) {
+    // Check if user already exists by email
+    const existingUserByEmail = await userRepository.getByEmail(email);
+    if (existingUserByEmail) {
       return null; // User already exists
     }
 

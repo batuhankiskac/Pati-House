@@ -1,21 +1,37 @@
 import cacheUtils from '@/lib/cache/cache-utils';
 import redisConnection from '@/lib/cache/connection';
 
-// Mock the Redis client
-const mockRedisClient = {
-  get: jest.fn(),
-  setex: jest.fn(),
-  del: jest.fn(),
-  keys: jest.fn(),
-};
+// Create mock Redis client
+let mockRedisClient: any;
 
 // Mock the Redis connection
 jest.mock('@/lib/cache/connection', () => ({
   __esModule: true,
   default: {
-    getClient: jest.fn().mockReturnValue(mockRedisClient),
-  },
+    getClient: jest.fn().mockImplementation(() => {
+      // Return the mock client or a default object if not initialized
+      return mockRedisClient || {
+        get: jest.fn(),
+        setex: jest.fn(),
+        del: jest.fn(),
+        keys: jest.fn(),
+      };
+    }),
+  }
 }));
+
+beforeEach(() => {
+  // Initialize mock Redis client before each test
+  mockRedisClient = {
+    get: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn(),
+  };
+
+  // Clear all mocks
+  jest.clearAllMocks();
+});
 
 describe('Cache Integration', () => {
   beforeEach(() => {

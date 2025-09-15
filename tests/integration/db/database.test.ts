@@ -129,8 +129,8 @@ describe('Database Integration', () => {
         expect(createdCat).toEqual({ ...newCat, id: 2 });
         expect(db.query).toHaveBeenCalledWith(
           `INSERT INTO cats (name, breed, age, gender, description, image, data_ai_hint)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)
-           RETURNING id, name, breed, age, gender, description, image, data_ai_hint as "dataAiHint"`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id, name, breed, age, gender, description, image, data_ai_hint as "dataAiHint"`,
           [
             newCat.name,
             newCat.breed,
@@ -178,8 +178,8 @@ describe('Database Integration', () => {
         expect(updatedCat).toEqual({ ...mockCat, name: 'Fluffy Updated' });
         expect(db.query).toHaveBeenCalledWith(
           `UPDATE cats SET name = $1, updated_at = CURRENT_TIMESTAMP
-           WHERE id = $2
-           RETURNING id, name, breed, age, gender, description, image, data_ai_hint as "dataAiHint"`,
+         WHERE id = $2
+         RETURNING id, name, breed, age, gender, description, image, data_ai_hint as "dataAiHint"`,
           ['Fluffy Updated', 1]
         );
       });
@@ -255,10 +255,10 @@ describe('Database Integration', () => {
         expect(requests).toEqual([mockRequest]);
         expect(db.query).toHaveBeenCalledWith(
           `SELECT id, cat_name as "catName", request_date as "requestDate", status,
-                  applicant_name as "applicant.name", applicant_email as "applicant.email",
-                  applicant_phone as "applicant.phone", applicant_address as "applicant.address",
-                  applicant_reason as "applicant.reason"
-           FROM adoption_requests ORDER BY id`
+                applicant_name as "applicant.name", applicant_email as "applicant.email",
+                applicant_phone as "applicant.phone", applicant_address as "applicant.address",
+                applicant_reason as "applicant.reason"
+         FROM adoption_requests ORDER BY id`
         );
       });
     });
@@ -287,10 +287,10 @@ describe('Database Integration', () => {
         expect(request).toEqual(mockRequest);
         expect(db.query).toHaveBeenCalledWith(
           `SELECT id, cat_name as "catName", request_date as "requestDate", status,
-                  applicant_name as "applicant.name", applicant_email as "applicant.email",
-                  applicant_phone as "applicant.phone", applicant_address as "applicant.address",
-                  applicant_reason as "applicant.reason"
-           FROM adoption_requests WHERE id = $1`,
+                applicant_name as "applicant.name", applicant_email as "applicant.email",
+                applicant_phone as "applicant.phone", applicant_address as "applicant.address",
+                applicant_reason as "applicant.reason"
+         FROM adoption_requests WHERE id = $1`,
           [1]
         );
       });

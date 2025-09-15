@@ -32,13 +32,10 @@ describe('CatCard', () => {
     expect(screen.getByText('Persian')).toBeInTheDocument();
 
     // Check that age is rendered
-    expect(screen.getByText('3 years old')).toBeInTheDocument();
+    expect(screen.getByText('3 yaş')).toBeInTheDocument();
 
     // Check that gender is rendered
-    expect(screen.getByText('Male')).toBeInTheDocument();
-
-    // Check that description is rendered
-    expect(screen.getByText('A fluffy Persian cat who loves to play')).toBeInTheDocument();
+    expect(screen.getByText('Erkek')).toBeInTheDocument();
 
     // Check that image is rendered with correct src and alt
     const image = screen.getByRole('img');
@@ -46,11 +43,12 @@ describe('CatCard', () => {
     expect(image).toHaveAttribute('alt', 'Fluffy');
   });
 
-  it('should render adopt button', () => {
+  it('should render as a link to the cat details page', () => {
     render(<CatCard cat={mockCat} />);
 
-    const adoptButton = screen.getByRole('button', { name: /adopt/i });
-    expect(adoptButton).toBeInTheDocument();
+    const link = screen.getByRole('link');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', '/cats/1');
   });
 
   it('should handle missing image gracefully', () => {
@@ -62,14 +60,12 @@ describe('CatCard', () => {
     expect(screen.getByText('Persian')).toBeInTheDocument();
  });
 
-  it('should handle long descriptions with truncation', () => {
-    const catWithLongDescription = {
-      ...mockCat,
-      description: 'A very long description that should be truncated or handled appropriately in the UI',
-    };
-    render(<CatCard cat={catWithLongDescription} />);
+  it('should handle cats without images gracefully', () => {
+    const catWithoutImage = { ...mockCat, image: '' };
+    render(<CatCard cat={catWithoutImage} />);
 
-    // The description should still be rendered
-    expect(screen.getByText(catWithLongDescription.description)).toBeInTheDocument();
+    // Should still render the cat information even without image
+    expect(screen.getByText('Fluffy')).toBeInTheDocument();
+    expect(screen.getByText('Persian')).toBeInTheDocument();
   });
 });

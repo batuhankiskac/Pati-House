@@ -30,7 +30,7 @@ describe('Adoption Request Validation Schemas', () => {
     it('should reject an adoption request with name too short', () => {
       const invalidRequest = {
         catName: 'Fluffy',
-        fullName: 'Jo', // Min is 2 characters
+        fullName: 'J', // Min is 2 characters
         email: 'john.doe@example.com',
         phone: '1234567890',
         address: '123 Main St, City, Country',
