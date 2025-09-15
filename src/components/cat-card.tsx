@@ -40,7 +40,7 @@ export default function CatCard({ cat }: CatCardProps) {
           >
             {cat.name}
           </CardTitle>
-          <div className="flex items-center text-sm text-muted-foreground gap-2">
+          <div className="flex flex-wrap items-center text-sm text-muted-foreground gap-2">
             {cat.gender === 'Male' ? (
               <>
                 <Mars className="h-4 w-4" aria-hidden="true" />

@@ -1,6 +1,7 @@
 import React, { ErrorInfo, ReactNode } from 'react';
 import { ErrorDisplay } from '@/components/layout/error-display';
 import ErrorLogger from '@/lib/error-logger';
+import logger from '@/lib/logger';
 
 interface AdminErrorBoundaryProps {
   children: ReactNode;
@@ -25,6 +26,14 @@ export class AdminErrorBoundary extends React.Component<AdminErrorBoundaryProps,
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error with our error logger
     ErrorLogger.log(error, { componentStack: errorInfo.componentStack || undefined });
+
+    // Also log with structured logger
+    logger.error('Admin React component error boundary caught an error', {
+      error: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack || undefined,
+      url: typeof window !== 'undefined' ? window.location.href : 'server'
+    });
   }
 
   handleRetry = () => {

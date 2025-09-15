@@ -1,3 +1,5 @@
+import logger from '@/lib/logger';
+
 // Error logging utility for the application
 interface ErrorInfo {
   componentStack?: string;
@@ -5,9 +7,9 @@ interface ErrorInfo {
 }
 
 class ErrorLogger {
-  // Log error to console
+  // Log error with structured logging
   static logError(error: Error, info?: ErrorInfo) {
-    console.error('[ErrorLogger]', error.message, {
+    logger.error(error.message, {
       stack: error.stack,
       componentStack: info?.componentStack,
       timestamp: new Date().toISOString(),
@@ -39,7 +41,7 @@ class ErrorLogger {
     }
   }
 
-  // Log error with both console and external service
+ // Log error with both structured logging and external service
   static log(error: Error, info?: ErrorInfo) {
     this.logError(error, info);
     this.logToService(error, info);

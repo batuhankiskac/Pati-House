@@ -1,4 +1,5 @@
 import { z, ZodSchema } from 'zod';
+import logger from '@/lib/logger';
 
 // Type for validation errors
 export type ValidationError = {
@@ -33,6 +34,12 @@ export function validateData<T>(schema: ZodSchema<T>, data: unknown): Validation
         message: err.message,
       }));
 
+      // Log validation errors
+      logger.error('Validation failed', {
+        errors,
+        data: typeof data === 'object' ? data : { value: data }
+      });
+
       return {
         success: false,
         errors,
@@ -40,6 +47,10 @@ export function validateData<T>(schema: ZodSchema<T>, data: unknown): Validation
     }
 
     // Handle unexpected errors
+    logger.error('Unexpected validation error', {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+
     return {
       success: false,
       errors: [{ path: '', message: 'An unexpected error occurred during validation' }],

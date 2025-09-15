@@ -135,9 +135,10 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                           aria-haspopup="true"
                           size="icon"
                           variant="ghost"
+                          className="h-10 w-10"
                           aria-label={`Actions for ${cat.name}`}
                         >
-                          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                          <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
                           <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>

@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { userRepository, User } from './data';
 import { AUTH_CONFIG } from '@/lib/config';
+import logger from '@/lib/logger';
 
 // const SALT_ROUNDS = 10;
 // const SECRET_KEY = process.env.SECRET_KEY || 'fallback-secret-key';
@@ -20,12 +21,14 @@ export async function registerUser(username: string, email: string, password: st
     // Check if user already exists by username
     const existingUserByUsername = await userRepository.getByUsername(username);
     if (existingUserByUsername) {
+      logger.warn('User registration failed - username already exists', { username });
       return null; // User already exists
     }
 
     // Check if user already exists by email
     const existingUserByEmail = await userRepository.getByEmail(email);
     if (existingUserByEmail) {
+      logger.warn('User registration failed - email already exists', { email });
       return null; // User already exists
     }
 
@@ -43,9 +46,14 @@ export async function registerUser(username: string, email: string, password: st
 
     // Save to database
     const createdUser = await userRepository.create(newUser);
+    logger.info('User registered successfully', { userId: createdUser.id, username });
     return createdUser;
   } catch (error) {
-    console.error('Error registering user:', error);
+    logger.error('Error registering user', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      username,
+      email
+    });
     return null;
   }
 }
@@ -55,18 +63,24 @@ export async function authenticateUser(username: string, password: string): Prom
     // Find user by username
     const user = await userRepository.getByUsername(username);
     if (!user) {
+      logger.warn('Authentication failed - user not found', { username });
       return null; // User not found
     }
 
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
+      logger.warn('Authentication failed - invalid password', { username });
       return null; // Invalid password
     }
 
+    logger.info('User authenticated successfully', { userId: user.id, username });
     return user;
   } catch (error) {
-    console.error('Error authenticating user:', error);
+    logger.error('Error authenticating user', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      username
+    });
     return null;
   }
 }
@@ -113,15 +127,20 @@ export function verifyToken(token: string): { id: string; username: string; name
 export async function createSession(username: string, password: string): Promise<{ success: boolean; token?: string }> {
   const user = await authenticateUser(username, password);
   if (!user) {
+    logger.warn('Session creation failed - authentication failed', { username });
     return { success: false };
   }
 
   try {
     // Generate JWT token
     const token = generateToken(user);
+    logger.debug('Session created successfully', { userId: user.id, username });
     return { success: true, token };
   } catch (error) {
-    console.error('Token generation error:', error);
+    logger.error('Token generation error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      username
+    });
     return { success: false };
   }
 }
@@ -189,17 +208,22 @@ export async function requireAuth(request: NextRequest): Promise<{ success: bool
     const authToken = request.cookies.get(COOKIE_NAME);
 
     if (!authToken) {
+      logger.warn('Authentication required but no auth token found');
       return { success: false };
     }
 
     const decoded = verifyToken(authToken.value);
     if (!decoded) {
+      logger.warn('Authentication required but token verification failed');
       return { success: false };
     }
 
+    logger.debug('Authentication successful', { userId: decoded.id, username: decoded.username });
     return { success: true, user: decoded };
   } catch (error) {
-    console.error('Error in requireAuth:', error);
+    logger.error('Error in requireAuth', {
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
     return { success: false };
   }
 }

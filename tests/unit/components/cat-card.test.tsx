@@ -40,7 +40,7 @@ describe('CatCard', () => {
     // Check that image is rendered with correct src and alt
     const image = screen.getByRole('img');
     expect(image).toHaveAttribute('src', 'https://example.com/cat.jpg');
-    expect(image).toHaveAttribute('alt', 'Fluffy');
+    expect(image).toHaveAttribute('alt', 'Image of Fluffy, a Persian cat');
   });
 
   it('should render as a link to the cat details page', () => {

@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth';
 import { NextRequest } from 'next/server';
 import cacheUtils from '@/lib/cache/cache-utils';
 import { ERROR_MESSAGES } from '@/lib/config';
+import logger from '@/lib/logger';
 
 /**
  * Simple database API for cats.
@@ -38,24 +39,37 @@ function validatePayload(body: unknown): string[] {
 }
 
 // GET /api/cats  -> list all
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const startTime = Date.now();
   try {
     // Try to get from cache first
     const cachedCats = await cacheUtils.getCachedCats();
     if (cachedCats) {
-      console.debug('[API][GET /api/cats] returning cached data', { count: cachedCats.length });
+      const duration = Date.now() - startTime;
+      logger.http('GET', '/api/cats', 200, duration, {
+        cached: true,
+        count: cachedCats.length
+      });
       return NextResponse.json({ success: true, data: cachedCats });
     }
 
     const cats = await catRepository.getAll();
-    console.debug('[API][GET /api/cats] returning', { count: cats.length });
+    const duration = Date.now() - startTime;
+    logger.http('GET', '/api/cats', 200, duration, {
+      cached: false,
+      count: cats.length
+    });
 
     // Cache the result
     await cacheUtils.setCachedCats(cats);
 
     return NextResponse.json({ success: true, data: cats });
   } catch (err) {
-    console.error('[API][GET /api/cats] error', err);
+    const duration = Date.now() - startTime;
+    logger.error('[API][GET /api/cats] error', {
+      error: err instanceof Error ? err.message : 'Unknown error',
+      duration
+    });
     // return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
     return NextResponse.json({ success: false, error: ERROR_MESSAGES.UNEXPECTED_ERROR }, { status: 500 });
   }
@@ -63,9 +77,14 @@ export async function GET() {
 
 // POST /api/cats -> create
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   // Require authentication for creating cats
   const authResult = await requireAuth(request);
   if (!authResult.success) {
+    const duration = Date.now() - startTime;
+    logger.http('POST', '/api/cats', 401, duration, {
+      message: 'Unauthorized access'
+    });
     return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
@@ -74,6 +93,11 @@ export async function POST(request: NextRequest) {
 
     const errors = validatePayload(body);
     if (errors.length) {
+      const duration = Date.now() - startTime;
+      logger.http('POST', '/api/cats', 400, duration, {
+        message: 'Validation failed',
+        errors
+      });
       return NextResponse.json({ success: false, error: errors.join(', ') }, { status: 400 });
     }
 
@@ -91,14 +115,23 @@ export async function POST(request: NextRequest) {
     };
 
     const createdCat = await catRepository.create(newCat);
-    console.debug('[API][POST /api/cats] created', { id: createdCat.id, total: (await catRepository.getAll()).length });
+    const totalCats = await catRepository.getAll();
+    const duration = Date.now() - startTime;
+    logger.http('POST', '/api/cats', 201, duration, {
+      id: createdCat.id,
+      total: totalCats.length
+    });
 
     // Invalidate cache after creating a new cat
     await cacheUtils.invalidateCatsCache();
 
     return NextResponse.json({ success: true, data: createdCat }, { status: 201 });
   } catch (err) {
-    console.error('[API][POST /api/cats] error', err);
+    const duration = Date.now() - startTime;
+    logger.error('[API][POST /api/cats] error', {
+      error: err instanceof Error ? err.message : 'Unknown error',
+      duration
+    });
     return NextResponse.json({ success: false, error: 'Beklenmeyen hata' }, { status: 500 });
   }
 }

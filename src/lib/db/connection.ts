@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import { types } from 'pg';
 import { CONNECTION_CONFIG } from '@/lib/config';
+import logger from '@/lib/logger';
 
 // Parse numeric types as floats instead of strings
 types.setTypeParser(types.builtins.NUMERIC, (value: string) => parseFloat(value));
@@ -45,10 +46,20 @@ class DatabaseConnection {
 
   public async query(text: string, params?: any[]) {
     const start = Date.now();
-    const res = await this.pool.query(text, params);
-    const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: res.rowCount });
-    return res;
+    try {
+      const res = await this.pool.query(text, params);
+      const duration = Date.now() - start;
+      logger.database(text, duration, res.rowCount ?? undefined);
+      return res;
+    } catch (error) {
+      const duration = Date.now() - start;
+      logger.error('Database query failed', {
+        query: text,
+        duration,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
   }
 
   public async getClient() {

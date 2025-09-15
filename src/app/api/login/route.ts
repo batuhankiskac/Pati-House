@@ -2,13 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSession, authenticateUser } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { APP_URLS } from '@/lib/config';
+import logger from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   try {
     const body = await request.json();
     const { username, password } = body;
 
     if (!username || !password) {
+      const duration = Date.now() - startTime;
+      logger.http('POST', '/api/login', 400, duration, {
+        message: 'Username and password are required'
+      });
       return NextResponse.json(
         { error: 'Username and password are required' },
         { status: 400 }
@@ -18,6 +24,11 @@ export async function POST(request: NextRequest) {
     // Authenticate user
     const user = await authenticateUser(username, password);
     if (!user) {
+      const duration = Date.now() - startTime;
+      logger.http('POST', '/api/login', 401, duration, {
+        message: 'Invalid username or password',
+        username
+      });
       return NextResponse.json(
         { error: 'Invalid username or password' },
         { status: 401 }
@@ -27,6 +38,10 @@ export async function POST(request: NextRequest) {
     // Create session with JWT token
     const sessionResult = await createSession(username, password);
     if (!sessionResult.success) {
+      const duration = Date.now() - startTime;
+      logger.http('POST', '/api/login', 500, duration, {
+        message: 'Session could not be created'
+      });
       return NextResponse.json(
         { error: 'Session could not be created' },
         { status: 500 }
@@ -46,7 +61,14 @@ export async function POST(request: NextRequest) {
       sameSite: 'strict',
       path: '/',
       domain: process.env.NODE_ENV === 'production' ? domain : undefined,
-      maxAge: 60 * 60 * 24 * 7 // 7 days
+      maxAge: 60 * 24 * 7 // 7 days
+    });
+
+    const duration = Date.now() - startTime;
+    logger.http('POST', '/api/login', 200, duration, {
+      message: 'Login successful',
+      userId: user.id,
+      username: user.username
     });
 
     return NextResponse.json({
@@ -58,7 +80,11 @@ export async function POST(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
+    const duration = Date.now() - startTime;
+    logger.error('Login error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      duration
+    });
     return NextResponse.json(
       { error: 'Server error' },
       { status: 500 }

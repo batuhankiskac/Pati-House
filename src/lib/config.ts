@@ -39,3 +39,10 @@ export const CONNECTION_CONFIG = {
 export const ERROR_MESSAGES = {
   UNEXPECTED_ERROR: 'Unexpected error occurred',
 };
+
+// Logging configuration
+export const LOGGING_CONFIG = {
+  LEVEL: process.env.LOG_LEVEL as 'debug' | 'info' | 'warn' | 'error' || 'info',
+  FILE_PATH: process.env.LOG_FILE_PATH || './logs/app.log',
+  FILE_MAX_SIZE: parseInt(process.env.LOG_FILE_MAX_SIZE || '10485760', 10), // 10MB default
+};

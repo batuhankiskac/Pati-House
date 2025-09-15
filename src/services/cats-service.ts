@@ -5,6 +5,7 @@ import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
 import { validateData } from '@/lib/validation/utils';
 import type { CatFormData, CatUpdateData } from '@/lib/validation/cats';
 import { API_ENDPOINTS } from '@/lib/config';
+import logger from '@/lib/logger';
 
 
 type CreateCatInput = CatFormData;
@@ -13,15 +14,17 @@ type UpdateCatInput = CatUpdateData;
 const API_BASE = API_ENDPOINTS.CATS;
 
 async function fetchCats(): Promise<{ success: boolean; data?: Cat[]; error?: string }> {
+  const startTime = Date.now();
   try {
     // Try to get from cache first
     const cachedCats = await cacheUtils.getCachedCats();
     if (cachedCats) {
-      console.debug('[service][cats] returning cached list');
+      const duration = Date.now() - startTime;
+      logger.debug('[service][cats] returning cached list', { duration, count: cachedCats.length });
       return { success: true, data: cachedCats };
     }
 
-    console.debug('[service][cats] fetching list');
+    logger.debug('[service][cats] fetching list');
     const res = await fetch(API_BASE, { cache: 'no-store' });
     const json = await res.json();
     if (!res.ok || !json.success) {
@@ -30,21 +33,32 @@ async function fetchCats(): Promise<{ success: boolean; data?: Cat[]; error?: st
 
     // Cache the result
     await cacheUtils.setCachedCats(json.data);
-    console.debug('[service][cats] fetched', json.data.length);
+    const duration = Date.now() - startTime;
+    logger.debug('[service][cats] fetched', { duration, count: json.data.length });
     return { success: true, data: json.data };
   } catch (e: any) {
-    console.error('[service][cats] fetch error', e);
+    const duration = Date.now() - startTime;
+    logger.error('[service][cats] fetch error', {
+      error: e.message || 'Error',
+      duration
+    });
     return { success: false, error: e.message || 'Error' };
   }
 }
 
 async function createCat(data: CreateCatInput): Promise<{ success: boolean; cat?: Cat; error?: string }> {
+  const startTime = Date.now();
   try {
-    console.debug('[service][cats] createCat start');
+    logger.debug('[service][cats] createCat start');
 
     // Validate input data
     const validationResult = validateData(catFormSchema, data);
     if (!validationResult.success) {
+      const duration = Date.now() - startTime;
+      logger.error('[service][cats] createCat validation failed', {
+        errors: validationResult.errors,
+        duration
+      });
       const firstError = validationResult.errors?.[0];
       return { success: false, error: firstError?.message || 'Validation failed' };
     }
@@ -56,14 +70,25 @@ async function createCat(data: CreateCatInput): Promise<{ success: boolean; cat?
     });
     const json = await res.json();
     if (!res.ok || !json.success) {
+      const duration = Date.now() - startTime;
+      logger.error('[service][cats] createCat API error', {
+        status: res.status,
+        error: json.error || 'Failed to add cat',
+        duration
+      });
       return { success: false, error: json.error || 'Failed to add cat' };
     }
     // Invalidate cache after creating a new cat
     await cacheUtils.invalidateCatsCache();
-    console.debug('[service][cats] createCat ok id', json.data.id);
+    const duration = Date.now() - startTime;
+    logger.debug('[service][cats] createCat ok', { id: json.data.id, duration });
     return { success: true, cat: json.data };
   } catch (e: any) {
-    console.error('[service][cats] createCat error', e);
+    const duration = Date.now() - startTime;
+    logger.error('[service][cats] createCat error', {
+      error: e.message || 'Unexpected error',
+      duration
+    });
     return { success: false, error: e.message || 'Unexpected error' };
   }
 }

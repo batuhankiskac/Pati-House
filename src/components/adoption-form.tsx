@@ -97,7 +97,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
               <p id="form-description" className="sr-only">
                 {catName} için sahiplenme başvurusu yapmak için aşağıdaki formu doldurunuz.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="fullName"
@@ -113,6 +113,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                         <Input
                           placeholder="Ad Soyad"
                           {...field}
+                          className="text-base md:text-sm"
                           aria-describedby={form.formState.errors.fullName ? `${field.name}-error` : undefined}
                         />
                       </FormControl>
@@ -141,6 +142,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                         <Input
                           placeholder="siz@ornek.com"
                           {...field}
+                          className="text-base md:text-sm"
                           aria-describedby={form.formState.errors.email ? `${field.name}-error` : undefined}
                         />
                       </FormControl>
