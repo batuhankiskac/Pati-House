@@ -12,7 +12,7 @@ test('should display admin dashboard when authenticated', async ({ page }) => {
 
   // Fill in login credentials (these would need to be valid test credentials)
   await page.getByLabel('Username').fill('admin');
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password').fill('admin');
 
   // Submit the login form
   await page.getByRole('button', { name: /login/i }).click();
