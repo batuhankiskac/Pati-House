@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth-session';
 import testCacheFunctionality from '@/lib/cache/test-cache';
+
+export const runtime = 'nodejs';
 
 /**
  * API endpoint to test cache functionality

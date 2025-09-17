@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { SafeLink } from '@/components/common/safe-link';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +11,7 @@ interface CatCardProps {
 
 export default function CatCard({ cat }: CatCardProps) {
   return (
-    <Link
+    <SafeLink
       href={`/cats/${cat.id}`}
       className="block group"
       aria-label={`View details for ${cat.name}`}
@@ -64,6 +64,6 @@ export default function CatCard({ cat }: CatCardProps) {
             </Badge>
         </CardFooter>
       </Card>
-    </Link>
+    </SafeLink>
   );
 }
