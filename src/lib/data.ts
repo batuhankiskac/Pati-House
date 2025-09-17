@@ -1,3 +1,5 @@
+import { CatRepository, AdoptionRequestRepository, UserRepository } from './db/repositories';
+
 export type Cat = {
   id: number;
   name: string;
@@ -10,16 +12,19 @@ export type Cat = {
 };
 
 export type User = {
-  name: string;
+  id: string;
+  username: string;
   email: string;
-  avatar: string;
+  password: string; // hashed password
+  name: string;
+  avatar?: string;
 };
 
 export type AdoptionRequest = {
   id: number;
   catName: string;
   requestDate: string;
-  status: 'Bekliyor' | 'Onaylandı' | 'Reddedildi';
+  status: 'Pending' | 'Approved' | 'Rejected';
   applicant: {
     name: string;
     email: string;
@@ -29,10 +34,7 @@ export type AdoptionRequest = {
   };
 };
 
-/**
- * Seed data removed. Arrays start empty; data is added exclusively via API routes.
- * This avoids hard-coded breeds/records and ensures dynamic filter population.
- */
-export const cats: Cat[] = [];
-
-export const adoptionRequests: AdoptionRequest[] = [];
+// Export the database repositories instead of in-memory arrays
+export const catRepository = CatRepository;
+export const adoptionRequestRepository = AdoptionRequestRepository;
+export const userRepository = UserRepository;

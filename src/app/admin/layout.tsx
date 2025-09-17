@@ -4,6 +4,7 @@ import AdminSidebar from '@/components/layout/admin-sidebar';
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { AdminErrorBoundary } from '@/components/admin/error-boundary';
 
 export default function AdminLayout({
   children,
@@ -31,9 +32,11 @@ export default function AdminLayout({
 
   // Authenticated - show admin panel
   return (
-    <div className="flex min-h-screen">
-      <AdminSidebar />
-      <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
-    </div>
+    <AdminErrorBoundary>
+      <div className="flex min-h-screen flex-col md:flex-row">
+        <AdminSidebar />
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+      </div>
+    </AdminErrorBoundary>
   );
 }

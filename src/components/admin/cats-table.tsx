@@ -25,6 +25,7 @@ import { Badge } from '../ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import CatEditDialog from './cat-edit-dialog';
 import { useCats } from '@/hooks/use-cats';
+import { AdminErrorBoundary } from '@/components/admin/error-boundary';
 
 export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () => void }) {
   const { toast } = useToast();
@@ -39,18 +40,18 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
   };
 
   const handleDelete = async (catId: number, catName: string) => {
-    if (!window.confirm(`${catName} isimli kediyi silmek istediğinize emin misiniz?`)) return;
+    if (!window.confirm(`Are you sure you want to delete the cat named ${catName}?`)) return;
     const result = await deleteCat(catId);
     if (result.success) {
       toast({
-        title: 'Başarılı',
-        description: 'Kedi silindi (optimistic).',
+        title: 'Success',
+        description: 'Cat deleted (optimistic).',
       });
       triggerExternalRefresh();
     } else {
       toast({
-        title: 'Hata',
-        description: result.error || 'Kedi silinirken hata oluştu.',
+        title: 'Error',
+        description: result.error || 'An error occurred while deleting the cat.',
         variant: 'destructive',
       });
       // Attempt to resync from server
@@ -64,25 +65,46 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
   };
 
   return (
-    <>
-      <Card>
+    <AdminErrorBoundary>
+      <Card
+        role="region"
+        aria-label="Cats table"
+      >
         <CardHeader>
-          <CardTitle>Kediler</CardTitle>
+          <CardTitle>Cats</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading && <div className="py-4 text-sm text-muted-foreground">Yükleniyor...</div>}
-          {error && !loading && <div className="py-2 text-sm text-red-600">Hata: {error}</div>}
+          {loading && (
+            <div
+              className="py-4 text-sm text-muted-foreground"
+              role="status"
+              aria-live="polite"
+            >
+              Loading...
+            </div>
+          )}
+          {error && !loading && (
+            <div
+              className="py-2 text-sm text-red-600"
+              role="alert"
+              aria-live="assertive"
+            >
+              Error: {error}
+            </div>
+          )}
           {!loading && !error && (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="hidden w-[100px] sm:table-cell">Resim</TableHead>
-                <TableHead>İsim</TableHead>
-                <TableHead>Cins</TableHead>
-                <TableHead className="hidden md:table-cell">Yaş</TableHead>
-                <TableHead className="hidden md:table-cell">Cinsiyet</TableHead>
-                <TableHead>
-                  <span className="sr-only">Eylemler</span>
+                <TableHead className="hidden w-[100px] sm:table-cell">
+                  <span className="sr-only">Image</span>
+                </TableHead>
+                <TableHead scope="col">Name</TableHead>
+                <TableHead scope="col">Breed</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">Age</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">Gender</TableHead>
+                <TableHead scope="col">
+                  <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -91,11 +113,12 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                 <TableRow key={cat.id}>
                   <TableCell className="hidden sm:table-cell">
                     <Image
-                      alt="Kedi resmi"
+                      alt={`Image of ${cat.name}`}
                       className="aspect-square rounded-md object-cover"
                       height="64"
                       src={cat.image}
                       width="64"
+                      sizes="64px"
                       data-ai-hint={cat.dataAiHint}
                     />
                   </TableCell>
@@ -103,26 +126,32 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                   <TableCell>
                     <Badge variant="outline">{cat.breed}</Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{cat.age} yaş</TableCell>
-                  <TableCell className="hidden md:table-cell">{cat.gender === 'Male' ? 'Erkek' : 'Dişi'}</TableCell>
+                  <TableCell className="hidden md:table-cell">{cat.age} years</TableCell>
+                  <TableCell className="hidden md:table-cell">{cat.gender === 'Male' ? 'Male' : 'Female'}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Menüyü aç</span>
+                        <Button
+                          aria-haspopup="true"
+                          size="icon"
+                          variant="ghost"
+                          className="h-10 w-10"
+                          aria-label={`Actions for ${cat.name}`}
+                        >
+                          <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
+                          <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => handleEdit(cat)}>
-                          Düzenle
+                          Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(cat.id, cat.name)}
                           className="text-red-600"
                         >
-                          Sil
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -146,6 +175,6 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
           triggerExternalRefresh();
         }}
       />
-    </>
-  );
+    </AdminErrorBoundary>
+ );
 }
