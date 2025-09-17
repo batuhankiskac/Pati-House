@@ -1,3 +1,5 @@
+"use client";
+
 import React, { ErrorInfo, ReactNode } from 'react';
 import { ErrorDisplay } from '@/components/layout/error-display';
 import ErrorLogger from '@/lib/error-logger';
