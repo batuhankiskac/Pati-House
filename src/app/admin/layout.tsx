@@ -2,7 +2,7 @@
 
 import AdminSidebar from '@/components/layout/admin-sidebar';
 import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
+import { useSafeRouter } from '@/hooks/use-safe-router';
 import { useEffect } from 'react';
 import { AdminErrorBoundary } from '@/components/admin/error-boundary';
 
@@ -12,7 +12,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
+  const router = useSafeRouter();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {

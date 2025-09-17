@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken } from '@/lib/token';
 import { AUTH_CONFIG } from '@/lib/config';
 
 // Cookie configuration
@@ -13,7 +13,7 @@ const SECURE_COOKIE_OPTIONS = {
   path: '/' as const
 };
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public paths that don't require authentication
@@ -40,7 +40,7 @@ export function middleware(request: NextRequest) {
     }
 
     // Verify the token
-    const decoded = verifyToken(authToken.value);
+    const decoded = await verifyToken(authToken.value);
     if (!decoded) {
       // If token is invalid, delete the cookie and redirect to login
       const response = NextResponse.redirect(new URL('/login', request.url));

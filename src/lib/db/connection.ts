@@ -29,7 +29,9 @@ class DatabaseConnection {
     // Handle pool errors
     this.pool.on('error', (err) => {
       console.error('Unexpected error on idle client', err);
-      process.exit(-1);
+      logger.error('Unexpected database pool error', {
+        error: err instanceof Error ? err.message : 'Unknown error',
+      });
     });
   }
 

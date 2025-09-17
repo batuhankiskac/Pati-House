@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { catRepository, type Cat } from '@/lib/data';
 import { normalizeBreed } from '@/lib/utils';
-import { requireAuth } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth-session';
 import { NextRequest } from 'next/server';
 import cacheUtils from '@/lib/cache/cache-utils';
 import { ERROR_MESSAGES } from '@/lib/config';
 import logger from '@/lib/logger';
+
+export const runtime = 'nodejs';
 
 /**
  * Simple database API for cats.

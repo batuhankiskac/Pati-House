@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import { useSafeRouter } from '@/hooks/use-safe-router';
 import { useRequests } from '@/hooks/use-requests';
 import { ErrorBoundary } from '@/components/layout/error-boundary';
 import { adoptionRequestSchema } from '@/lib/validation/requests';
@@ -30,7 +30,7 @@ interface AdoptionFormProps {
 
 export default function AdoptionForm({ catName }: AdoptionFormProps) {
   const { toast } = useToast();
-  const router = useRouter();
+  const router = useSafeRouter();
 
   const form = useForm<AdoptionFormValues>({
     resolver: zodResolver(adoptionRequestSchema),
