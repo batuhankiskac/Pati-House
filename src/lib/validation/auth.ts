@@ -3,7 +3,10 @@ import { z } from 'zod';
 // Schema for login forms
 export const loginSchema = z.object({
   username: z.string().min(1, 'Username is required').max(50, 'Username must be 50 characters or less'),
-  password: z.string().min(6, 'Password must be at least 6 characters').max(100, 'Password must be 100 characters or less'),
+  password: z
+    .string()
+    .min(5, 'Password must be at least 5 characters')
+    .max(100, 'Password must be 100 characters or less'),
 });
 
 // Schema for user registration (if needed in the future)
