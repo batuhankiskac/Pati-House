@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth-session';
 import { warmUpAllCaches } from '@/lib/cache/cache-warming';
+
+export const runtime = 'nodejs';
 
 /**
  * API endpoint to manually trigger cache warming

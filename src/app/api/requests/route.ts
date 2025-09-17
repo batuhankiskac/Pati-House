@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { adoptionRequestRepository, type AdoptionRequest } from '@/lib/data';
-import { requireAuth } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth-session';
 import { NextRequest } from 'next/server';
 import cacheUtils from '@/lib/cache/cache-utils';
 import { ERROR_MESSAGES } from '@/lib/config';
+
+export const runtime = 'nodejs';
 
 /**
  * Database adoption requests collection endpoint.

@@ -5,11 +5,16 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^react$': '<rootDir>/node_modules/react',
+    '^react-dom$': '<rootDir>/node_modules/react-dom',
   },
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.next/',
     '<rootDir>/tests/e2e/',
+  ],
+  modulePathIgnorePatterns: [
+    '<rootDir>/src/package.json',
   ],
   transform: {
     '^.+\\.(ts|tsx|jsx|js)$': ['ts-jest', {

@@ -1,8 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createSession, getSession, destroySession } from '@/lib/auth';
+import { useSafeRouter } from '@/hooks/use-safe-router';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -16,7 +15,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: React.PropsWithChildren<{}>) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const router = useSafeRouter();
 
   // Check cookie on initial load
   useEffect(() => {
@@ -26,35 +25,63 @@ export function AuthProvider({ children }: React.PropsWithChildren<{}>) {
         return;
       }
 
-      // Use the getSession function to check authentication
-      const session = await getSession();
-      setIsAuthenticated(!!session);
-      setLoading(false);
+      try {
+        const response = await fetch('/api/session', {
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const data = await response.json();
+        setIsAuthenticated(Boolean(data?.authenticated));
+      } catch (error) {
+        console.error('Failed to check session', error);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
     };
 
     checkInitialAuth();
   }, []);
 
   const login = async (username: string, password: string): Promise<boolean> => {
-    const success = await createSession(username, password);
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (success) {
-      // Update state
+      if (!response.ok) {
+        return false;
+      }
+
       setIsAuthenticated(true);
-
-      // Go to admin page
       router.push('/admin');
-
       return true;
+    } catch (error) {
+      console.error('Login request failed', error);
+      return false;
     }
-    return false;
   };
 
   const logout = async () => {
-    // Use the destroySession function to clear the cookie
-    await destroySession();
-    setIsAuthenticated(false);
-    router.push('/');
+    try {
+      await fetch('/api/session', {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout request failed', error);
+    } finally {
+      setIsAuthenticated(false);
+      router.push('/');
+    }
   };
 
   return (

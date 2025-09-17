@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSession, authenticateUser } from '@/lib/auth';
-import { cookies } from 'next/headers';
-import { APP_URLS } from '@/lib/config';
+import { setAuthCookie } from '@/lib/auth-session';
 import logger from '@/lib/logger';
+
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     // Create session with JWT token
     const sessionResult = await createSession(username, password);
-    if (!sessionResult.success) {
+    if (!sessionResult.success || !sessionResult.token) {
       const duration = Date.now() - startTime;
       logger.http('POST', '/api/login', 500, duration, {
         message: 'Session could not be created'
@@ -48,21 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Set JWT token in cookie
-    const cookieStore = await cookies();
-    const COOKIE_NAME = 'auth-token';
-    // const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const appUrl = APP_URLS.BASE;
-    const domain = appUrl.replace(/^https?:\/\//, '').split(':')[0];
-
-    cookieStore.set(COOKIE_NAME, sessionResult.token!, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      domain: process.env.NODE_ENV === 'production' ? domain : undefined,
-      maxAge: 60 * 24 * 7 // 7 days
-    });
+    setAuthCookie(sessionResult.token);
 
     const duration = Date.now() - startTime;
     logger.http('POST', '/api/login', 200, duration, {

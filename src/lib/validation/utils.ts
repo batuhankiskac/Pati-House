@@ -28,8 +28,9 @@ export function validateData<T>(schema: ZodSchema<T>, data: unknown): Validation
       data: parsedData,
     };
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errors: ValidationError[] = error.errors.map((err) => ({
+    if (error instanceof z.ZodError || (error && typeof error === 'object' && Array.isArray((error as any).issues))) {
+      const issues = error instanceof z.ZodError ? error.issues : (error as any).issues;
+      const errors: ValidationError[] = issues.map((err: { path: (string | number)[]; message: string }) => ({
         path: err.path.join('.'),
         message: err.message,
       }));
