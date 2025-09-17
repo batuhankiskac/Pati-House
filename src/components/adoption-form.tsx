@@ -111,6 +111,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          id={field.name}
                           placeholder="Ad Soyad"
                           {...field}
                           className="text-base md:text-sm"
@@ -140,6 +141,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          id={field.name}
                           placeholder="siz@ornek.com"
                           {...field}
                           className="text-base md:text-sm"
@@ -170,6 +172,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        id={field.name}
                         placeholder="(555) 123-4567"
                         {...field}
                         aria-describedby={form.formState.errors.phone ? `${field.name}-error` : undefined}
@@ -198,6 +201,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        id={field.name}
                         placeholder="123 Ana Cad, Herhangibiryer, Türkiye"
                         {...field}
                         aria-describedby={form.formState.errors.address ? `${field.name}-error` : undefined}
@@ -226,13 +230,14 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
                     </FormLabel>
                     <FormControl>
                       <Textarea
+                        id={field.name}
                         placeholder="Bize evinizden, evcil hayvan deneyiminizden ve neden harika bir sahip olacağınızdan bahsedin."
                         className="resize-y min-h-[120px]"
                         {...field}
                         aria-describedby={form.formState.errors.reason ? `${field.name}-error` : undefined}
                       />
                     </FormControl>
-                     <FormDescription>
+                    <FormDescription>
                       Yaşam durumunuzu ve evcil hayvanlarla olan deneyiminizi kısaca açıklayın.
                     </FormDescription>
                     {form.formState.errors.reason && (
