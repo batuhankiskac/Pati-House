@@ -1,6 +1,5 @@
 // Service for cat-related API calls and business logic
 import type { Cat } from '@/lib/data';
-import cacheUtils from '@/lib/cache/cache-utils';
 import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
 import { validateData } from '@/lib/validation/utils';
 import type { CatFormData, CatUpdateData } from '@/lib/validation/cats';
@@ -13,12 +12,33 @@ type UpdateCatInput = CatUpdateData;
 // const API_BASE = '/api/cats';
 const API_BASE = API_ENDPOINTS.CATS;
 
+type CacheUtilsModule = typeof import('@/lib/cache/cache-utils');
+
+let cacheUtilsPromise: Promise<CacheUtilsModule['default']> | null = null;
+
+async function getCacheUtils(): Promise<CacheUtilsModule['default'] | null> {
+  if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'test') {
+    return null;
+  }
+
+  if (process.env.NEXT_RUNTIME && process.env.NEXT_RUNTIME !== 'nodejs') {
+    return null;
+  }
+
+  if (!cacheUtilsPromise) {
+    cacheUtilsPromise = import('@/lib/cache/cache-utils').then((mod) => mod.default);
+  }
+
+  return cacheUtilsPromise;
+}
+
 async function fetchCats(): Promise<{ success: boolean; data?: Cat[]; error?: string }> {
   const startTime = Date.now();
   try {
+    const cache = await getCacheUtils();
     // Try to get from cache first
-    const cachedCats = await cacheUtils.getCachedCats();
-    if (cachedCats) {
+    const cachedCats = cache ? await cache.getCachedCats() : null;
+    if (cachedCats && cachedCats.length > 0) {
       const duration = Date.now() - startTime;
       logger.debug('[service][cats] returning cached list', { duration, count: cachedCats.length });
       return { success: true, data: cachedCats };
@@ -32,7 +52,9 @@ async function fetchCats(): Promise<{ success: boolean; data?: Cat[]; error?: st
     }
 
     // Cache the result
-    await cacheUtils.setCachedCats(json.data);
+    if (cache) {
+      await cache.setCachedCats(json.data);
+    }
     const duration = Date.now() - startTime;
     logger.debug('[service][cats] fetched', { duration, count: json.data.length });
     return { success: true, data: json.data };
@@ -79,7 +101,10 @@ async function createCat(data: CreateCatInput): Promise<{ success: boolean; cat?
       return { success: false, error: json.error || 'Failed to add cat' };
     }
     // Invalidate cache after creating a new cat
-    await cacheUtils.invalidateCatsCache();
+    const cache = await getCacheUtils();
+    if (cache) {
+      await cache.invalidateCatsCache();
+    }
     const duration = Date.now() - startTime;
     logger.debug('[service][cats] createCat ok', { id: json.data.id, duration });
     return { success: true, cat: json.data };
@@ -114,8 +139,11 @@ async function updateCat(id: number, data: UpdateCatInput): Promise<{ success: b
       return { success: false, error: json.error || 'Failed to update cat' };
     }
     // Invalidate cache after updating a cat
-    await cacheUtils.invalidateCatsCache();
-    await cacheUtils.invalidateCatCache(id);
+    const cache = await getCacheUtils();
+    if (cache) {
+      await cache.invalidateCatsCache();
+      await cache.invalidateCatCache(id);
+    }
     console.debug('[service][cats] updateCat ok', { id });
     return { success: true, cat: json.data };
   } catch (e: any) {
@@ -133,8 +161,11 @@ async function deleteCat(id: number): Promise<{ success: boolean; error?: string
       return { success: false, error: json.error || 'Failed to delete cat' };
     }
     // Invalidate cache after deleting a cat
-    await cacheUtils.invalidateCatsCache();
-    await cacheUtils.invalidateCatCache(id);
+    const cache = await getCacheUtils();
+    if (cache) {
+      await cache.invalidateCatsCache();
+      await cache.invalidateCatCache(id);
+    }
     console.debug('[service][cats] deleteCat ok', { id });
     return { success: true };
   } catch (e: any) {
