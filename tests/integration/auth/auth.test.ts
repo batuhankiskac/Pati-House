@@ -1,7 +1,7 @@
 import { registerUser, authenticateUser, getUserById, generateToken, verifyToken, createSession } from '@/lib/auth';
 import { userRepository } from '@/lib/data';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { generateToken as tokenGenerate, verifyToken as tokenVerify } from '@/lib/token';
 
 // Mock the user repository
 jest.mock('@/lib/data', () => ({
@@ -19,10 +19,10 @@ jest.mock('bcryptjs', () => ({
   compare: jest.fn(),
 }));
 
-// Mock jsonwebtoken
-jest.mock('jsonwebtoken', () => ({
-  sign: jest.fn(),
- verify: jest.fn(),
+// Mock token helpers
+jest.mock('@/lib/token', () => ({
+  generateToken: jest.fn(),
+  verifyToken: jest.fn(),
 }));
 
 describe('Authentication Integration', () => {
@@ -204,46 +204,40 @@ describe('Authentication Integration', () => {
   });
 
   describe('generateToken', () => {
-    it('should generate a JWT token', () => {
-      (jwt.sign as jest.Mock).mockReturnValue('generated_token');
+    it('should generate a JWT token', async () => {
+      (tokenGenerate as jest.Mock).mockResolvedValue('generated_token');
 
-      const token = generateToken(mockUser);
+      const token = await generateToken(mockUser);
 
       expect(token).toBe('generated_token');
-      expect(jwt.sign).toHaveBeenCalledWith(
-        {
-          id: mockUser.id,
-          username: mockUser.username,
-          name: mockUser.name,
-        },
-        'fallback-jwt-secret',
-        { expiresIn: '7d' }
-      );
+      expect(tokenGenerate).toHaveBeenCalledWith({
+        id: mockUser.id,
+        username: mockUser.username,
+        name: mockUser.name,
+      });
     });
   });
 
   describe('verifyToken', () => {
-    it('should verify a valid JWT token', () => {
+    it('should verify a valid JWT token', async () => {
       const decodedToken = {
         id: '1',
         username: 'johndoe',
         name: 'John Doe',
       };
 
-      (jwt.verify as jest.Mock).mockReturnValue(decodedToken);
+      (tokenVerify as jest.Mock).mockResolvedValue(decodedToken);
 
-      const result = verifyToken('valid_token');
+      const result = await verifyToken('valid_token');
 
       expect(result).toEqual(decodedToken);
-      expect(jwt.verify).toHaveBeenCalledWith('valid_token', 'fallback-jwt-secret');
+      expect(tokenVerify).toHaveBeenCalledWith('valid_token');
     });
 
-    it('should return null for invalid JWT token', () => {
-      (jwt.verify as jest.Mock).mockImplementation(() => {
-        throw new Error('Invalid token');
-      });
+    it('should return null for invalid JWT token', async () => {
+      (tokenVerify as jest.Mock).mockResolvedValue(null);
 
-      const result = verifyToken('invalid_token');
+      const result = await verifyToken('invalid_token');
 
       expect(result).toBeNull();
     });
@@ -256,7 +250,7 @@ describe('Authentication Integration', () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
       // Mock token generation
-      (jwt.sign as jest.Mock).mockReturnValue('session_token');
+      (tokenGenerate as jest.Mock).mockResolvedValue('session_token');
 
       const result = await createSession('johndoe', 'password123');
 
@@ -266,7 +260,7 @@ describe('Authentication Integration', () => {
       });
       expect(userRepository.getByUsername).toHaveBeenCalledWith('johndoe');
       expect(bcrypt.compare).toHaveBeenCalledWith('password123', mockUser.password);
-      expect(jwt.sign).toHaveBeenCalled();
+      expect(tokenGenerate).toHaveBeenCalled();
     });
 
     it('should fail to create a session for invalid credentials', async () => {

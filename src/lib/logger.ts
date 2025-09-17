@@ -1,6 +1,4 @@
 // Centralized logging utility for the application
-import fs from 'fs';
-import path from 'path';
 
 // Define log levels
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -28,13 +26,17 @@ interface LoggerConfig {
 import { LOGGING_CONFIG } from '@/lib/config';
 
 // Default configuration
+const isServerEnvironment = typeof window === 'undefined';
+
 const defaultConfig: LoggerConfig = {
   level: LOGGING_CONFIG.LEVEL,
-  transports: ['console'],
-  file: {
-    path: LOGGING_CONFIG.FILE_PATH,
-    maxSize: LOGGING_CONFIG.FILE_MAX_SIZE,
-  }
+  transports: ['console', ...(isServerEnvironment ? ['file'] as LogTransport[] : [])],
+  file: isServerEnvironment
+    ? {
+        path: LOGGING_CONFIG.FILE_PATH,
+        maxSize: LOGGING_CONFIG.FILE_MAX_SIZE,
+      }
+    : undefined,
 };
 
 // Log level priorities (higher number = higher priority)
@@ -45,6 +47,28 @@ const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
   error: 3
 };
 
+type FsModule = typeof import('fs');
+type PathModule = typeof import('path');
+
+let fsModule: FsModule | null = null;
+let pathModule: PathModule | null = null;
+
+async function loadNodeModules() {
+  if (!isServerEnvironment) {
+    return null;
+  }
+
+  if (!fsModule) {
+    fsModule = await import('fs');
+  }
+
+  if (!pathModule) {
+    pathModule = await import('path');
+  }
+
+  return { fs: fsModule, path: pathModule };
+}
+
 class Logger {
   private config: LoggerConfig;
   private levels: LogLevel[] = ['debug', 'info', 'warn', 'error'];
@@ -52,12 +76,11 @@ class Logger {
   constructor(config: Partial<LoggerConfig> = {}) {
     this.config = { ...defaultConfig, ...config };
 
-    // Ensure logs directory exists
-    if (this.config.transports.includes('file') && this.config.file) {
-      const dir = path.dirname(this.config.file.path);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
+    if (!isServerEnvironment) {
+      this.config.transports = this.config.transports.filter((transport) => transport !== 'file');
+      this.config.file = undefined;
+    } else {
+      void this.ensureLogDirectory();
     }
   }
 
@@ -82,27 +105,45 @@ class Logger {
    return JSON.stringify(baseFields);
  }
 
+  private async ensureLogDirectory(): Promise<void> {
+    if (!this.config.file) return;
+
+    const modules = await loadNodeModules();
+    if (!modules) return;
+
+    const { fs, path } = modules;
+    const dir = path.dirname(this.config.file.path);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  }
+
   // Write to file with rotation
-  private writeToFile(entry: LogEntry): void {
+  private async writeToFile(entry: LogEntry): Promise<void> {
     if (!this.config.file) return;
 
     try {
+      const modules = await loadNodeModules();
+      if (!modules) return;
+
+      const { fs, path } = modules;
       const logLine = this.formatLogEntry(entry) + '\n';
 
-      // Check if file needs rotation
       if (fs.existsSync(this.config.file.path)) {
         const stats = fs.statSync(this.config.file.path);
         if (stats.size > this.config.file.maxSize) {
-          // Rotate log file
           const rotatedPath = `${this.config.file.path}.${new Date().toISOString().replace(/[:.]/g, '-')}`;
           fs.renameSync(this.config.file.path, rotatedPath);
         }
+      } else {
+        const dir = path.dirname(this.config.file.path);
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
       }
 
-      // Write to file
       fs.appendFileSync(this.config.file.path, logLine);
     } catch (error) {
-      // Fallback to console if file writing fails
       console.error('Logger file transport error:', error);
     }
   }
@@ -149,7 +190,7 @@ class Logger {
           this.writeToConsole(entry);
           break;
         case 'file':
-          this.writeToFile(entry);
+          void this.writeToFile(entry);
           break;
       }
     });
