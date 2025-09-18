@@ -16,6 +16,15 @@ export const AUTH_CONFIG = {
   JWT_SECRET: process.env.JWT_SECRET || 'fallback-jwt-secret',
   COOKIE_NAME: process.env.AUTH_COOKIE_NAME || 'auth-token',
   COOKIE_MAX_AGE: parseInt(process.env.AUTH_COOKIE_MAX_AGE || '604800', 10), // 7 days default
+  DEFAULT_ADMIN: {
+    USERNAME: process.env.DEFAULT_ADMIN_USERNAME || 'Hill',
+    PASSWORD: process.env.DEFAULT_ADMIN_PASSWORD || 'Yula.2024',
+    NAME: process.env.DEFAULT_ADMIN_NAME || 'Hill Administrator',
+    EMAIL: process.env.DEFAULT_ADMIN_EMAIL || 'hill@example.com',
+    PASSWORD_HASH:
+      process.env.DEFAULT_ADMIN_PASSWORD_HASH ||
+      '$2b$10$A5cKJ8VVaXsOwonlBtTMPuqm6hX4jcBpWJbtVPY05qtEH2gnnup..',
+  },
 };
 
 // API endpoints

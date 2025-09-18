@@ -17,7 +17,7 @@ const COOKIE_OPTIONS = {
 
 export async function getSession() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const authToken = cookieStore.get(COOKIE_NAME);
 
     if (authToken?.value) {
@@ -43,7 +43,7 @@ export async function getSession() {
 
 export async function destroySession() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     cookieStore.set(COOKIE_NAME, '', {
       ...COOKIE_OPTIONS,
       maxAge: 0,
@@ -89,7 +89,7 @@ export async function requireAuth(request: NextRequest) {
   }
 }
 
-export function setAuthCookie(token: string) {
-  const cookieStore = cookies();
+export async function setAuthCookie(token: string) {
+  const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, COOKIE_OPTIONS);
 }

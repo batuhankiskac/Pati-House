@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    setAuthCookie(sessionResult.token);
+    await setAuthCookie(sessionResult.token);
 
     const duration = Date.now() - startTime;
     logger.http('POST', '/api/login', 200, duration, {
