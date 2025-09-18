@@ -102,7 +102,7 @@ export class MockUsersService {
   constructor() {
     // Initialize with some test data
     this.users = [
-      TestDataFactory.createUser({ username: 'admin', email: 'admin@example.com' }),
+      TestDataFactory.createUser({ username: 'Hill', email: 'hill@example.com', password: 'Yula.2024', name: 'Hill Administrator' }),
       TestDataFactory.createUser({ username: 'user1', email: 'user1@example.com' }),
     ];
   }

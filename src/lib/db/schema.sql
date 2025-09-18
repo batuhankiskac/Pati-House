@@ -68,5 +68,5 @@ CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
 
 -- Insert default admin user (only if it doesn't exist)
 INSERT INTO users (username, email, password, name)
-SELECT 'admin', 'admin@example.com', '$2a$10$8K1p/a0dhrxiowP.dnkgNORTWgdEDHn5L2/xjpEWuC.QQv4rKO9jO', 'Admin User'
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');
+SELECT 'Hill', 'hill@example.com', '$2b$10$A5cKJ8VVaXsOwonlBtTMPuqm6hX4jcBpWJbtVPY05qtEH2gnnup..', 'Hill Administrator'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'Hill');

@@ -1,5 +1,6 @@
 import { registerUser, authenticateUser, getUserById, generateToken, verifyToken, createSession } from '@/lib/auth';
 import { userRepository } from '@/lib/data';
+import { AUTH_CONFIG } from '@/lib/config';
 import bcrypt from 'bcryptjs';
 import { generateToken as tokenGenerate, verifyToken as tokenVerify } from '@/lib/token';
 
@@ -162,6 +163,23 @@ describe('Authentication Integration', () => {
       expect(bcrypt.compare).toHaveBeenCalledWith('wrongpassword', mockUser.password);
     });
 
+    it('should return fallback admin when database has no matching user', async () => {
+      const fallbackAdmin = AUTH_CONFIG.DEFAULT_ADMIN;
+      (userRepository.getByUsername as jest.Mock).mockResolvedValue(null);
+
+      const result = await authenticateUser(fallbackAdmin.USERNAME, fallbackAdmin.PASSWORD);
+
+      expect(result).toEqual({
+        id: 'fallback-admin',
+        username: fallbackAdmin.USERNAME,
+        email: fallbackAdmin.EMAIL,
+        password: fallbackAdmin.PASSWORD_HASH,
+        name: fallbackAdmin.NAME,
+      });
+      expect(userRepository.getByUsername).toHaveBeenCalledWith(fallbackAdmin.USERNAME);
+      expect(bcrypt.compare).not.toHaveBeenCalled();
+    });
+
     it('should handle errors during authentication', async () => {
       // Mock user found
       (userRepository.getByUsername as jest.Mock).mockResolvedValue(mockUser);
@@ -271,6 +289,23 @@ describe('Authentication Integration', () => {
 
       expect(result).toEqual({ success: false });
       expect(userRepository.getByUsername).toHaveBeenCalledWith('invaliduser');
+    });
+
+    it('should create a session using fallback admin credentials when the database user is missing', async () => {
+      const fallbackAdmin = AUTH_CONFIG.DEFAULT_ADMIN;
+      (userRepository.getByUsername as jest.Mock).mockResolvedValue(null);
+      (tokenGenerate as jest.Mock).mockResolvedValue('fallback_token');
+
+      const result = await createSession(fallbackAdmin.USERNAME, fallbackAdmin.PASSWORD);
+
+      expect(result).toEqual({ success: true, token: 'fallback_token' });
+      expect(userRepository.getByUsername).toHaveBeenCalledWith(fallbackAdmin.USERNAME);
+      expect(bcrypt.compare).not.toHaveBeenCalled();
+      expect(tokenGenerate).toHaveBeenCalledWith({
+        id: 'fallback-admin',
+        username: fallbackAdmin.USERNAME,
+        name: fallbackAdmin.NAME,
+      });
     });
   });
 });
