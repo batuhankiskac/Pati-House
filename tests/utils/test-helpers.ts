@@ -5,7 +5,7 @@ import { Page, expect } from '@playwright/test';
 /**
  * Helper function to login as an admin user
  */
-export async function loginAsAdmin(page: Page, username: string = 'admin', password: string = 'password123') {
+export async function loginAsAdmin(page: Page, username: string = 'Hill', password: string = 'Yula.2024') {
   // Navigate to login page
   await page.goto('/login');
 

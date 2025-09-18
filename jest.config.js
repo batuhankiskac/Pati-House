@@ -13,6 +13,9 @@ module.exports = {
     '<rootDir>/.next/',
     '<rootDir>/tests/e2e/',
   ],
+  modulePathIgnorePatterns: [
+    '<rootDir>/src/package.json',
+  ],
   transform: {
     '^.+\\.(ts|tsx|jsx|js)$': ['ts-jest', {
       tsconfig: 'tsconfig.jest.json'
