@@ -22,8 +22,8 @@ test.describe('Mobile Responsiveness Tests', () => {
 
     // Login first
     await page.goto('/login');
-    await page.fill('#username', 'admin');
-    await page.fill('#password', 'admin123');
+    await page.fill('#username', 'Hill');
+    await page.fill('#password', 'Yula.2024');
     await page.click('button[type="submit"]');
 
     // Navigate to admin page

@@ -5,7 +5,7 @@ describe('Auth Validation Schemas', () => {
     it('should validate a correct login form', () => {
       const validLogin = {
         username: 'johndoe',
-        password: 'admin',
+        password: 'Yula.2024',
       };
 
       expect(() => loginSchema.parse(validLogin)).not.toThrow();
@@ -13,7 +13,7 @@ describe('Auth Validation Schemas', () => {
 
     it('should reject a login form with missing username', () => {
       const invalidLogin = {
-        password: 'admin',
+        password: 'Yula.2024',
       };
 
       expect(() => loginSchema.parse(invalidLogin)).toThrow();
@@ -22,7 +22,7 @@ describe('Auth Validation Schemas', () => {
     it('should reject a login form with username too long', () => {
       const invalidLogin = {
         username: 'a'.repeat(51), // 51 characters, max is 50
-        password: 'admin',
+        password: 'Yula.2024',
       };
 
       expect(() => loginSchema.parse(invalidLogin)).toThrow();
