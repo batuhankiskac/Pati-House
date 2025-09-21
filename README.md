@@ -164,19 +164,20 @@ If your application still can't connect:
 
 The admin panel and API work even if Redis is not running. By default, caching is disabled unless you explicitly provide a `REDIS_URL` environment variable. When the variable is missing, the application falls back to an in-memory no-op cache so you won't see repeated `ECONNREFUSED 127.0.0.1:6379` errors while developing locally.
 
-To enable Redis caching:
+To enable Redis caching with the provided Docker Compose stack:
 
-1. Start a Redis instance (for example with Docker):
+1. Start the Redis service alongside PostgreSQL:
    ```bash
-   docker run --name pati-redis -p 6379:6379 -d redis:7
+   docker-compose up -d postgres redis
    ```
+   Redis will store its data in the `redis_data` volume and listen on port `6379` on your host machine.
 2. Set the connection string in your environment:
    ```
    REDIS_URL=redis://localhost:6379
    ```
 3. Restart the Next.js dev server so it picks up the new configuration.
 
-If Redis becomes unavailable at runtime, the cache gracefully falls back to the no-op implementation and your requests will continue to work.
+If you prefer running Redis manually, you can still start your own container or local instance and point `REDIS_URL` at it. Regardless of how Redis is started, if it becomes unavailable at runtime the cache gracefully falls back to the no-op implementation and your requests will continue to work.
 
 2. Test connection from host:
    ```bash
