@@ -16,23 +16,31 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Cat } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
-import { useCats } from '@/hooks/use-cats';
 import { AdminErrorBoundary } from '@/components/admin/error-boundary';
 import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
 import { formatErrors, validateData } from '@/lib/validation/utils';
-import type { CatFormData } from '@/lib/validation/cats';
+import type { CatFormData, CatUpdateData } from '@/lib/validation/cats';
 
 interface CatEditDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   cat?: Cat | null;
   isEditing?: boolean;
-  onSuccess?: () => void;
+  onSuccess?: () => void | Promise<void>;
+  onCreateCat: (data: CatFormData) => Promise<{ success: boolean; cat?: Cat; error?: string }>;
+  onUpdateCat: (id: number, data: CatUpdateData) => Promise<{ success: boolean; cat?: Cat; error?: string }>;
 }
 
-export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = false, onSuccess }: CatEditDialogProps) {
+export default function CatEditDialog({
+  isOpen,
+  onOpenChange,
+  cat,
+  isEditing = false,
+  onSuccess,
+  onCreateCat,
+  onUpdateCat
+}: CatEditDialogProps) {
   const { toast } = useToast();
-  const { createCat, updateCat } = useCats();
   const [formData, setFormData] = useState<CatFormData>({
     name: cat?.name || '',
     breed: cat?.breed || '',
@@ -61,6 +69,16 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
     e.preventDefault();
     setIsSubmitting(true);
 
+    if (isEditing && !cat) {
+      toast({
+        title: 'Hata',
+        description: 'Düzenlenecek kedi bulunamadı.',
+        variant: 'destructive',
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     // Validate form data
     const validationSchema = isEditing ? catUpdateSchema : catFormSchema;
     const validationResult = validateData(validationSchema, formData);
@@ -78,8 +96,8 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
 
     try {
       const result = isEditing && cat
-        ? await updateCat(cat.id, formData)
-        : await createCat(formData);
+        ? await onUpdateCat(cat.id, formData)
+        : await onCreateCat(formData);
 
       if (result.success) {
         setFieldErrors({});
@@ -88,7 +106,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
           description: isEditing ? 'Kedi bilgileri güncellendi.' : 'Kedi başarıyla eklendi.',
         });
         onOpenChange(false);
-        onSuccess && onSuccess();
+        await onSuccess?.();
       } else {
         toast({
           title: 'Hata',

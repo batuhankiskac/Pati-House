@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AdoptionForm from '@/components/adoption-form';
 
+const createRequestMock = jest.fn();
+
 // Mock the useToast hook
 jest.mock('@/hooks/use-toast', () => ({
   useToast: () => ({
@@ -13,7 +15,7 @@ jest.mock('@/hooks/use-toast', () => ({
 // Mock the useRequests hook
 jest.mock('@/hooks/use-requests', () => ({
   useRequests: () => ({
-    createRequest: jest.fn(),
+    createRequest: createRequestMock,
   }),
 }));
 
@@ -29,6 +31,7 @@ describe('AdoptionForm', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    createRequestMock.mockResolvedValue({ success: true });
   });
 
   it('should render the form with correct fields', () => {
@@ -154,4 +157,35 @@ describe('AdoptionForm', () => {
       expect(screen.getByText(/Please provide more information \(at least 20 characters\)/i)).toBeInTheDocument();
     }, { timeout: 2000 });
   }, 3000);
+
+  it('submits with the cat name populated from props', async () => {
+    render(<AdoptionForm catName={catName} />);
+
+    fireEvent.input(screen.getByLabelText(/tam adınız/i), {
+      target: { value: 'John Doe' },
+    });
+    fireEvent.input(screen.getByLabelText(/e-posta/i), {
+      target: { value: 'john.doe@example.com' },
+    });
+    fireEvent.input(screen.getByLabelText(/telefon numarası/i), {
+      target: { value: '1234567890' },
+    });
+    fireEvent.input(screen.getByLabelText(/tam adres/i), {
+      target: { value: '123 Main St, City, Country' },
+    });
+    fireEvent.input(screen.getByLabelText(/neden sahiplenmek istiyorsunuz/i), {
+      target: { value: 'I love cats and want to provide a loving home for Fluffy.' },
+    });
+
+    const submitButton = screen.getByRole('button', { name: /başvuruyu gönder/i });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(createRequestMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          catName,
+        })
+      );
+    });
+  });
 });

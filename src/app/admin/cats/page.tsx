@@ -6,37 +6,95 @@ import CatsTable from '@/components/admin/cats-table';
 import { useState, useCallback } from 'react';
 import CatEditDialog from '@/components/admin/cat-edit-dialog';
 import { useCats } from '@/hooks/use-cats';
+import type { Cat } from '@/lib/data';
 
 /**
- * Uses useCats() hook. Hook exposes `refresh`, not `refreshCats`.
- * Previous code destructured a non-existent refreshCats causing TypeError.
+ * Manage cats page keeps a single source of truth for cat data mutations
+ * via the useCats() hook and shares it with the table and dialog.
  */
 export default function ManageCatsPage() {
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const { refresh } = useCats();
+  const {
+    cats,
+    loading,
+    error,
+    refresh,
+    createCat,
+    updateCat,
+    deleteCat
+  } = useCats();
 
-  const handleRefresh = useCallback(() => {
-    refresh();
-  }, [refresh]);
+  const [dialogState, setDialogState] = useState<{
+    open: boolean;
+    mode: 'create' | 'edit';
+    cat: Cat | null;
+  }>({
+    open: false,
+    mode: 'create',
+    cat: null,
+  });
+
+  const openCreateDialog = useCallback(() => {
+    setDialogState({ open: true, mode: 'create', cat: null });
+  }, []);
+
+  const openEditDialog = useCallback((catToEdit: Cat) => {
+    setDialogState({ open: true, mode: 'edit', cat: catToEdit });
+  }, []);
+
+  const closeDialog = useCallback(() => {
+    setDialogState({
+      open: false,
+      mode: 'create',
+      cat: null,
+    });
+  }, []);
+
+  const handleDialogOpenChange = useCallback((open: boolean) => {
+    if (open) {
+      setDialogState(prev => ({ ...prev, open: true }));
+    } else {
+      closeDialog();
+    }
+  }, [closeDialog]);
+
+  const handleRefresh = useCallback(() => refresh(), [refresh]);
+
+  const handleDialogSuccess = useCallback(async () => {
+    closeDialog();
+    try {
+      await handleRefresh();
+    } catch (error) {
+      console.error('[admin][cats] refresh after dialog success failed', error);
+    }
+  }, [closeDialog, handleRefresh]);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold font-headline">Kedileri Yönet</h1>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
+        <Button onClick={openCreateDialog}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Yeni Kedi Ekle
         </Button>
       </div>
-      <CatsTable onRefreshAction={handleRefresh} />
+      <CatsTable
+        cats={cats}
+        loading={loading}
+        error={error}
+        onRefreshAction={handleRefresh}
+        onEditCat={openEditDialog}
+        onDeleteCat={deleteCat}
+      />
 
       {/* Add Dialog */}
       <CatEditDialog
-        isOpen={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-        cat={null}
-        isEditing={false}
-        onSuccess={handleRefresh}
+        isOpen={dialogState.open}
+        onOpenChange={handleDialogOpenChange}
+        cat={dialogState.cat}
+        isEditing={dialogState.mode === 'edit'}
+        onSuccess={handleDialogSuccess}
+        onCreateCat={createCat}
+        onUpdateCat={updateCat}
       />
     </div>
   );
