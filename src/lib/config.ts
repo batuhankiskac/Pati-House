@@ -41,7 +41,8 @@ export const APP_URLS = {
 // Database and cache connections
 export const CONNECTION_CONFIG = {
   DATABASE_URL: process.env.DATABASE_URL || 'postgresql://username:password@localhost:5432/pati_db',
-  REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
+  // Default to empty string so Redis usage can be optional in local development
+  REDIS_URL: process.env.REDIS_URL || '',
 };
 
 // Standardized error messages
