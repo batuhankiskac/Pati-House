@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useCats } from '@/hooks/use-cats';
 import { AdminErrorBoundary } from '@/components/admin/error-boundary';
 import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
-import { validateData } from '@/lib/validation/utils';
+import { formatErrors, validateData } from '@/lib/validation/utils';
 import type { CatFormData } from '@/lib/validation/cats';
 
 interface CatEditDialogProps {
@@ -33,7 +33,7 @@ interface CatEditDialogProps {
 export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = false, onSuccess }: CatEditDialogProps) {
   const { toast } = useToast();
   const { createCat, updateCat } = useCats();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CatFormData>({
     name: cat?.name || '',
     breed: cat?.breed || '',
     age: cat?.age || 1,
@@ -43,6 +43,19 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    setFormData({
+      name: cat?.name || '',
+      breed: cat?.breed || '',
+      age: cat?.age || 1,
+      gender: (cat?.gender || 'Male') as 'Male' | 'Female',
+      description: cat?.description || '',
+      image: cat?.image || 'https://placehold.co/600x600.png'
+    });
+    setFieldErrors({});
+  }, [cat, isOpen, isEditing]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,10 +66,10 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
     const validationResult = validateData(validationSchema, formData);
 
     if (!validationResult.success) {
-      // Display validation errors
+      setFieldErrors(formatErrors(validationResult.errors || []));
       toast({
-        title: 'Validation Error',
-        description: 'Please check the form for errors.',
+        title: 'Doğrulama Hatası',
+        description: 'Lütfen form alanlarını kontrol edin.',
         variant: 'destructive',
       });
       setIsSubmitting(false);
@@ -69,23 +82,24 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
         : await createCat(formData);
 
       if (result.success) {
+        setFieldErrors({});
         toast({
-          title: 'Success',
-          description: isEditing ? 'Cat successfully updated.' : 'Cat successfully added.',
+          title: 'Başarılı',
+          description: isEditing ? 'Kedi bilgileri güncellendi.' : 'Kedi başarıyla eklendi.',
         });
         onOpenChange(false);
         onSuccess && onSuccess();
       } else {
         toast({
-          title: 'Error',
-          description: result.error || 'Operation failed',
+          title: 'Hata',
+          description: result.error || 'İşlem başarısız oldu.',
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'An unexpected error occurred.',
+        title: 'Hata',
+        description: 'Beklenmeyen bir hata oluştu.',
         variant: 'destructive',
       });
     } finally {
@@ -98,14 +112,14 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent
           className="sm:max-w-[425px]"
-          aria-label={isEditing ? 'Edit Cat' : 'Add New Cat'}
+          aria-label={isEditing ? 'Kedi Bilgilerini Düzenle' : 'Yeni Kedi Ekle'}
           role="dialog"
           aria-modal="true"
         >
           <DialogHeader>
-            <DialogTitle>{isEditing ? 'Edit Cat' : 'Add New Cat'}</DialogTitle>
+            <DialogTitle>{isEditing ? 'Kedi Bilgilerini Düzenle' : 'Yeni Kedi Ekle'}</DialogTitle>
             <DialogDescription>
-              {isEditing ? 'Update cat information.' : 'Enter new cat information.'}
+              {isEditing ? 'Kedi bilgilerini güncelleyin.' : 'Yeni kedi bilgilerini girin.'}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,7 +129,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="text-right"
                 aria-required="true"
               >
-                Name
+                İsim
               </Label>
               <Input
                 id="name"
@@ -124,7 +138,13 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="col-span-3"
                 required
                 aria-describedby="name-error"
+                aria-invalid={Boolean(fieldErrors.name)}
               />
+              {fieldErrors.name && (
+                <p className="col-start-2 col-span-3 text-sm text-red-600" id="name-error">
+                  {fieldErrors.name}
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label
@@ -132,7 +152,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="text-right"
                 aria-required="true"
               >
-                Breed
+                Cins
               </Label>
               <Input
                 id="breed"
@@ -141,15 +161,21 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="col-span-3"
                 required
                 aria-describedby="breed-error"
+                aria-invalid={Boolean(fieldErrors.breed)}
               />
+              {fieldErrors.breed && (
+                <p className="col-start-2 col-span-3 text-sm text-red-600" id="breed-error">
+                  {fieldErrors.breed}
+                </p>
+              )}
             </div>
-              <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label
                 htmlFor="age"
                 className="text-right"
                 aria-required="true"
               >
-                Age
+                Yaş
               </Label>
               <Input
                 id="age"
@@ -157,11 +183,20 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 min="0"
                 max="20"
                 value={formData.age}
-                onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) || 1 }))}
+                onChange={(e) => {
+                  const nextValue = Number(e.target.value);
+                  setFormData(prev => ({ ...prev, age: Number.isNaN(nextValue) ? 0 : nextValue }));
+                }}
                 className="col-span-3"
                 required
                 aria-describedby="age-error"
+                aria-invalid={Boolean(fieldErrors.age)}
               />
+              {fieldErrors.age && (
+                <p className="col-start-2 col-span-3 text-sm text-red-600" id="age-error">
+                  {fieldErrors.age}
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label
@@ -169,21 +204,27 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="text-right"
                 aria-required="true"
               >
-                Gender
+                Cinsiyet
               </Label>
               <Select
                 value={formData.gender}
                 onValueChange={(value: 'Male' | 'Female') => setFormData(prev => ({ ...prev, gender: value }))}
                 aria-describedby="gender-error"
+                aria-invalid={Boolean(fieldErrors.gender)}
               >
                 <SelectTrigger className="col-span-3">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
+                  <SelectItem value="Male">Erkek</SelectItem>
+                  <SelectItem value="Female">Dişi</SelectItem>
                 </SelectContent>
               </Select>
+              {fieldErrors.gender && (
+                <p className="col-start-2 col-span-3 text-sm text-red-600" id="gender-error">
+                  {fieldErrors.gender}
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <Label
@@ -191,7 +232,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="text-right mt-2"
                 aria-required="true"
               >
-                Description
+                Açıklama
               </Label>
               <Textarea
                 id="description"
@@ -201,7 +242,13 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 rows={3}
                 required
                 aria-describedby="description-error"
+                aria-invalid={Boolean(fieldErrors.description)}
               />
+              {fieldErrors.description && (
+                <p className="col-start-2 col-span-3 text-sm text-red-600" id="description-error">
+                  {fieldErrors.description}
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label
@@ -209,7 +256,7 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="text-right"
                 aria-required="true"
               >
-                Image URL
+                Görsel URL'si
               </Label>
               <Input
                 id="image"
@@ -218,16 +265,22 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
                 className="col-span-3"
                 required
                 aria-describedby="image-error"
+                aria-invalid={Boolean(fieldErrors.image)}
               />
+              {fieldErrors.image && (
+                <p className="col-start-2 col-span-3 text-sm text-red-600" id="image-error">
+                  {fieldErrors.image}
+                </p>
+              )}
             </div>
             <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                aria-label="Cancel"
+                aria-label="İptal"
               >
-                Cancel
+                İptal
               </Button>
               <Button
                 type="submit"
@@ -236,11 +289,11 @@ export default function CatEditDialog({ isOpen, onOpenChange, cat, isEditing = f
               >
                 {isSubmitting ? (
                   <>
-                    <span className="sr-only">Saving</span>
-                    Saving...
+                    <span className="sr-only">Kaydediliyor</span>
+                    Kaydediliyor...
                   </>
                 ) : (
-                  isEditing ? 'Update' : 'Add'
+                  isEditing ? 'Güncelle' : 'Ekle'
                 )}
               </Button>
             </DialogFooter>

@@ -40,18 +40,18 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
   };
 
   const handleDelete = async (catId: number, catName: string) => {
-    if (!window.confirm(`Are you sure you want to delete the cat named ${catName}?`)) return;
+    if (!window.confirm(`${catName} adlı kediyi silmek istediğinize emin misiniz?`)) return;
     const result = await deleteCat(catId);
     if (result.success) {
       toast({
-        title: 'Success',
-        description: 'Cat deleted (optimistic).',
+        title: 'Başarılı',
+        description: 'Kedi silindi (geçici sonuç).',
       });
       triggerExternalRefresh();
     } else {
       toast({
-        title: 'Error',
-        description: result.error || 'An error occurred while deleting the cat.',
+        title: 'Hata',
+        description: result.error || 'Kedi silinirken bir hata oluştu.',
         variant: 'destructive',
       });
       // Attempt to resync from server
@@ -68,10 +68,10 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
     <AdminErrorBoundary>
       <Card
         role="region"
-        aria-label="Cats table"
+        aria-label="Kedi tablosu"
       >
         <CardHeader>
-          <CardTitle>Cats</CardTitle>
+          <CardTitle>Kediler</CardTitle>
         </CardHeader>
         <CardContent>
           {loading && (
@@ -80,7 +80,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
               role="status"
               aria-live="polite"
             >
-              Loading...
+              Yükleniyor...
             </div>
           )}
           {error && !loading && (
@@ -89,7 +89,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
               role="alert"
               aria-live="assertive"
             >
-              Error: {error}
+              Hata: {error}
             </div>
           )}
           {!loading && !error && (
@@ -97,14 +97,14 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
             <TableHeader>
               <TableRow>
                 <TableHead className="hidden w-[100px] sm:table-cell">
-                  <span className="sr-only">Image</span>
+                  <span className="sr-only">Görsel</span>
                 </TableHead>
-                <TableHead scope="col">Name</TableHead>
-                <TableHead scope="col">Breed</TableHead>
-                <TableHead scope="col" className="hidden md:table-cell">Age</TableHead>
-                <TableHead scope="col" className="hidden md:table-cell">Gender</TableHead>
+                <TableHead scope="col">İsim</TableHead>
+                <TableHead scope="col">Cins</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">Yaş</TableHead>
+                <TableHead scope="col" className="hidden md:table-cell">Cinsiyet</TableHead>
                 <TableHead scope="col">
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">İşlemler</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -113,7 +113,7 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                 <TableRow key={cat.id}>
                   <TableCell className="hidden sm:table-cell">
                     <Image
-                      alt={`Image of ${cat.name}`}
+                      alt={`${cat.name} kedisinin fotoğrafı`}
                       className="aspect-square rounded-md object-cover"
                       height="64"
                       src={cat.image}
@@ -126,8 +126,8 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                   <TableCell>
                     <Badge variant="outline">{cat.breed}</Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{cat.age} years</TableCell>
-                  <TableCell className="hidden md:table-cell">{cat.gender === 'Male' ? 'Male' : 'Female'}</TableCell>
+                  <TableCell className="hidden md:table-cell">{cat.age} yaş</TableCell>
+                  <TableCell className="hidden md:table-cell">{cat.gender === 'Male' ? 'Erkek' : 'Dişi'}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -136,22 +136,22 @@ export default function CatsTable({ onRefreshAction }: { onRefreshAction?: () =>
                           size="icon"
                           variant="ghost"
                           className="h-10 w-10"
-                          aria-label={`Actions for ${cat.name}`}
+                          aria-label={`${cat.name} için işlemler`}
                         >
                           <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
-                          <span className="sr-only">Open menu</span>
+                          <span className="sr-only">Menüyü aç</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel>İşlemler</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => handleEdit(cat)}>
-                          Edit
+                          Düzenle
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(cat.id, cat.name)}
                           className="text-red-600"
                         >
-                          Delete
+                          Sil
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

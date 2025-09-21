@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const catFormSchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
   breed: z.string().min(1, 'Breed is required').max(50, 'Breed must be 50 characters or less'),
-  age: z.number().int().min(0, 'Age must be 0 or greater').max(30, 'Age must be 30 or less'),
+  age: z.coerce.number().int().min(0, 'Age must be 0 or greater').max(30, 'Age must be 30 or less'),
   gender: z.enum(['Male', 'Female'], {
     errorMap: () => ({ message: 'Gender must be Male or Female' }),
   }),
