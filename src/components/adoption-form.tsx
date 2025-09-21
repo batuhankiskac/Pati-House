@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -35,7 +36,7 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
   const form = useForm<AdoptionFormValues>({
     resolver: zodResolver(adoptionRequestSchema),
     defaultValues: {
-      catName: '',
+      catName,
       fullName: '',
       email: '',
       phone: '',
@@ -43,6 +44,10 @@ export default function AdoptionForm({ catName }: AdoptionFormProps) {
       reason: '',
     },
   });
+
+  useEffect(() => {
+    form.setValue('catName', catName, { shouldDirty: false });
+  }, [catName, form]);
 
   const { createRequest } = useRequests();
 
