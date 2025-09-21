@@ -41,15 +41,32 @@ export default function ManageCatsPage() {
     setDialogState({ open: true, mode: 'edit', cat: catToEdit });
   }, []);
 
-  const handleDialogOpenChange = useCallback((open: boolean) => {
-    setDialogState(prev => (open ? { ...prev, open: true } : {
+  const closeDialog = useCallback(() => {
+    setDialogState({
       open: false,
       mode: 'create',
       cat: null,
-    }));
+    });
   }, []);
 
+  const handleDialogOpenChange = useCallback((open: boolean) => {
+    if (open) {
+      setDialogState(prev => ({ ...prev, open: true }));
+    } else {
+      closeDialog();
+    }
+  }, [closeDialog]);
+
   const handleRefresh = useCallback(() => refresh(), [refresh]);
+
+  const handleDialogSuccess = useCallback(async () => {
+    closeDialog();
+    try {
+      await handleRefresh();
+    } catch (error) {
+      console.error('[admin][cats] refresh after dialog success failed', error);
+    }
+  }, [closeDialog, handleRefresh]);
 
   return (
     <div>
@@ -75,7 +92,7 @@ export default function ManageCatsPage() {
         onOpenChange={handleDialogOpenChange}
         cat={dialogState.cat}
         isEditing={dialogState.mode === 'edit'}
-        onSuccess={handleRefresh}
+        onSuccess={handleDialogSuccess}
         onCreateCat={createCat}
         onUpdateCat={updateCat}
       />
