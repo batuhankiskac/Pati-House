@@ -13,7 +13,8 @@ import type { AdoptionRequest } from '@/lib/data';
 import { User, Mail, Phone, Home, FileText } from 'lucide-react';
 import { useRequests } from '@/hooks/use-requests';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { restoreBodyPointerEvents } from '@/lib/utils';
 
 interface RequestDetailsDialogProps {
   isOpen: boolean;
@@ -30,6 +31,16 @@ export default function RequestDetailsDialog({
   const { updateStatus } = useRequests();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState<'Approved' | 'Rejected' | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      restoreBodyPointerEvents();
+    }
+
+    return () => {
+      restoreBodyPointerEvents();
+    };
+  }, [isOpen]);
 
   const changeStatus = async (next: 'Approved' | 'Rejected') => {
     if (status === next) {

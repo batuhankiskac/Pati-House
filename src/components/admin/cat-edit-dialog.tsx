@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Cat } from '@/lib/data';
+import { restoreBodyPointerEvents } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { AdminErrorBoundary } from '@/components/admin/error-boundary';
 import { catFormSchema, catUpdateSchema } from '@/lib/validation/cats';
@@ -64,6 +65,16 @@ export default function CatEditDialog({
     });
     setFieldErrors({});
   }, [cat, isOpen, isEditing]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      restoreBodyPointerEvents();
+    }
+
+    return () => {
+      restoreBodyPointerEvents();
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

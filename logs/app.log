@@ -450,3 +450,243 @@
 {"timestamp":"2025-09-21T15:22:29.410Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":1,"rowCount":1}
 {"timestamp":"2025-09-21T15:22:29.410Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":false,"count":1}
 {"timestamp":"2025-09-21T15:22:29.411Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":1}
+{"timestamp":"2025-09-22T18:57:49.026Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":13,"rowCount":2}
+{"timestamp":"2025-09-22T18:57:49.027Z","level":"info","message":"HTTP GET /api/cats 200 19ms","method":"GET","url":"/api/cats","statusCode":200,"duration":19,"cached":false,"count":2}
+{"timestamp":"2025-09-22T18:57:49.027Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":10,"rowCount":2}
+{"timestamp":"2025-09-22T18:57:49.028Z","level":"info","message":"HTTP GET /api/cats 200 11ms","method":"GET","url":"/api/cats","statusCode":200,"duration":11,"cached":false,"count":2}
+{"timestamp":"2025-09-22T18:57:49.028Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":1}
+{"timestamp":"2025-09-22T18:57:49.032Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":4}
+{"timestamp":"2025-09-22T18:57:51.342Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":2}
+{"timestamp":"2025-09-22T18:57:51.349Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":2}
+{"timestamp":"2025-09-22T18:57:51.900Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-22T18:57:51.903Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-22T18:57:51.903Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":2,"rowCount":2}
+{"timestamp":"2025-09-22T18:57:51.904Z","level":"debug","message":"Cache SET: requests:list","operation":"SET","key":"requests:list","duration":0}
+{"timestamp":"2025-09-22T18:57:51.906Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":2,"rowCount":2}
+{"timestamp":"2025-09-22T18:57:51.912Z","level":"debug","message":"Cache SET: requests:list","operation":"SET","key":"requests:list","duration":0}
+{"timestamp":"2025-09-24T11:20:17.515Z","level":"error","message":"[Cache] Error getting key cats:list","key":"cats:list","error":"Reached the max retries per request limit (which is 1). Refer to \"maxRetriesPerRequest\" option for details."}
+{"timestamp":"2025-09-24T11:20:17.515Z","level":"error","message":"[Cache] Error getting key cats:list","key":"cats:list","error":"Reached the max retries per request limit (which is 1). Refer to \"maxRetriesPerRequest\" option for details."}
+{"timestamp":"2025-09-24T11:20:17.522Z","level":"error","message":"Database query failed","query":"SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":6,"error":"connect ECONNREFUSED 127.0.0.1:5432"}
+{"timestamp":"2025-09-24T11:20:17.659Z","level":"error","message":"[API][GET /api/cats] error","error":"Failed to fetch cats","duration":204}
+{"timestamp":"2025-09-24T11:20:17.680Z","level":"error","message":"Database query failed","query":"SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":160,"error":"connect ECONNREFUSED 127.0.0.1:5432"}
+{"timestamp":"2025-09-24T11:20:17.751Z","level":"error","message":"[API][GET /api/cats] error","error":"Failed to fetch cats","duration":293}
+{"timestamp":"2025-09-24T11:21:02.801Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":31,"rowCount":2}
+{"timestamp":"2025-09-24T11:21:02.802Z","level":"info","message":"HTTP GET /api/cats 200 39ms","method":"GET","url":"/api/cats","statusCode":200,"duration":39,"cached":false,"count":2}
+{"timestamp":"2025-09-24T11:21:02.803Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":25,"rowCount":2}
+{"timestamp":"2025-09-24T11:21:02.972Z","level":"info","message":"HTTP GET /api/cats 200 195ms","method":"GET","url":"/api/cats","statusCode":200,"duration":195,"cached":false,"count":2}
+{"timestamp":"2025-09-24T11:21:02.973Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":171}
+{"timestamp":"2025-09-24T11:21:02.975Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":3}
+{"timestamp":"2025-09-24T11:21:43.793Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":7,"rowCount":1}
+{"timestamp":"2025-09-24T11:21:43.794Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":6,"rowCount":1}
+{"timestamp":"2025-09-24T11:21:43.794Z","level":"debug","message":"Cache SET: cats:item:2","operation":"SET","key":"cats:item:2","duration":1}
+{"timestamp":"2025-09-24T11:21:43.797Z","level":"debug","message":"Cache SET: cats:item:2","operation":"SET","key":"cats:item:2","duration":3}
+{"timestamp":"2025-09-24T11:22:20.196Z","level":"warn","message":"Authentication required but no auth token found"}
+{"timestamp":"2025-09-24T11:22:20.198Z","level":"warn","message":"Authentication required but no auth token found"}
+{"timestamp":"2025-09-24T11:22:37.358Z","level":"debug","message":"DB Query: INSERT INTO adoption_requests (cat_name, request_date, status, applicant_name, applicant_email,\n                                      applicant_phone, applicant_address, applicant_reason)\n         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)\n         RETURNING id, cat_name as \"catName\", request_date as \"requestDate\", status","duration":8,"rowCount":1}
+{"timestamp":"2025-09-24T11:22:37.360Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":2,"rowCount":3}
+{"timestamp":"2025-09-24T11:22:37.361Z","level":"debug","message":"Cache DEL: requests:list","operation":"DEL","key":"requests:list","duration":1}
+{"timestamp":"2025-09-24T11:22:37.362Z","level":"debug","message":"Cache INVALIDATE_PATTERN: requests:item:*","operation":"INVALIDATE_PATTERN","key":"requests:item:*","duration":1,"keysCount":0}
+{"timestamp":"2025-09-24T11:22:37.362Z","level":"debug","message":"Cache INVALIDATE_REQUESTS: all","operation":"INVALIDATE_REQUESTS","key":"all","duration":2}
+{"timestamp":"2025-09-24T11:22:37.564Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:22:37.568Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:22:37.574Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:22:37.575Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:23:10.108Z","level":"debug","message":"DB Query: SELECT id, username, email, password, name, avatar FROM users WHERE username = $1","duration":5,"rowCount":1}
+{"timestamp":"2025-09-24T11:23:10.218Z","level":"info","message":"User authenticated successfully","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:10.220Z","level":"debug","message":"DB Query: SELECT id, username, email, password, name, avatar FROM users WHERE username = $1","duration":2,"rowCount":1}
+{"timestamp":"2025-09-24T11:23:10.285Z","level":"info","message":"User authenticated successfully","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:10.287Z","level":"debug","message":"Session created successfully","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:10.288Z","level":"info","message":"Login successful","method":"POST","url":"/api/login","statusCode":200,"duration":186,"userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:10.441Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:23:10.447Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:10.447Z","level":"info","message":"HTTP GET /api/cats 200 3ms","method":"GET","url":"/api/cats","statusCode":200,"duration":3,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:23:10.451Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:10.453Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":5,"rowCount":3}
+{"timestamp":"2025-09-24T11:23:10.455Z","level":"debug","message":"Cache SET: requests:list","operation":"SET","key":"requests:list","duration":2}
+{"timestamp":"2025-09-24T11:23:10.458Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":4,"rowCount":3}
+{"timestamp":"2025-09-24T11:23:10.459Z","level":"debug","message":"Cache SET: requests:list","operation":"SET","key":"requests:list","duration":1}
+{"timestamp":"2025-09-24T11:23:14.891Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:23:14.895Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:23:22.341Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:23:22.345Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":2}
+{"timestamp":"2025-09-24T11:23:39.025Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:39.030Z","level":"debug","message":"DB Query: INSERT INTO cats (name, breed, age, gender, description, image, data_ai_hint)\n         VALUES ($1, $2, $3, $4, $5, $6, $7)\n         RETURNING id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\"","duration":4,"rowCount":1}
+{"timestamp":"2025-09-24T11:23:39.031Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":1,"rowCount":3}
+{"timestamp":"2025-09-24T11:23:39.031Z","level":"info","message":"HTTP POST /api/cats 201 7ms","method":"POST","url":"/api/cats","statusCode":201,"duration":7,"id":4,"total":3}
+{"timestamp":"2025-09-24T11:23:39.034Z","level":"debug","message":"Cache DEL: cats:list","operation":"DEL","key":"cats:list","duration":3}
+{"timestamp":"2025-09-24T11:23:39.036Z","level":"debug","message":"Cache INVALIDATE_PATTERN: cats:item:*","operation":"INVALIDATE_PATTERN","key":"cats:item:*","duration":2,"keysCount":1}
+{"timestamp":"2025-09-24T11:23:39.036Z","level":"debug","message":"Cache INVALIDATE_CATS: all","operation":"INVALIDATE_CATS","key":"all","duration":5}
+{"timestamp":"2025-09-24T11:23:39.086Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":2,"rowCount":3}
+{"timestamp":"2025-09-24T11:23:39.086Z","level":"info","message":"HTTP GET /api/cats 200 3ms","method":"GET","url":"/api/cats","statusCode":200,"duration":3,"cached":false,"count":3}
+{"timestamp":"2025-09-24T11:23:39.087Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":1}
+{"timestamp":"2025-09-24T11:23:42.463Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:42.470Z","level":"info","message":"HTTP GET /api/cats 200 4ms","method":"GET","url":"/api/cats","statusCode":200,"duration":4,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:42.471Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:42.475Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:47.944Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:47.947Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:47.951Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:47.955Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:49.274Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:49.278Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:23:54.291Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:54.299Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:54.305Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:23:54.307Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:12.996Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:13.000Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:54.255Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:54.257Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:54.262Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:54.267Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:57.357Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:57.523Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests WHERE id = $1","duration":5,"rowCount":1}
+{"timestamp":"2025-09-24T11:24:57.534Z","level":"debug","message":"DB Query: UPDATE adoption_requests SET status = $1, updated_at = CURRENT_TIMESTAMP\n         WHERE id = $2\n         RETURNING id, cat_name as \"catName\", request_date as \"requestDate\", status","duration":10,"rowCount":1}
+{"timestamp":"2025-09-24T11:24:57.537Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests WHERE id = $1","duration":2,"rowCount":1}
+{"timestamp":"2025-09-24T11:24:57.538Z","level":"debug","message":"Cache DEL: requests:item:3","operation":"DEL","key":"requests:item:3","duration":0}
+{"timestamp":"2025-09-24T11:24:57.539Z","level":"debug","message":"Cache INVALIDATE_REQUEST: 3","operation":"INVALIDATE_REQUEST","key":"3","duration":1}
+{"timestamp":"2025-09-24T11:24:57.540Z","level":"debug","message":"Cache DEL: requests:list","operation":"DEL","key":"requests:list","duration":1}
+{"timestamp":"2025-09-24T11:24:57.540Z","level":"debug","message":"Cache INVALIDATE_PATTERN: requests:item:*","operation":"INVALIDATE_PATTERN","key":"requests:item:*","duration":0,"keysCount":0}
+{"timestamp":"2025-09-24T11:24:57.541Z","level":"debug","message":"Cache INVALIDATE_REQUESTS: all","operation":"INVALIDATE_REQUESTS","key":"all","duration":2}
+{"timestamp":"2025-09-24T11:24:59.025Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:24:59.113Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests WHERE id = $1","duration":4,"rowCount":1}
+{"timestamp":"2025-09-24T11:24:59.115Z","level":"debug","message":"DB Query: UPDATE adoption_requests SET status = $1, updated_at = CURRENT_TIMESTAMP\n         WHERE id = $2\n         RETURNING id, cat_name as \"catName\", request_date as \"requestDate\", status","duration":1,"rowCount":1}
+{"timestamp":"2025-09-24T11:24:59.116Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests WHERE id = $1","duration":0,"rowCount":1}
+{"timestamp":"2025-09-24T11:24:59.117Z","level":"debug","message":"Cache DEL: requests:item:3","operation":"DEL","key":"requests:item:3","duration":0}
+{"timestamp":"2025-09-24T11:24:59.118Z","level":"debug","message":"Cache INVALIDATE_REQUEST: 3","operation":"INVALIDATE_REQUEST","key":"3","duration":1}
+{"timestamp":"2025-09-24T11:24:59.118Z","level":"debug","message":"Cache DEL: requests:list","operation":"DEL","key":"requests:list","duration":0}
+{"timestamp":"2025-09-24T11:24:59.118Z","level":"debug","message":"Cache INVALIDATE_PATTERN: requests:item:*","operation":"INVALIDATE_PATTERN","key":"requests:item:*","duration":0,"keysCount":0}
+{"timestamp":"2025-09-24T11:24:59.119Z","level":"debug","message":"Cache INVALIDATE_REQUESTS: all","operation":"INVALIDATE_REQUESTS","key":"all","duration":1}
+{"timestamp":"2025-09-24T11:25:03.438Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:03.443Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:12.057Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:12.061Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:19.045Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-24T11:25:19.048Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":1,"rowCount":1}
+{"timestamp":"2025-09-24T11:25:19.051Z","level":"debug","message":"DB Query: UPDATE cats SET name = $1, breed = $2, age = $3, gender = $4, description = $5, image = $6, updated_at = CURRENT_TIMESTAMP\n         WHERE id = $7\n         RETURNING id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\"","duration":2,"rowCount":1}
+{"timestamp":"2025-09-24T11:25:19.052Z","level":"debug","message":"Cache DEL: cats:item:2","operation":"DEL","key":"cats:item:2","duration":1}
+{"timestamp":"2025-09-24T11:25:19.052Z","level":"debug","message":"Cache INVALIDATE_CAT: 2","operation":"INVALIDATE_CAT","key":"2","duration":1}
+{"timestamp":"2025-09-24T11:25:19.053Z","level":"debug","message":"Cache DEL: cats:list","operation":"DEL","key":"cats:list","duration":1}
+{"timestamp":"2025-09-24T11:25:19.053Z","level":"debug","message":"Cache INVALIDATE_PATTERN: cats:item:*","operation":"INVALIDATE_PATTERN","key":"cats:item:*","duration":0,"keysCount":0}
+{"timestamp":"2025-09-24T11:25:19.053Z","level":"debug","message":"Cache INVALIDATE_CATS: all","operation":"INVALIDATE_CATS","key":"all","duration":1}
+{"timestamp":"2025-09-24T11:25:19.089Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":1,"rowCount":3}
+{"timestamp":"2025-09-24T11:25:19.090Z","level":"info","message":"HTTP GET /api/cats 200 3ms","method":"GET","url":"/api/cats","statusCode":200,"duration":3,"cached":false,"count":3}
+{"timestamp":"2025-09-24T11:25:19.090Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":0}
+{"timestamp":"2025-09-24T11:25:22.434Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:22.439Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:22.995Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:22.996Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:23.000Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:23.004Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-24T11:25:24.592Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":1,"rowCount":1}
+{"timestamp":"2025-09-24T11:25:24.593Z","level":"debug","message":"Cache SET: cats:item:2","operation":"SET","key":"cats:item:2","duration":1}
+{"timestamp":"2025-09-26T10:07:47.803Z","level":"error","message":"[Cache] Error getting key cats:list","key":"cats:list","error":"Reached the max retries per request limit (which is 1). Refer to \"maxRetriesPerRequest\" option for details."}
+{"timestamp":"2025-09-26T10:07:47.803Z","level":"error","message":"[Cache] Error getting key cats:list","key":"cats:list","error":"Reached the max retries per request limit (which is 1). Refer to \"maxRetriesPerRequest\" option for details."}
+{"timestamp":"2025-09-26T10:07:47.806Z","level":"error","message":"Database query failed","query":"SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":2,"error":"connect ECONNREFUSED 127.0.0.1:5432"}
+{"timestamp":"2025-09-26T10:07:47.922Z","level":"error","message":"[API][GET /api/cats] error","error":"Failed to fetch cats","duration":178}
+{"timestamp":"2025-09-26T10:07:47.938Z","level":"error","message":"Database query failed","query":"SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":133,"error":"connect ECONNREFUSED 127.0.0.1:5432"}
+{"timestamp":"2025-09-26T10:07:48.014Z","level":"error","message":"[API][GET /api/cats] error","error":"Failed to fetch cats","duration":261}
+{"timestamp":"2025-09-26T10:13:11.824Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":66,"rowCount":3}
+{"timestamp":"2025-09-26T10:13:11.825Z","level":"info","message":"HTTP GET /api/cats 200 72ms","method":"GET","url":"/api/cats","statusCode":200,"duration":72,"cached":false,"count":3}
+{"timestamp":"2025-09-26T10:13:11.826Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":69,"rowCount":3}
+{"timestamp":"2025-09-26T10:13:11.826Z","level":"info","message":"HTTP GET /api/cats 200 96ms","method":"GET","url":"/api/cats","statusCode":200,"duration":96,"cached":false,"count":3}
+{"timestamp":"2025-09-26T10:13:11.826Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":1}
+{"timestamp":"2025-09-26T10:13:11.827Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":1}
+{"timestamp":"2025-09-26T10:13:19.378Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":7,"rowCount":1}
+{"timestamp":"2025-09-26T10:13:19.379Z","level":"debug","message":"Cache SET: cats:item:2","operation":"SET","key":"cats:item:2","duration":1}
+{"timestamp":"2025-09-26T10:13:22.373Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:22.380Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:22.382Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:22.387Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:23.787Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":1,"rowCount":1}
+{"timestamp":"2025-09-26T10:13:23.788Z","level":"debug","message":"Cache SET: cats:item:3","operation":"SET","key":"cats:item:3","duration":1}
+{"timestamp":"2025-09-26T10:13:30.757Z","level":"info","message":"HTTP GET /api/cats 200 3ms","method":"GET","url":"/api/cats","statusCode":200,"duration":3,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:30.757Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:30.761Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:30.763Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:51.417Z","level":"debug","message":"DB Query: SELECT id, username, email, password, name, avatar FROM users WHERE username = $1","duration":6,"rowCount":1}
+{"timestamp":"2025-09-26T10:13:51.495Z","level":"info","message":"User authenticated successfully","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:13:51.497Z","level":"debug","message":"DB Query: SELECT id, username, email, password, name, avatar FROM users WHERE username = $1","duration":2,"rowCount":1}
+{"timestamp":"2025-09-26T10:13:51.562Z","level":"info","message":"User authenticated successfully","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:13:51.564Z","level":"debug","message":"Session created successfully","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:13:51.571Z","level":"info","message":"Login successful","method":"POST","url":"/api/login","statusCode":200,"duration":160,"userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:13:51.716Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:51.721Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:52.239Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:13:52.242Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:13:52.243Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":3,"rowCount":3}
+{"timestamp":"2025-09-26T10:13:52.243Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":1,"rowCount":3}
+{"timestamp":"2025-09-26T10:13:52.244Z","level":"debug","message":"Cache SET: requests:list","operation":"SET","key":"requests:list","duration":1}
+{"timestamp":"2025-09-26T10:13:52.246Z","level":"debug","message":"Cache SET: requests:list","operation":"SET","key":"requests:list","duration":3}
+{"timestamp":"2025-09-26T10:13:54.880Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:13:54.884Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:14:00.617Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:00.619Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":1,"rowCount":1}
+{"timestamp":"2025-09-26T10:14:00.631Z","level":"debug","message":"DB Query: UPDATE cats SET name = $1, breed = $2, age = $3, gender = $4, description = $5, image = $6, updated_at = CURRENT_TIMESTAMP\n         WHERE id = $7\n         RETURNING id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\"","duration":10,"rowCount":1}
+{"timestamp":"2025-09-26T10:14:00.632Z","level":"debug","message":"Cache DEL: cats:item:3","operation":"DEL","key":"cats:item:3","duration":0}
+{"timestamp":"2025-09-26T10:14:00.633Z","level":"debug","message":"Cache INVALIDATE_CAT: 3","operation":"INVALIDATE_CAT","key":"3","duration":1}
+{"timestamp":"2025-09-26T10:14:00.634Z","level":"debug","message":"Cache DEL: cats:list","operation":"DEL","key":"cats:list","duration":1}
+{"timestamp":"2025-09-26T10:14:00.634Z","level":"debug","message":"Cache INVALIDATE_PATTERN: cats:item:*","operation":"INVALIDATE_PATTERN","key":"cats:item:*","duration":0,"keysCount":1}
+{"timestamp":"2025-09-26T10:14:00.635Z","level":"debug","message":"Cache INVALIDATE_CATS: all","operation":"INVALIDATE_CATS","key":"all","duration":2}
+{"timestamp":"2025-09-26T10:14:00.668Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":0,"rowCount":3}
+{"timestamp":"2025-09-26T10:14:00.668Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":false,"count":3}
+{"timestamp":"2025-09-26T10:14:00.669Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":1}
+{"timestamp":"2025-09-26T10:14:03.317Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:14:03.322Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:14:05.532Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:05.536Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:05.540Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:05.544Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:07.808Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:07.812Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:13.472Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:13.475Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:13.480Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:14:13.484Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:16:02.588Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:16:02.592Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:16:02.599Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:16:02.599Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:26:21.889Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:26:21.976Z","level":"debug","message":"DB Query: SELECT id, cat_name as \"catName\", request_date as \"requestDate\", status,\n                applicant_name as \"applicant.name\", applicant_email as \"applicant.email\",\n                applicant_phone as \"applicant.phone\", applicant_address as \"applicant.address\",\n                applicant_reason as \"applicant.reason\"\n         FROM adoption_requests ORDER BY id","duration":87,"rowCount":3}
+{"timestamp":"2025-09-26T10:26:21.978Z","level":"debug","message":"Cache SET: requests:list","operation":"SET","key":"requests:list","duration":1}
+{"timestamp":"2025-09-26T10:26:21.994Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":12,"rowCount":3}
+{"timestamp":"2025-09-26T10:26:21.995Z","level":"info","message":"HTTP GET /api/cats 200 21ms","method":"GET","url":"/api/cats","statusCode":200,"duration":21,"cached":false,"count":3}
+{"timestamp":"2025-09-26T10:26:21.996Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":1}
+{"timestamp":"2025-09-26T10:29:46.033Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:46.036Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:46.041Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:46.044Z","level":"info","message":"HTTP GET /api/cats 200 2ms","method":"GET","url":"/api/cats","statusCode":200,"duration":2,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:47.286Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:47.289Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:53.783Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:53.790Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats WHERE id = $1","duration":6,"rowCount":1}
+{"timestamp":"2025-09-26T10:29:53.795Z","level":"debug","message":"DB Query: UPDATE cats SET name = $1, breed = $2, age = $3, gender = $4, description = $5, image = $6, updated_at = CURRENT_TIMESTAMP\n         WHERE id = $7\n         RETURNING id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\"","duration":3,"rowCount":1}
+{"timestamp":"2025-09-26T10:29:53.799Z","level":"debug","message":"Cache DEL: cats:item:3","operation":"DEL","key":"cats:item:3","duration":4}
+{"timestamp":"2025-09-26T10:29:53.800Z","level":"debug","message":"Cache INVALIDATE_CAT: 3","operation":"INVALIDATE_CAT","key":"3","duration":5}
+{"timestamp":"2025-09-26T10:29:53.800Z","level":"debug","message":"Cache DEL: cats:list","operation":"DEL","key":"cats:list","duration":0}
+{"timestamp":"2025-09-26T10:29:53.802Z","level":"debug","message":"Cache INVALIDATE_PATTERN: cats:item:*","operation":"INVALIDATE_PATTERN","key":"cats:item:*","duration":1,"keysCount":0}
+{"timestamp":"2025-09-26T10:29:53.802Z","level":"debug","message":"Cache INVALIDATE_CATS: all","operation":"INVALIDATE_CATS","key":"all","duration":2}
+{"timestamp":"2025-09-26T10:29:53.832Z","level":"debug","message":"DB Query: SELECT id, name, breed, age, gender, description, image, data_ai_hint as \"dataAiHint\" FROM cats ORDER BY id","duration":1,"rowCount":3}
+{"timestamp":"2025-09-26T10:29:53.832Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":false,"count":3}
+{"timestamp":"2025-09-26T10:29:53.833Z","level":"debug","message":"Cache SET: cats:list","operation":"SET","key":"cats:list","duration":0}
+{"timestamp":"2025-09-26T10:29:56.229Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:56.234Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:56.238Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:56.240Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:56.934Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:56.937Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:57.569Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:57.572Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:57.575Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:57.577Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:29:58.313Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:58.316Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:58.318Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:29:58.321Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:30:01.276Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:30:01.280Z","level":"debug","message":"Authentication successful","userId":"1","username":"Hill"}
+{"timestamp":"2025-09-26T10:30:04.154Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:30:04.155Z","level":"info","message":"HTTP GET /api/cats 200 1ms","method":"GET","url":"/api/cats","statusCode":200,"duration":1,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:30:04.158Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
+{"timestamp":"2025-09-26T10:30:04.161Z","level":"info","message":"HTTP GET /api/cats 200 0ms","method":"GET","url":"/api/cats","statusCode":200,"duration":0,"cached":true,"count":3}
